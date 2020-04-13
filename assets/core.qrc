@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/metronome">
+        <file>core/metronome/Primary.wav</file>
+        <file>core/metronome/Secondary.wav</file>
+    </qresource>
+</RCC>
