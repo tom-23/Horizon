@@ -1,5 +1,5 @@
-#ifndef TIMELINE_H
-#define TIMELINE_H
+#ifndef TIMELINECONTROL_H
+#define TIMELINECONTROL_H
 
 #include <QtGui>
 #include <QWidget>
@@ -10,10 +10,14 @@
 
 #include "timelinegraphicwidget.h"
 #include "rulergraphicwidget.h"
-#include "regiongraphicitem.h"
+
 #include "graphicsview.h"
+
 #include "trackcontrolswidget.h"
 #include "track.h"
+
+#include "region.h"
+
 
 
 
@@ -25,22 +29,31 @@ public:
     GraphicsView *regionsView;
     GraphicsView *rulerView;
 
+
     void setNoteLength(int _noteLength);
     void setBarLength(int _barLength);
 
     void setBarAmount(int _barAmount);
-
     void setHZoomFactor(int _hZoomFactor);
 
-    void removeTrack(int _index);
     void addTrack(int _index);
+    void removeTrack(int _index);
+
+    int getTrackCount();
+
+
+    void addRegion(int _trackIndex);
+    void removeRegion(int _index);
+    void setRegionTrack(int _oldTrackIndex, int _newTrackIndex);
+
+    int getRegionCount();
 
 
     int noteLength;
     int barLength;
     int barCount;
 
-    int trackCount;
+
 
     int hZoomFactor;
 
@@ -56,6 +69,12 @@ private:
     RulerGraphicWidget *rulerGraphic;
 
     std::vector<class Track *> *trackList;
+    std::vector<class Region *> *regionList;
+
+    int trackCount;
+    int regionCount;
+
+    void setZRegionValues(int _zValue);
 
 };
 

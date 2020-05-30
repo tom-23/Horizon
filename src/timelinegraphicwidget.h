@@ -13,6 +13,7 @@
 #include <QBrush>
 #include <QGraphicsItem>
 #include <QPoint>
+#include <QGraphicsItemGroup>
 #include <iostream>
 
 #include "playhead.h"
@@ -26,7 +27,7 @@ class TimelineGraphicWidget : public QWidget
     Q_OBJECT
 
 public:
-    TimelineGraphicWidget(QGraphicsView *_view, QWidget *_parent = nullptr);
+    TimelineGraphicWidget(QGraphicsView *_view, QWidget *_parent = nullptr, int _barAmount = 8, int _barLength = 4);
     ~TimelineGraphicWidget();
     QGraphicsItem *ItemAt(QPointF position) { return scene->itemAt(position, QTransform()); }
     void SetFrame(int _frame)
@@ -53,12 +54,15 @@ public:
 
 private:
     QList<QList<QGraphicsLineItem*>*> *barLines;
+
     int hScaleFactor;
     int vScaleFactor;
     int barAmount;
     int barLength;
 
     void mousePressEvent(QMouseEvent *event);
+
+    QGraphicsRectItem *viewportPadding;
 
 protected:
     void resizeEvent(QResizeEvent *event);

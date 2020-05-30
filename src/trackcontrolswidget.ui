@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>56456</width>
+    <width>250</width>
     <height>60</height>
    </size>
   </property>
@@ -36,12 +36,21 @@
 font-family: SF Display;
 font-size: 11px;
 }
-#centralwidget {
+#container {
 	border: none;
-	border-bottom: 1px Solid #0f0f0f;	
+	padding: 0px;
+	margin: 0px;
 	border-radius: 0px;
+border-bottom: 1px Solid #0f0f0f;	
 	
 	
+}
+
+#color {
+border: none;
+
+border-bottom: 1px Solid #0f0f0f;	
+border-left: 1px Solid #0f0f0f;	
 }
 
 
@@ -75,7 +84,7 @@ QSlider::sub-page:horizontal {
     background-color: #42c8fc;
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -92,9 +101,9 @@ QSlider::sub-page:horizontal {
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="centralwidget">
+    <widget class="QFrame" name="container">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -110,10 +119,10 @@ QSlider::sub-page:horizontal {
       <bool>false</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+      <enum>QFrame::Sunken</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
@@ -121,6 +130,9 @@ QSlider::sub-page:horizontal {
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
        <number>5</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -136,8 +148,17 @@ QSlider::sub-page:horizontal {
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
+        </property>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="number">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
             <width>15</width>
@@ -153,7 +174,7 @@ QSlider::sub-page:horizontal {
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="title">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -168,6 +189,9 @@ QSlider::sub-page:horizontal {
             <bold>true</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>MIDI</string>
           </property>
@@ -179,31 +203,18 @@ QSlider::sub-page:horizontal {
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Preferred</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>5</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
         </property>
         <property name="rightMargin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="gain">
           <property name="minimumSize">
            <size>
             <width>45</width>
@@ -218,48 +229,12 @@ QSlider::sub-page:horizontal {
             <bold>true</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">border: 1px Solid #0f0f0f;	
+	border-radius: 5px;</string>
+          </property>
           <property name="text">
            <string>0.0 dB</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>18</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="minimum">
-           <number>-70</number>
-          </property>
-          <property name="maximum">
-           <number>12</number>
-          </property>
-          <property name="value">
-           <number>0</number>
-          </property>
-          <property name="tracking">
-           <bool>false</bool>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="invertedAppearance">
-           <bool>false</bool>
-          </property>
-          <property name="invertedControls">
-           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -347,6 +322,16 @@ QSlider::sub-page:horizontal {
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="color" native="true">
+     <property name="maximumSize">
+      <size>
+       <width>5</width>
+       <height>16777215</height>
+      </size>
+     </property>
     </widget>
    </item>
   </layout>

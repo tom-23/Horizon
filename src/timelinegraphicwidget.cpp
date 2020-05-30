@@ -1,18 +1,24 @@
 #include "timelinegraphicwidget.h"
 
-TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_parent)
+TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_parent, int _barAmount, int _barLength)
 {
     if (_view)
         view = _view;
     else
         view = new QGraphicsView(this);
     scene = view->scene();
+    view->setRenderHint(QPainter::Antialiasing);
     setMouseTracking(true);
     barLines = new QList<QList<QGraphicsLineItem *>*>;
 
     hScaleFactor = 100;
-    barAmount = 5;
-    barLength = 4;
+    barAmount = _barAmount;
+    barLength = _barLength;
+
+    viewportPadding = new QGraphicsRectItem();
+    viewportPadding->setRect(0,0, barAmount * hScaleFactor, 5);
+    viewportPadding->setPen(Qt::NoPen);
+    scene->addItem(viewportPadding);
 
     QFont font = scene->font();
     font.setPointSize(10);
@@ -26,16 +32,23 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
             if (beat == 0) {
                 QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#0f0f0f"));
                 line->setPos(i * hScaleFactor, 0);
+
                 bar->insert(bar->end(), line);
+
             } else {
+
                 int hLocation = (hScaleFactor / barLength) * beat;
                 QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#1a1a1a"));
                 line->setPos((i * hScaleFactor) + hLocation, 0);
+
                 bar->insert(bar->end(), line);
+
             }
 
         }
+
         barLines->insert(barLines->end(), bar);
+
 
     }
 
@@ -43,6 +56,7 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     scene->addItem(indicator);
     indicator->setZValue(101);
     connect(view, SIGNAL(mousePressEventSignal(QMouseEvent)), this, SIGNAL(mousePressEvent(QMouseEvent)));
+
 }
 
 
@@ -75,11 +89,15 @@ void TimelineGraphicWidget::setBarAmount(int _value) {
                     QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#0f0f0f"));
                     line->setPos(i * hScaleFactor, 0);
                     bar->insert(bar->end(), line);
+
                 } else {
                     int hLocation = (hScaleFactor / barLength) * beat;
                     QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#1a1a1a"));
                     line->setPos((i * hScaleFactor) + hLocation, 0);
+
                     bar->insert(bar->end(), line);
+
+
                 }
 
             }
@@ -122,12 +140,16 @@ void TimelineGraphicWidget::setBarLength(int _value) {
             if (beat == 0) {
                 QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#0f0f0f"));
                 line->setPos(i * hScaleFactor, 0);
+
                 bar->insert(bar->end(), line);
+
             } else {
                 int hLocation = (hScaleFactor / barLength) * beat;
                 QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#1a1a1a"));
                 line->setPos((i * hScaleFactor) + hLocation, 0);
+
                 bar->insert(bar->end(), line);
+
             }
 
         }

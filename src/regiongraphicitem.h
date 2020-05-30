@@ -1,5 +1,5 @@
-#ifndef RegionGraphicItem_H
-#define RegionGraphicItem_H
+#ifndef REGIONGRAPHICITEM_H
+#define REGIONGRAPHICITEM_H
 
 #include <QGraphicsItem>
 #include <QBrush>
@@ -9,69 +9,22 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 
+class Timeline;
+
+
 class RegionGraphicItem : public QGraphicsItem
 {
 public:
-    RegionGraphicItem(QGraphicsScene *_scene, QColor _color) : QGraphicsItem()
-    {
-        setFlags(ItemIsMovable);
-        color = _color;
-        outlineColor = color.lighter(30);
-        selectedColor = QColor(200,30,180);
-        selectedColorOutline = selectedColor.lighter(30);
-        //        rounded = 3;
-        //        hasShadow = false;
-        //        thresholdShadow=0.0f;
-        brush = QBrush(color);
-        pen = QPen(outlineColor, 1);
-        pen.setCapStyle(Qt::RoundCap);
-        length = 5;
-        height = 60;
-        oldPos = pos();
-        scene = _scene;
-    }
-    RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene)
-    {
-        setFlags(ItemIsMovable);
-        color = _color;
-        outlineColor = color.lighter(30);
-        selectedColor = QColor(200,30,180);
-        selectedColorOutline = selectedColor.lighter(30);
-        //        rounded = 3;
-        //        hasShadow = false;
-        //        thresholdShadow=0.0f;
-        brush = QBrush(color);
-        pen = QPen(outlineColor, penWidth);
-        pen.setCapStyle(Qt::RoundCap);
-        length = _length;
-        height = 60;
-        oldPos = scenePos();
-        scene = _scene;
-    }
+    RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline);
+    RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline);
 
-    void SetLength(float _length)
-    {
-        length = _length;
-    }
+    void setHScaleFactor(int _value);
+    float getGridLocation();
+    void setGridLocation(float _value);
 
-    QColor color;
-    QColor outlineColor;
-    static QColor selectedColor;
-    static QColor selectedColorOutline;
-    static int penWidth;
-    static int rounded;
-    static bool hasShadow;
-    static float thresholdShadow;
-    QBrush brush;
-    QPen pen;
-    int length, height;
-    bool pressed = false;
-    QPointF oldPos, oldMousePos;
-    QGraphicsScene *scene;
-    // QGraphicsItem interface
 
-    virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+
 
     // QGraphicsItem interface
 protected:
@@ -79,10 +32,37 @@ protected:
 
     // QGraphicsItem interface
 protected:
+
+    QColor color;
+    QColor outlineColor;
+    QColor selectedColor;
+    QColor selectedColorOutline;
+    int penWidth;
+    int rounded;
+    bool hasShadow;
+    float thresholdShadow;
+    QBrush brush;
+    QPen pen;
+    int length, height;
+    bool pressed = false;
+    QPointF oldPos, oldMousePos;
+    int oldTrackIndex;
+    int hScaleFactor;
+    float gridLocation;
+    QGraphicsScene *scene;
+    // QGraphicsItem interface
+
+    Timeline *timeline;
+
+    virtual QRectF boundingRect() const override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
 

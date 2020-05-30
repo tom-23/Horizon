@@ -12,8 +12,8 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent) :
     ui->setupUi(this);
 
     QColor color = QColor::fromRgb(QRandomGenerator::global()->generate());
-    QString style = QString("#centralwidget { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
-    ui->centralwidget->setStyleSheet(style);
+    QString style = QString("#color { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
+    ui->color->setStyleSheet(style);
 
 }
 

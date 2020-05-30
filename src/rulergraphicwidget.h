@@ -19,7 +19,7 @@ using namespace std;
 class RulerGraphicWidget : public QWidget
 {
 public:
-    RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent = nullptr);
+    RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent = nullptr, int _barAmount = 8);
     ~RulerGraphicWidget();
     QGraphicsScene *scene;
     QGraphicsView *view;
@@ -34,6 +34,7 @@ private:
     QList<QGraphicsTextItem*> *barNumbers;
     int hScaleFactor;
     int barAmount;
+    QGraphicsRectItem *viewportPadding;
 };
 
 #endif // RulerGraphicWidget_H

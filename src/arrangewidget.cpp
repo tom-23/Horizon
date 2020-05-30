@@ -12,21 +12,30 @@ ArrangeWidget::ArrangeWidget(QWidget *parent) :
     ui(new Ui::ArrangeWidget)
 {
     ui->setupUi(this);
+    tl = new Timeline(ui->trackRegions, ui->trackRuler, ui->trackControlsContents);
 
     connect(ui->trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->trackControls->verticalScrollBar(), SLOT(setValue(int)));
     connect(ui->trackControls->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->trackRegions->verticalScrollBar(), SLOT(setValue(int)));
 
 
-    connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
-    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->overview, SLOT(setValue(int)));
-    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), ui->overview, SLOT(setRange(int, int)));
-
     connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->trackRuler->horizontalScrollBar(), SLOT(setValue(int)));
+    connect(ui->trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange()));
 
-    tl = new Timeline(ui->trackRegions, ui->trackRuler, ui->trackControlsContents);
+    connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
+    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), ui->overview, SLOT(setRange(int, int)));
+    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->overview, SLOT(setValue(int)));
 
 
 
+    qDebug() << "Scroll Value:" << ui->trackRuler->horizontalScrollBar()->value();
+
+
+
+
+}
+
+void tst() {
+    qDebug() << "OOF";
 }
 
 ArrangeWidget::~ArrangeWidget()
@@ -53,7 +62,7 @@ void ArrangeWidget::on_pushButton_4_clicked()
 void ArrangeWidget::on_pushButton_5_clicked()
 {
 
-    tl->addTrack(tl->trackCount);
+    tl->addTrack(tl->getTrackCount());
 
 
 }
@@ -88,4 +97,13 @@ void ArrangeWidget::on_spinBox_valueChanged(int arg1)
 void ArrangeWidget::on_spinBox_2_valueChanged(int arg1)
 {
     tl->setBarLength(arg1);
+}
+
+void ArrangeWidget::on_pushButton_clicked()
+{
+    tl->addRegion(0);
+}
+
+void ArrangeWidget::on_trackRuler_sliderChange() {
+    qDebug() << "Slider Changed!";
 }

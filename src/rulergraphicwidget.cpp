@@ -1,6 +1,6 @@
 #include "rulergraphicwidget.h"
 
-RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent)
+RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent, int _barAmount)
 {
     if (_view)
         view = _view;
@@ -12,9 +12,14 @@ RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent)
     barNumbers = new QList<QGraphicsTextItem *>;
 
     hScaleFactor = 100;
-    barAmount = 5;
+    barAmount = _barAmount;
     QFont font = scene->font();
     font.setPointSize(10);
+
+    viewportPadding = new QGraphicsRectItem();
+    viewportPadding->setRect(0,0, barAmount * hScaleFactor, 5);
+    viewportPadding->setPen(Qt::NoPen);
+    scene->addItem(viewportPadding);
 
     // Timeline Numbers and Lines
     for (int i = 0; i < barAmount; i++)

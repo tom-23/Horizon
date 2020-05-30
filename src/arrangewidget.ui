@@ -136,7 +136,14 @@ border: none;
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="text">
-           <string>A</string>
+           <string>T</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>R</string>
           </property>
          </widget>
         </item>
@@ -169,7 +176,7 @@ border: none;
         <item>
          <widget class="QSpinBox" name="spinBox">
           <property name="minimum">
-           <number>5</number>
+           <number>8</number>
           </property>
           <property name="maximum">
            <number>100</number>
@@ -542,7 +549,7 @@ border-right: 1px Solid #0f0f0f;
             <item>
              <widget class="QGraphicsView" name="trackRuler">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -550,13 +557,13 @@ border-right: 1px Solid #0f0f0f;
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>16</height>
+                <height>20</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>16</height>
+                <height>20</height>
                </size>
               </property>
               <property name="styleSheet">
@@ -565,6 +572,48 @@ border-right: 1px Solid #0f0f0f;
 	border-bottom: 1px Solid #0f0f0f;	
     border-top: 1px Solid #0f0f0f;	
 	background-color: #282828;
+}
+QScrollBar {
+border: 1px Solid #0f0f0f;	
+background-color: rgb(76, 76, 76);
+padding: 2px;
+}
+QScrollBar:vertical {
+border-right: none;
+border-top: none;
+border-bottom: none;
+width: 12px;
+}
+QScrollBar:horizontal {
+border-left: none;
+border-bottom: none;
+border-right: none;
+height: 12px;
+}
+QScrollBar::handle {
+background-color :#0f0f0f;
+border-radius: 3px;
+}
+
+QScrollBar::handle:vertical {
+min-height: 20px;
+}
+
+QScrollBar::handle:horizontal{
+min-width: 20px;
+}
+
+QScrollBar::add-line:horizontal {
+border: none;
+}
+QScrollBar::sub-line:horizontal {
+border: none;
+}
+QScrollBar::add-line:vertical {
+border: none;
+}
+QScrollBar::sub-line:vertical {
+border: none;
 }</string>
               </property>
               <property name="frameShape">
@@ -577,13 +626,13 @@ border-right: 1px Solid #0f0f0f;
                <number>0</number>
               </property>
               <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
+               <enum>Qt::ScrollBarAsNeeded</enum>
               </property>
               <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
+               <enum>Qt::ScrollBarAsNeeded</enum>
               </property>
               <property name="sizeAdjustPolicy">
-               <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+               <enum>QAbstractScrollArea::AdjustIgnored</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

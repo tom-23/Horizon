@@ -20,13 +20,13 @@ class Track : public std::vector<Track>
 {
 public:
     Track();
-    Track(TrackControlsWidget *controlsWidget, TimelineGraphicWidget *timeLineWidget,int _index);
+    Track(TrackControlsWidget *controlsWidget, TimelineGraphicWidget *timeLineWidget, int _index);
     QGraphicsLineItem* seperator;
     QGraphicsRectItem* selectionRect;
-    QList<RegionGraphicItem *> regionList;
+
     void setIndex(int _value);
     void setSelected(bool _selected);
-    void addRegion(RegionGraphicItem);
+
 private:
     int index;
     bool selected;

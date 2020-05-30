@@ -32,6 +32,10 @@ private slots:
 
     void on_spinBox_2_valueChanged(int arg1);
 
+    void on_pushButton_clicked();
+
+    void on_trackRuler_sliderChange();
+
 private:
     Ui::ArrangeWidget *ui;
 protected:
