@@ -4,6 +4,7 @@
 #include "LabSound/LabSound.h"
 #include "audioregionmanager.h"
 #include "trackaudio.h"
+#include "audioutil.h"
 #include <iostream>
 #include <QtGui>
 
@@ -28,6 +29,7 @@ private:
     std::shared_ptr<GainNode> outputNode;
     QBasicTimer clock;
     void eventLoop(QTimerEvent *event);
+
 
 };
 
