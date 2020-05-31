@@ -22,7 +22,6 @@ SOURCES += \
     src/arrangewidget.cpp \
     src/audiomanager.cpp \
     src/audioregionmanager.cpp \
-    src/audioutil.cpp \
     src/effectwidget.cpp \
     src/graphicsview.cpp \
     src/grid.cpp \
@@ -87,19 +86,16 @@ install_it.files += %{sourceDir}/Core
 
 INSTALLS += install_it
 
-mac: LIBS += -F$$PWD/lib/LabSound/build/bin/ -framework LabSound_d
-
 INCLUDEPATH += $$PWD/lib/LabSound/include
 DEPENDPATH += $$PWD/lib/LabSound/include
 
-macx: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibopus_d
-macx: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibopus_d.a
+mac: LIBS += -F$$PWD/lib/LabSound/build/bin/ -framework LabSound
 
-macx: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibnyquist_d
-macx: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibnyquist_d.a
+macx: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibnyquist
+macx: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibnyquist.a
 
-macx: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibwavpack_d
-macx: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibwavpack_d.a
+macx: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibwavpack
+macx: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibwavpack.a
 
 mac: LIBS += -framework Cocoa
 mac: LIBS += -framework Accelerate
@@ -122,18 +118,9 @@ win32: LIBS += -lWinMM
 
 win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -lLabSound
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/LabSound.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libLabSound.a
 
 win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibnyquist
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libnyquist.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibnyquist.a
-
-
-win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibopus
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libopus.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibopus.a
-
 
 win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibwavpack
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libwavpack.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibwavpack.a
