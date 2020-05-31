@@ -22,6 +22,7 @@ SOURCES += \
     src/arrangewidget.cpp \
     src/audiomanager.cpp \
     src/audioregionmanager.cpp \
+    src/audioutil.cpp \
     src/effectwidget.cpp \
     src/graphicsview.cpp \
     src/grid.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     src/arrangewidget.h \
     src/audiomanager.h \
     src/audioregionmanager.h \
+    src/audioutil.h \
     src/effectwidget.h \
     src/graphicsview.h \
     src/grid.h \
@@ -111,3 +113,27 @@ ICON = assets/app_icon.icns
 coreContentFiles.files = $$PWD/assets/core
 coreContentFiles.path = Contents/Resources
 QMAKE_BUNDLE_DATA += coreContentFiles
+
+win32: LIBS += -ldsound
+
+win32: LIBS += -ldxguid
+
+win32: LIBS += -lWinMM
+
+win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -lLabSound
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/LabSound.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libLabSound.a
+
+win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibnyquist
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libnyquist.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibnyquist.a
+
+
+win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibopus
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libopus.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibopus.a
+
+
+win32: LIBS += -L$$PWD/lib/LabSound/build/bin/ -llibwavpack
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/libwavpack.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/LabSound/build/bin/liblibwavpack.a
