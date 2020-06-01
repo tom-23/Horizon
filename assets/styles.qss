@@ -1,0 +1,100 @@
+* {
+font-family: SF Display;
+font-size: 11px;
+}
+
+#centralwidget {
+	background-color: @background;
+}
+
+#header {
+	background-color: @foreground;
+	border-bottom: 1px Solid @borders;	
+}
+
+#footer {
+	background-color: @foreground;
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 1px Solid @borders;	
+    border-radius: 5px;
+}
+
+#position_lcd {
+	background-color: #1e1e1e;
+	border: 1px Solid #0f0f0f;	
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#tempo_lcd {
+	background-color: #1e1e1e;
+	border: 1px Solid #0f0f0f;	
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#timesig_lcd {
+	background-color: #1e1e1e;
+	border: 1px Solid #0f0f0f;	
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+QLabel {
+	padding: 0px;
+	margin: 0px;
+	font-size: 11px;
+	border: 0px;
+
+}
+
+QPushButton {
+	background-color: #1e1e1e;
+	border: 1px Solid #0f0f0f;	
+	border-radius: 5px;
+	padding: 2px;
+	padding-left: 12px;
+	padding-right: 12px;
+	font-size: 11px;
+}
+
+QPushButton:checked {
+	background-color: #323232;
+}
+
+QToolButton {
+	background-color: transparent;
+	border: none;
+	
+}
+
+QMenu {
+    border: 1px Solid rgb(40, 40, 40);
+	border-radius: 5px;
+	
+	background-color: rgba(40, 40, 40, 200);
+	menu-scrollable: 1; 
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+    background-color: transparent;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #d4fffd;
+	color: black;
+}
