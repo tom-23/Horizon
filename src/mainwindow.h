@@ -6,6 +6,7 @@
 #include "infowidget.h"
 #include "librarywidget.h"
 #include "audiomanager.h"
+#include "thememanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,12 +21,17 @@ public:
     ~MainWindow();
 
     AudioManager *audioMan;
+    ThemeManager *themeMan;
+
+    ArrangeWidget* ar;
 
 
 private slots:
 
 
     void on_playButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

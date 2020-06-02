@@ -14,56 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#centralwidget {
-	border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-background-color: #282828;
-}
-
-#arrangeContents {
-	
-}
-
-QPushButton {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-	padding: 2px;
-	padding-left: 12px;
-	padding-right: 12px;
-	font-size: 11px;
-}
-
-#trackControls {
-	border: 1px Solid #0f0f0f;	
-	
-	
-}
-
-
-
-#trackTools {
-	border: none;
-	
-
-}
-
-
-#overview:horizontal {
-border: 1px Solid #0f0f0f;	
-	
-}
-#overview::handle:horizontal {
-border: 2px Solid rgba(255,255,255,0.25);	
-border-radius: 0px;
-margin: 2px;
-}
-#overview::add-line:horizontal {
-border: none;
-}
-#overview::sub-line:horizontal {
-border: none;
-}
+   <string notr="true">
 
 
 </string>
@@ -85,7 +36,7 @@ border: none;
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="centralwidget">
+    <widget class="QFrame" name="container">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -127,7 +78,6 @@ border: none;
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -136,7 +86,7 @@ border: none;
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="text">
-           <string>T</string>
+           <string>+</string>
           </property>
          </widget>
         </item>
@@ -161,34 +111,10 @@ border: none;
          </spacer>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox_2">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>16</number>
-          </property>
-          <property name="value">
-           <number>4</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox">
-          <property name="minimum">
-           <number>8</number>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="pushButton_4">
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -203,7 +129,6 @@ border: none;
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -240,26 +165,13 @@ border: none;
           <property name="maximumSize">
            <size>
             <width>120</width>
-            <height>20</height>
+            <height>10</height>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">QSlider::groove:horizontal {
-    background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	height: 2px;
-	border-radius: 5px;
-	margin-right: 5px;
-	margin-left: 5px;
-}
-
-QSlider::handle:horizontal {
-	border-radius: 6px;
-	border: 1px Solid Bacl;
-	background-color: rgb(76, 76, 76);
-	height: 100px;
-	margin: -5px -5px;
-	width: 10px;
+           <string notr="true">QSlider {
+	background-color: rgb(255, 0, 255);
+	margin-top: 0px;
 }</string>
           </property>
           <property name="minimum">
@@ -397,7 +309,7 @@ border: none;
              <number>0</number>
             </property>
             <item>
-             <widget class="QWidget" name="widget_3" native="true">
+             <widget class="QWidget" name="arrangeCorner" native="true">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -411,11 +323,7 @@ border: none;
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QWidget {
-	border: none;
-	background-color: #282828;
-border-right: 1px Solid #0f0f0f;	
-}</string>
+               <string notr="true"/>
               </property>
              </widget>
             </item>
@@ -468,8 +376,8 @@ border-right: 1px Solid #0f0f0f;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>248</width>
-                 <height>230</height>
+                 <width>250</width>
+                 <height>232</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -505,6 +413,9 @@ border-right: 1px Solid #0f0f0f;
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
                   <layout class="QVBoxLayout" name="verticalLayout_6"/>
                  </widget>
                 </item>
@@ -516,7 +427,7 @@ border-right: 1px Solid #0f0f0f;
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="rightPanel" native="true">
+          <widget class="QWidget" name="timeline" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -524,11 +435,7 @@ border-right: 1px Solid #0f0f0f;
             </sizepolicy>
            </property>
            <property name="styleSheet">
-            <string notr="true">#rightPanel {
-	border: 1px Solid #0f0f0f;	
-	
-}
-</string>
+            <string notr="true"/>
            </property>
            <layout class="QVBoxLayout" name="right">
             <property name="spacing">
@@ -547,74 +454,18 @@ border-right: 1px Solid #0f0f0f;
              <number>1</number>
             </property>
             <item>
-             <widget class="QGraphicsView" name="trackRuler">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
+             <widget class="QGraphicsView" name="ruler">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>20</height>
+                <height>16</height>
                </size>
               </property>
               <property name="styleSheet">
                <string notr="true">QGraphicsView {
-	border: none;
-	border-bottom: 1px Solid #0f0f0f;	
-    border-top: 1px Solid #0f0f0f;	
-	background-color: #282828;
+	
 }
-QScrollBar {
-border: 1px Solid #0f0f0f;	
-background-color: rgb(76, 76, 76);
-padding: 2px;
-}
-QScrollBar:vertical {
-border-right: none;
-border-top: none;
-border-bottom: none;
-width: 12px;
-}
-QScrollBar:horizontal {
-border-left: none;
-border-bottom: none;
-border-right: none;
-height: 12px;
-}
-QScrollBar::handle {
-background-color :#0f0f0f;
-border-radius: 3px;
-}
-
-QScrollBar::handle:vertical {
-min-height: 20px;
-}
-
-QScrollBar::handle:horizontal{
-min-width: 20px;
-}
-
-QScrollBar::add-line:horizontal {
-border: none;
-}
-QScrollBar::sub-line:horizontal {
-border: none;
-}
-QScrollBar::add-line:vertical {
-border: none;
-}
-QScrollBar::sub-line:vertical {
-border: none;
-}</string>
+</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
@@ -626,13 +477,10 @@ border: none;
                <number>0</number>
               </property>
               <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAsNeeded</enum>
+               <enum>Qt::ScrollBarAlwaysOff</enum>
               </property>
               <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAsNeeded</enum>
-              </property>
-              <property name="sizeAdjustPolicy">
-               <enum>QAbstractScrollArea::AdjustIgnored</enum>
+               <enum>Qt::ScrollBarAlwaysOff</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -645,48 +493,7 @@ border: none;
                <cursorShape>ArrowCursor</cursorShape>
               </property>
               <property name="styleSheet">
-               <string notr="true">QScrollBar {
-border: 1px Solid #0f0f0f;	
-background-color: rgb(76, 76, 76);
-padding: 2px;
-}
-QScrollBar:vertical {
-border-right: none;
-border-top: none;
-border-bottom: none;
-width: 12px;
-}
-QScrollBar:horizontal {
-border-left: none;
-border-bottom: none;
-border-right: none;
-height: 12px;
-}
-QScrollBar::handle {
-background-color :#0f0f0f;
-border-radius: 3px;
-}
-
-QScrollBar::handle:vertical {
-min-height: 20px;
-}
-
-QScrollBar::handle:horizontal{
-min-width: 20px;
-}
-
-QScrollBar::add-line:horizontal {
-border: none;
-}
-QScrollBar::sub-line:horizontal {
-border: none;
-}
-QScrollBar::add-line:vertical {
-border: none;
-}
-QScrollBar::sub-line:vertical {
-border: none;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
@@ -702,6 +509,9 @@ border: none;
               </property>
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAlwaysOn</enum>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QAbstractScrollArea::AdjustToContents</enum>
               </property>
               <property name="sceneRect">
                <rectf>

@@ -10,6 +10,9 @@ Timeline::Timeline(QGraphicsView *_trackRegions, QGraphicsView *_trackRuler, QWi
     trackCount = 0;
     regionCount = 0;
 
+    barCount = 8;
+    barLength = 4;
+
     QGraphicsScene *regionsScene = new QGraphicsScene;
     regionsView = new GraphicsView(regionsScene);
     timelineGraphic = new TimelineGraphicWidget(regionsView, nullptr, 8, 4);
@@ -40,6 +43,14 @@ Timeline::~Timeline() {
 
 }
 
+void Timeline::setColorTheme(ThemeManager *_themeManager) {
+    rulerGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("font-color-secondary"));
+    timelineGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("lines-secondary"));
+    for (int i = 0; i < trackCount; i++) {
+        trackList->at(i)->setColorTheme(_themeManager->getColor("lines-primary"));
+    }
+}
+
 void Timeline::setHZoomFactor(int _hZoomFactor) {
     hZoomFactor = _hZoomFactor;
     timelineGraphic->setHScaleFactor(hZoomFactor);
@@ -47,7 +58,19 @@ void Timeline::setHZoomFactor(int _hZoomFactor) {
     for (int i = 0; i < regionCount; i++) {
         regionList->at(i)->getRegionGraphicItem()->setHScaleFactor(hZoomFactor);
     }
+    for (int i = 0; i < trackCount; i++) {
+        trackList->at(i)->setHScaleFactor(hZoomFactor);
+    }
 
+    updateViewports();
+
+
+
+}
+
+void Timeline::updateViewports() {
+    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) - 10, (trackCount * 60) + 10);
+    rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), rulerGraphic->height());
 }
 
 void Timeline::setBarAmount(int _barAmount) {
@@ -56,6 +79,7 @@ void Timeline::setBarAmount(int _barAmount) {
     rulerGraphic->setBarAmount(barCount);
     // When adding new lines to the scene, regions will be put behind the items so we need to bring them to the foreground.
     this->setZRegionValues(barCount * barLength);
+    updateViewports();
 }
 
 void Timeline::setBarLength(int _barLength) {
@@ -86,6 +110,7 @@ void Timeline::addTrack(int _index) {
 
     tcw->show();
     trackCount = trackList->size();
+    updateViewports();
 
 }
 

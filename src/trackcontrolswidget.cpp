@@ -3,7 +3,8 @@
 #include <QPalette>
 #include <QColor>
 #include <QRandomGenerator>
-
+#include <QMenu>
+#include <QContextMenuEvent>
 
 TrackControlsWidget::TrackControlsWidget(QWidget *parent) :
     QWidget(parent),
@@ -12,12 +13,30 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent) :
     ui->setupUi(this);
 
     QColor color = QColor::fromRgb(QRandomGenerator::global()->generate());
-    QString style = QString("#color { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
-    ui->color->setStyleSheet(style);
+    QString style = QString("#trackColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
+    ui->trackColor->setStyleSheet(style);
 
 }
 
 TrackControlsWidget::~TrackControlsWidget()
 {
     delete ui;
+}
+
+
+void TrackControlsWidget::on_TrackControlsWidget_customContextMenuRequested(const QPoint &pos)
+{
+    QMenu menu(this);
+    menu.setTitle("Hello");
+
+   menu.setAutoFillBackground(true);
+
+   menu.addAction("New Track...");
+   menu.addAction("New Group...");
+   menu.addAction("New Bus...");
+   menu.addSeparator();
+   menu.addAction("Choose Color");
+   menu.setWindowFlags(menu.windowFlags() | Qt::CustomizeWindowHint);
+   menu.exec(mapToGlobal(pos));
+
 }

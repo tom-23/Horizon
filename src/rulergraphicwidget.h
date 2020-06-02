@@ -29,6 +29,8 @@ public:
     void setHScaleFactor(int _value);
     void setBarAmount(int _value);
 
+    void setColorTheme(QColor linesColor, QColor textColor);
+
 private:
     QList<QGraphicsLineItem*> *barLines;
     QList<QGraphicsTextItem*> *barNumbers;

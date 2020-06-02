@@ -71,5 +71,8 @@
         "list": "cpp",
         "sstream": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "colorize.files_extensions": [
+        ".json"
+    ]
 }

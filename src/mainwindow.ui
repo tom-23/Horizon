@@ -14,85 +14,7 @@
    <string>Horizon</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-font-family: SF Display;
-font-size: 11px;
-}
-
-#centralwidget {
-	background-color: rgb(50,50,50);
-}
-
-#header {
-	background-color: #282828;
-	border-bottom: 1px Solid #0f0f0f;	
-}
-
-#footer {
-	background-color: #282828;
-	margin-left: 5px;
-	margin-right: 5px;
-	border: 1px Solid #0f0f0f;	
-border-radius: 5px;
-}
-
-#position_lcd {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	font-size: 11px;
-	padding: -5px;
-	margin-bottom: 1px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-#tempo_lcd {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	font-size: 11px;
-	padding: -5px;
-	margin-bottom: 1px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-#timesig_lcd {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	font-size: 11px;
-	padding: -5px;
-	margin-bottom: 1px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-QLabel {
-	padding: 0px;
-	margin: 0px;
-	font-size: 11px;
-	border: 0px;
-
-}
-
-QPushButton {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-	padding: 2px;
-	padding-left: 12px;
-	padding-right: 12px;
-	font-size: 11px;
-}
-
-QPushButton:checked {
-	background-color: #323232;
-}
-
-QToolButton {
-	background-color: transparent;
-	border: none;
-	
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -139,74 +61,54 @@ QToolButton {
         <number>5</number>
        </property>
        <item>
-        <widget class="QPushButton" name="pushButton_6">
-         <property name="font">
-          <font>
-           <family>SF Display</family>
-           <pointsize>-1</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <property name="spacing">
+          <number>0</number>
          </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButton_8">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Arrange</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_7">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Nodes</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_6">
          <property name="styleSheet">
-          <string notr="true">QPushButton:checked {
-	background-color: #213222;
-}</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Info</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_7">
-         <property name="font">
-          <font>
-           <family>SF Display</family>
-           <pointsize>-1</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QPushButton:checked {
-	background-color: #212b32;
-}</string>
-         </property>
-         <property name="text">
-          <string>Library</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_8">
-         <property name="font">
-          <font>
-           <family>SF Display</family>
-           <pointsize>-1</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QPushButton:checked {
-	background-color: #322121;
-}</string>
-         </property>
-         <property name="text">
-          <string>Editor</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -270,7 +172,6 @@ QToolButton {
             <property name="font">
              <font>
               <family>SF Display</family>
-              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="text">
@@ -371,8 +272,8 @@ QToolButton {
            </property>
            <property name="iconSize">
             <size>
-             <width>14</width>
-             <height>14</height>
+             <width>13</width>
+             <height>13</height>
             </size>
            </property>
           </widget>
@@ -388,8 +289,8 @@ QToolButton {
            </property>
            <property name="iconSize">
             <size>
-             <width>14</width>
-             <height>14</height>
+             <width>13</width>
+             <height>13</height>
             </size>
            </property>
           </widget>
@@ -405,8 +306,8 @@ QToolButton {
            </property>
            <property name="iconSize">
             <size>
-             <width>14</width>
-             <height>14</height>
+             <width>13</width>
+             <height>13</height>
             </size>
            </property>
           </widget>
@@ -427,11 +328,17 @@ QToolButton {
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>UpdateTheme</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton_3">
          <property name="font">
           <font>
            <family>SF Display</family>
-           <pointsize>-1</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -488,7 +395,6 @@ QToolButton {
             <property name="font">
              <font>
               <family>SF Display</family>
-              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="text">
@@ -514,6 +420,26 @@ QToolButton {
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="metroButton">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../assets/resources.qrc">
+           <normaloff>:/svg/svg/met_1.svg</normaloff>:/svg/svg/met_1.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QFrame" name="timesig_lcd">
@@ -585,31 +511,6 @@ QToolButton {
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="font">
-          <font>
-           <family>SF Display</family>
-           <pointsize>-1</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../assets/resources.qrc">
-           <normaloff>:/svg/svg/met_1.svg</normaloff>:/svg/svg/met_1.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>18</width>
-           <height>16</height>
-          </size>
-         </property>
         </widget>
        </item>
       </layout>
@@ -699,7 +600,7 @@ QToolButton {
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>18</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

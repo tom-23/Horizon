@@ -146,7 +146,6 @@ void RegionGraphicItem::setGridLocation(float _value) {
 
 }
 
-
 void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "Release";

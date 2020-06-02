@@ -12,25 +12,31 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+
     ui->setupUi(this);
-    ArrangeWidget* ar;
+    themeMan = new ThemeManager(this, "../Resources/themes/Neon.json");
+
+
     ar = new ArrangeWidget(this);
     ui->content->layout()->addWidget(ar);
     ar->show();
+    ar->tl->setColorTheme(themeMan);
 
-    InfoWidget* iw;
-    iw = new InfoWidget(this);
-    ui->content->layout()->addWidget(iw);
-    iw->show();
+
+    //InfoWidget* iw;
+    //iw = new InfoWidget(this);
+    //ui->content->layout()->addWidget(iw);
+    //iw->show();
 
     LibraryWidget* lb;
     lb = new LibraryWidget(this);
     ui->content->layout()->addWidget(lb);
     lb->show();
 
-    EffectWidget* ew;
-    ew = new EffectWidget(iw);
-    iw->addEffect(ew);
+    //EffectWidget* ew;
+    //ew = new EffectWidget(iw);
+    //iw->addEffect(ew);
 
     AudioGrid *ag = new AudioGrid();
 
@@ -64,4 +70,10 @@ std::shared_ptr<GainNode> gain;
 void MainWindow::on_playButton_clicked()
 {
     audioMan = new AudioManager(this);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    themeMan->updateTheme();
+    ar->tl->setColorTheme(themeMan);
 }

@@ -2,7 +2,7 @@
 #include "ui_colorpickerwidget.h"
 
 ColorPickerWidget::ColorPickerWidget(QWidget *parent) :
-    QWidget(parent),
+    QWidget(parent, Qt::Window),
     ui(new Ui::ColorPickerWidget)
 {
     ui->setupUi(this);
@@ -11,4 +11,9 @@ ColorPickerWidget::ColorPickerWidget(QWidget *parent) :
 ColorPickerWidget::~ColorPickerWidget()
 {
     delete ui;
+}
+
+
+QColor ColorPickerWidget::getColor() {
+    this->show();
 }

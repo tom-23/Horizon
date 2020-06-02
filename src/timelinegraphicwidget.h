@@ -18,6 +18,7 @@
 
 #include "playhead.h"
 #include "regiongraphicitem.h"
+#include "graphicsview.h"
 
 
 using namespace std;
@@ -50,6 +51,9 @@ public:
     void setBarAmount(int _value);
     void setBarLength(int _value);
 
+    int getBarAmount();
+
+    void setColorTheme(QColor primaryLinesColor, QColor secondaryLinesColor);
 
 
 private:
@@ -61,6 +65,9 @@ private:
     int barLength;
 
     void mousePressEvent(QMouseEvent *event);
+
+    QColor primaryColor;
+    QColor seconardColor;
 
     QGraphicsRectItem *viewportPadding;
 

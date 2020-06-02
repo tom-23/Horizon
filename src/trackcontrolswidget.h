@@ -15,6 +15,11 @@ public:
     explicit TrackControlsWidget(QWidget *parent = nullptr);
     ~TrackControlsWidget();
 
+private slots:
+
+
+    void on_TrackControlsWidget_customContextMenuRequested(const QPoint &pos);
+
 private:
     Ui::TrackControlsWidget *ui;
 

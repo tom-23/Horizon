@@ -5,21 +5,21 @@
 #include <QDebug>
 #include <QPainter>
 
-Timeline *tl;
+
 
 ArrangeWidget::ArrangeWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ArrangeWidget)
 {
     ui->setupUi(this);
-    tl = new Timeline(ui->trackRegions, ui->trackRuler, ui->trackControlsContents);
+    tl = new Timeline(ui->trackRegions, ui->ruler, ui->trackControlsContents);
 
     connect(ui->trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->trackControls->verticalScrollBar(), SLOT(setValue(int)));
     connect(ui->trackControls->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->trackRegions->verticalScrollBar(), SLOT(setValue(int)));
 
 
-    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->trackRuler->horizontalScrollBar(), SLOT(setValue(int)));
-    connect(ui->trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange()));
+    connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->ruler->horizontalScrollBar(), SLOT(setValue(int)));
+    connect(ui->ruler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange(int)));
 
     connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
     connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), ui->overview, SLOT(setRange(int, int)));
@@ -27,7 +27,7 @@ ArrangeWidget::ArrangeWidget(QWidget *parent) :
 
 
 
-    qDebug() << "Scroll Value:" << ui->trackRuler->horizontalScrollBar()->value();
+    qDebug() << "Scroll Value:" << ui->ruler->horizontalScrollBar()->value();
 
 
 
@@ -89,21 +89,15 @@ void ArrangeWidget::on_zoomSlider_valueChanged(int value)
     qDebug() << value;
 }
 
-void ArrangeWidget::on_spinBox_valueChanged(int arg1)
-{
-    tl->setBarAmount(arg1);
-}
-
-void ArrangeWidget::on_spinBox_2_valueChanged(int arg1)
-{
-    tl->setBarLength(arg1);
-}
 
 void ArrangeWidget::on_pushButton_clicked()
 {
     tl->addRegion(0);
 }
 
-void ArrangeWidget::on_trackRuler_sliderChange() {
-    qDebug() << "Slider Changed!";
+void ArrangeWidget::on_trackRuler_sliderChange(int _value) {
+    qDebug() << "Slider Changed!" << _value;
+    if (_value == 101) {
+       // ui->ruler->horizontalScrollBar()->setValue(0);
+    }
 }

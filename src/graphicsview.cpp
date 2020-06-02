@@ -1,6 +1,7 @@
 #include "graphicsview.h"
 #include <QDebug>
 
+
 void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
     if(!itemAt(event->pos())){
@@ -31,6 +32,9 @@ void GraphicsView::mouseMoveEvent(QMouseEvent *event)
 
     QGraphicsView::mouseMoveEvent(event);
 }
+
+
+
 
 void GraphicsView::mouseReleaseEvent(QMouseEvent *event){
     QGraphicsView::mouseReleaseEvent(event);

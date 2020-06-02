@@ -6,15 +6,20 @@
 #include <QMouseEvent>
 #include <iostream>
 #include <QDebug>
+#include <QTouchEvent>
 
 class GraphicsView:public QGraphicsView{
 Q_OBJECT
 public:
-    GraphicsView(QGraphicsScene *scene):QGraphicsView(scene){}
+    GraphicsView(QGraphicsScene *scene):QGraphicsView(scene){
+
+    }
 
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
     virtual void mouseMoveEvent(QMouseEvent *event) override;
+
+
 
 signals:
     void sendMousePressEventSignal(QMouseEvent *event);

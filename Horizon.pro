@@ -22,6 +22,7 @@ SOURCES += \
     src/arrangewidget.cpp \
     src/audiomanager.cpp \
     src/audioregionmanager.cpp \
+    src/colorpickerwidget.cpp \
     src/effectwidget.cpp \
     src/graphicsview.cpp \
     src/grid.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
     src/region.cpp \
     src/regiongraphicitem.cpp \
     src/rulergraphicwidget.cpp \
+    src/thememanager.cpp \
     src/timeline.cpp \
     src/timelinegraphicwidget.cpp \
     src/timer.cpp \
@@ -45,6 +47,7 @@ HEADERS += \
     src/audiomanager.h \
     src/audioregionmanager.h \
     src/audioutil.h \
+    src/colorpickerwidget.h \
     src/effectwidget.h \
     src/graphicsview.h \
     src/grid.h \
@@ -55,6 +58,7 @@ HEADERS += \
     src/region.h \
     src/regiongraphicitem.h \
     src/rulergraphicwidget.h \
+    src/thememanager.h \
     src/timeline.h \
     src/timelinegraphicwidget.h \
     src/timer.h \
@@ -64,6 +68,7 @@ HEADERS += \
 
 FORMS += \
     src/arrangewidget.ui \
+    src/colorpickerwidget.ui \
     src/effectwidget.ui \
     src/infowidget.ui \
     src/librarywidget.ui \
@@ -79,10 +84,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     assets/core.qrc \
     assets/resources.qrc \
-    src/styles.qss
+    assets/themes.qrc
 
 install_it.path = %{buildDir}
 install_it.files += %{sourceDir}/Core
+install_it.files += %{sourceDir}/themes
 
 INSTALLS += install_it
 
@@ -109,6 +115,10 @@ ICON = assets/app_icon.icns
 coreContentFiles.files = $$PWD/assets/core
 coreContentFiles.path = Contents/Resources
 QMAKE_BUNDLE_DATA += coreContentFiles
+
+themeContentFiles.files = $$PWD/assets/themes
+themeContentFiles.path = Contents/Resources
+QMAKE_BUNDLE_DATA += themeContentFiles
 
 win32: LIBS += -ldsound
 

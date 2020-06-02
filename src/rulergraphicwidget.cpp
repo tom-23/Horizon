@@ -1,4 +1,5 @@
 #include "rulergraphicwidget.h"
+#include <QScrollBar>
 
 RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent, int _barAmount)
 {
@@ -16,15 +17,11 @@ RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent, i
     QFont font = scene->font();
     font.setPointSize(10);
 
-    viewportPadding = new QGraphicsRectItem();
-    viewportPadding->setRect(0,0, barAmount * hScaleFactor, 5);
-    viewportPadding->setPen(Qt::NoPen);
-    scene->addItem(viewportPadding);
-
     // Timeline Numbers and Lines
     for (int i = 0; i < barAmount; i++)
     {
         QGraphicsTextItem *text = scene->addText(QString::number(i + 1), font);
+        text->setTextWidth(1);
         text->setPos((i * hScaleFactor) + 3, -3);
         QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 15), QColor("#0f0f0f"));
         line->setPos(i * hScaleFactor, 0);
@@ -32,6 +29,7 @@ RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent, i
         barNumbers->insert(barNumbers->end(), text);
 
     }
+
 
 }
 
@@ -43,6 +41,7 @@ void RulerGraphicWidget::setHScaleFactor(int _value) {
         barNumbers->at(i)->setX(barPos  + 3);
 
     }
+
 }
 
 
@@ -71,6 +70,18 @@ void RulerGraphicWidget::setBarAmount(int _value) {
         }
     }
 
+
+
+}
+
+void RulerGraphicWidget::setColorTheme(QColor linesColor, QColor textColor) {
+
+    for (int i = 0; i < barLines->size(); i++) {
+        barLines->at(i)->setPen(linesColor);
+        barNumbers->at(i)->setDefaultTextColor(textColor);
+    }
+    this->repaint();
+    this->update();
 
 }
 RulerGraphicWidget::~RulerGraphicWidget()

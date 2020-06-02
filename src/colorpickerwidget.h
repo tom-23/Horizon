@@ -15,6 +15,8 @@ public:
     explicit ColorPickerWidget(QWidget *parent = nullptr);
     ~ColorPickerWidget();
 
+    QColor getColor();
+
 private:
     Ui::ColorPickerWidget *ui;
 };

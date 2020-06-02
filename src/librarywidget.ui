@@ -26,21 +26,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#centralwidget {
-	border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-background-color: #282828;
-}
-
-QPushButton {
-	background-color: #1e1e1e;
-	border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-	padding: 2px;
-	padding-left: 12px;
-	padding-right: 12px;
-	font-size: 11px;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
@@ -59,7 +45,7 @@ QPushButton {
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="centralwidget">
+    <widget class="QFrame" name="container">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -98,7 +84,6 @@ QPushButton {
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -129,7 +114,6 @@ QPushButton {
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -144,7 +128,6 @@ QPushButton {
           <property name="font">
            <font>
             <family>SF Display</family>
-            <pointsize>-1</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>

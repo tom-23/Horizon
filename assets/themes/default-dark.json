@@ -1,9 +1,11 @@
 {
-    "background" : "",
-    "foreground" : "",
-    "borders" : "",
-    "pushbutton-background" : "",
-    "pushbutton-border" : "",
-    "lcd-background" : "",
-    "lcd-border" : ""
+    "background" : "rgb(50,50,50)",
+    "foreground" : "#282828",
+    "font-color-primary" : "lime",
+    "font-color-secondary" : "lime",
+    "borders" : "#0f0f0f",
+    "pushbutton-background" : "#1e1e1e",
+    "pushbutton-border" : "#0f0f0f",
+    "lcd-background" : "#1e1e1e",
+    "lcd-border" : "#0f0f0f"
 }

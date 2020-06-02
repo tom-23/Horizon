@@ -17,6 +17,7 @@
 #include "track.h"
 
 #include "region.h"
+#include "thememanager.h"
 
 
 
@@ -29,12 +30,16 @@ public:
     GraphicsView *regionsView;
     GraphicsView *rulerView;
 
+    void setColorTheme(ThemeManager *_themeManager);
+
 
     void setNoteLength(int _noteLength);
     void setBarLength(int _barLength);
 
     void setBarAmount(int _barAmount);
+
     void setHZoomFactor(int _hZoomFactor);
+    void updateViewports();
 
     void addTrack(int _index);
     void removeTrack(int _index);
@@ -58,6 +63,11 @@ public:
     int hZoomFactor;
 
 
+    QString backgroundColor;
+    QString linesColor;
+    QString playheadColor;
+    QString selectBoxColor;
+    QString textColor;
 
 
 private:
