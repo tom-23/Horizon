@@ -1,3 +1,4 @@
+[logo]: http://tom-butcher.ml:2233/git/tom/Horizon/raw/branch/master/main_brand.png "Horizon DAW"
 # Horizon
 A digital audio workstation written in c++ and using the Labsound library for audio playback.
 ## Getting started
