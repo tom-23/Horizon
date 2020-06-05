@@ -7,7 +7,9 @@
     "borders" : "#2c2338",
     "pushbutton-background" : "#16121c",
     "pushbutton-border" : "#483a5e",
-    "pushbutton-checked" : "#79faa3",
+    "pushbutton-checked-primary" : "#79faa3",
+    "pushbutton-checked-secondary" : "#ff003f",
+    "pushbutton-checked-tertiary" : "#00f2ff",
     "lcd-background" : "#16121c",
     "lcd-border" : "#483a5e",
     "zoom-slider-background" : "16121c",
@@ -20,5 +22,7 @@
     "scrollbar-border" : "#2c2338",
     "scrollbar-handle" : "#ec496e",
     "lines-primary" : "#2c2338",
-    "lines-secondary" : "#25202b"
+    "lines-secondary" : "#25202b",
+    "list-item-selected" : "#ec496e",
+    "list-item-hover" : "#d4fffd"
 }
