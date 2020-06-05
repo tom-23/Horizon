@@ -5,14 +5,16 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QLayout>
+#include <QSlider>
 #include <iostream>
 #include <vector>
 
 #include "timelinegraphicwidget.h"
 #include "rulergraphicwidget.h"
 
-#include "graphicsview.h"
 
+#include "graphicsscene.h"
+#include "graphicsview.h"
 #include "trackcontrolswidget.h"
 #include "track.h"
 
@@ -20,15 +22,15 @@
 #include "thememanager.h"
 
 
-
+class GraphicsView;
 
 class Timeline
 {
 public:
-    Timeline(QGraphicsView *trackRegions, QGraphicsView *trackRuler, QWidget *trackControls);
+    Timeline(QWidget *_parent, QGraphicsView *trackRuler, QScrollArea *trackControls,QLayout *_mainLayout);
     ~Timeline();
     GraphicsView *regionsView;
-    GraphicsView *rulerView;
+
 
     void setColorTheme(ThemeManager *_themeManager);
 
@@ -38,7 +40,7 @@ public:
 
     void setBarAmount(int _barAmount);
 
-    void setHZoomFactor(int _hZoomFactor);
+    void setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider = nullptr);
     void updateViewports();
 
     void addTrack(int _index);
@@ -58,7 +60,7 @@ public:
     int barLength;
     int barCount;
 
-
+    bool pinchToZoom;
 
     int hZoomFactor;
 
@@ -71,9 +73,9 @@ public:
 
 
 private:
-    QGraphicsView *trackRegions;
+    GraphicsView *trackRegions;
     QGraphicsView *trackRuler;
-    QWidget *trackControls;
+    QScrollArea *trackControls;
 
     TimelineGraphicWidget *timelineGraphic;
     RulerGraphicWidget *rulerGraphic;
@@ -84,7 +86,11 @@ private:
     int trackCount;
     int regionCount;
 
+
+
     void setZRegionValues(int _zValue);
+
+    QWidget *parent;
 
 };
 

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QJsonObject>
+#include <QDir>
 
 ThemeManager::ThemeManager(QWidget *_parent, QString _themeFileName)
 {
@@ -58,4 +59,52 @@ QColor ThemeManager::getColor(QString key) {
 
 void ThemeManager::updateTheme() {
     this->setThemeFile(themeFileName);
+}
+
+
+QString ThemeManager::colorizeSVG(QString filename) {
+    QFile baseSVG(filename);
+    QFileInfo fileInfo(baseSVG.fileName());
+    if(!baseSVG.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(0, "error", baseSVG.errorString());
+
+    }
+    QTextStream baseSVGTS(&baseSVG);
+    QString finalSVG;
+
+    while (!baseSVGTS.atEnd()) {
+        QString line = baseSVGTS.readLine();
+        foreach(const QString &key, colorTheme->keys()) {
+            line = line.replace(QString("@" + key), QString(colorTheme->value(key).toString()));
+        }
+        finalSVG.append(line);
+    }
+
+    QString tempDirLocation;
+
+    #if defined(Q_OS_WIN)
+
+    if (!QDir("/Temp").exists()) {
+       QDir().mkdir("/Temp");
+    }
+    tempDirLocation = "/Temp";
+
+    #elif defined(Q_OS_OSX)
+    if (!QDir("../Resources/temp").exists()) {
+       QDir().mkdir("../Resources/temp");
+    }
+    tempDirLocation = "../Resources/temp";
+    #endif
+
+    QString savedFileName = tempDirLocation + "/theme_" + fileInfo.fileName();
+
+    QFile outSVG(savedFileName);
+    qDebug() << finalSVG;
+
+    if (outSVG.open(QIODevice::ReadWrite) )
+    {
+        outSVG.write(finalSVG.toUtf8());
+    }
+
+    return savedFileName;
 }

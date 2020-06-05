@@ -2,6 +2,7 @@
 #define TimelineGraphicWidget_H
 
 #include <QWidget>
+#include <QObject>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QTransform>
@@ -54,6 +55,7 @@ public:
     int getBarAmount();
 
     void setColorTheme(QColor primaryLinesColor, QColor secondaryLinesColor);
+    QColor getPrimaryColor();
 
 
 private:
@@ -64,16 +66,19 @@ private:
     int barAmount;
     int barLength;
 
-    void mousePressEvent(QMouseEvent *event);
+
 
     QColor primaryColor;
     QColor seconardColor;
 
     QGraphicsRectItem *viewportPadding;
 
-protected:
-    void resizeEvent(QResizeEvent *event);
+ protected:
+    virtual void resizeEventSlot(QResizeEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void dragEnterEventSlot(QDragEnterEvent *event);
 
+    bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // TimelineGraphicWidget_H

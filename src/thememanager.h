@@ -14,10 +14,13 @@ public:
     void setThemeFile(QString _themeFileName);
     void updateTheme();
     QColor getColor(QString key);
+
+    QString colorizeSVG(QString filename);
 private:
     QString themeFileName;
     QWidget *parent;
     QJsonObject *colorTheme;
+
 };
 
 #endif // THEMEMANAGER_H

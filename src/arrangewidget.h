@@ -34,12 +34,15 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void on_trackRuler_sliderChange(int _value);
+
+
+    void on_zoomSlider_sliderMoved(int position);
 
 private:
     Ui::ArrangeWidget *ui;
 protected:
     void resizeEvent(QResizeEvent *event);
+
 };
 
 #endif // ARRANGEWIDGET_H

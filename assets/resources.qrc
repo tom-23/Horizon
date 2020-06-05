@@ -15,6 +15,7 @@
         <file>svg/info.svg</file>
         <file>svg/power.svg</file>
         <file>svg/bar.svg</file>
+        <file>svg/logo_base.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/TitilliumWeb-Bold.ttf</file>

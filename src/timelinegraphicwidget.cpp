@@ -2,11 +2,11 @@
 
 TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_parent, int _barAmount, int _barLength)
 {
-    if (_view)
-        view = _view;
-    else
-        view = new QGraphicsView(this);
+
+    view = _view;
+
     scene = view->scene();
+    qDebug() << "SCENE 2" << view->scene();
     view->setRenderHint(QPainter::Antialiasing);
     setMouseTracking(true);
     barLines = new QList<QList<QGraphicsLineItem *>*>;
@@ -15,12 +15,13 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     barAmount = _barAmount;
     barLength = _barLength;
 
+    setAcceptDrops(true);
 
 
-    viewportPadding = new QGraphicsRectItem();
-    viewportPadding->setRect(0,0, (barAmount * hScaleFactor) - 10, 5);
-    viewportPadding->setPen(Qt::NoPen);
-    scene->addItem(viewportPadding);
+   // viewportPadding = new QGraphicsRectItem();
+    //viewportPadding->setRect(0,0, (barAmount * hScaleFactor)+10, 5);
+    //viewportPadding->setPen(Qt::NoPen);
+    //scene->addItem(viewportPadding);
 
     QFont font = scene->font();
     font.setPointSize(10);
@@ -58,8 +59,11 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     indicator = new Playhead(height());
     scene->addItem(indicator);
     indicator->setZValue(101);
-    connect(view, SIGNAL(mousePressEventSignal(QMouseEvent)), this, SIGNAL(mousePressEvent(QMouseEvent)));
-
+    this->setMouseTracking(true);
+    this->installEventFilter(this);
+    //connect(this, &TimelineGraphicWidget::mousePressEvent, this, &TimelineGraphicWidget::mousePressEventSlot);
+    //connect(view, SIGNAL(dragEnterEvent(QDragEnterEvent)), this, SLOT(dragEnterEvent(QDragEnterEvent)));
+    qDebug() << "VPE";
 }
 
 
@@ -142,6 +146,10 @@ void TimelineGraphicWidget::setColorTheme(QColor primaryLinesColor, QColor secon
     this->update();
 }
 
+QColor TimelineGraphicWidget::getPrimaryColor() {
+    return primaryColor;
+}
+
 void TimelineGraphicWidget::setBarLength(int _value) {
 
     for (int i = 0; i < barLines->size(); i++) {
@@ -186,7 +194,7 @@ int TimelineGraphicWidget::getBarAmount() {
     return barAmount;
 }
 
-void TimelineGraphicWidget::resizeEvent(QResizeEvent *event) {
+void TimelineGraphicWidget::resizeEventSlot(QResizeEvent *event) {
 
 
 }
@@ -197,8 +205,21 @@ void TimelineGraphicWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 
-
 TimelineGraphicWidget::~TimelineGraphicWidget()
 {
 
+}
+
+void TimelineGraphicWidget::dragEnterEventSlot(QDragEnterEvent *event) {
+    event->acceptProposedAction();
+    qDebug() << "Drag enter!";
+
+}
+
+bool TimelineGraphicWidget::eventFilter(QObject *watched, QEvent *event) {
+    qDebug() << watched;
+    if(event->type() == QEvent::MouseButtonPress)
+        {
+             mousePressEvent(static_cast<QMouseEvent*>(event));
+        }
 }

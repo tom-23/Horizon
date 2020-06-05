@@ -35,7 +35,12 @@ void TrackControlsWidget::on_TrackControlsWidget_customContextMenuRequested(cons
    menu.addAction("New Group...");
    menu.addAction("New Bus...");
    menu.addSeparator();
-   menu.addAction("Choose Color");
+   menu.addAction("Cut")->setShortcut(QKeySequence::Cut);
+   menu.addAction("Copy")->setShortcut(QKeySequence::Copy);
+   menu.addAction("Paste")->setShortcut(QKeySequence::Copy);
+   menu.addSeparator();
+   menu.addAction("Rename...");
+   menu.addAction("Choose Colour");
    menu.setWindowFlags(menu.windowFlags() | Qt::CustomizeWindowHint);
    menu.exec(mapToGlobal(pos));
 

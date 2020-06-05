@@ -81,18 +81,11 @@
         </property>
         <item>
          <widget class="QPushButton" name="pushButton_5">
-          <property name="font">
-           <font>
-            <family>SF Display</family>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="text">
-           <string>A</string>
+           <string>Add Folder</string>
           </property>
          </widget>
         </item>
@@ -111,32 +104,18 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_4">
-          <property name="font">
-           <font>
-            <family>SF Display</family>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
-           <string>Draw</string>
+           <string>Filter</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_3">
-          <property name="font">
-           <font>
-            <family>SF Display</family>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="text">
-           <string>Pointer</string>
+           <string>Sort</string>
           </property>
          </widget>
         </item>
@@ -156,7 +135,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QTreeWidget" name="treeWidget">
+       <widget class="QTreeWidget" name="libraryTree">
         <attribute name="headerVisible">
          <bool>false</bool>
         </attribute>

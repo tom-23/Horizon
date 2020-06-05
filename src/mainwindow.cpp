@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "LabSound/LabSound.h"
 #include "grid.h"
+#include "aboutdialog.h"
 
 
 
@@ -76,4 +77,10 @@ void MainWindow::on_pushButton_clicked()
 {
     themeMan->updateTheme();
     ar->tl->setColorTheme(themeMan);
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog *ab = new AboutDialog(this, themeMan);
+    ab->show();
 }

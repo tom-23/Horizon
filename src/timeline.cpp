@@ -1,27 +1,62 @@
 #include "timeline.h"
+
 #include <QScrollBar>
 #include <QVBoxLayout>
 
-Timeline::Timeline(QGraphicsView *_trackRegions, QGraphicsView *_trackRuler, QWidget *_trackControls)
+Timeline::Timeline(QWidget *_parent, QGraphicsView *_trackRuler, QScrollArea *_trackControls, QLayout *_mainLayout)
 {
-    trackRegions = _trackRegions;
+
     trackRuler = _trackRuler;
     trackControls = _trackControls;
+    parent = _parent;
     trackCount = 0;
     regionCount = 0;
 
     barCount = 8;
     barLength = 4;
 
-    QGraphicsScene *regionsScene = new QGraphicsScene;
-    regionsView = new GraphicsView(regionsScene);
-    timelineGraphic = new TimelineGraphicWidget(regionsView, nullptr, 8, 4);
-    trackRegions->setScene(regionsScene);
+
+
+    QGraphicsScene *regionsScene = new GraphicsScene();
+
+    trackRegions = new GraphicsView(regionsScene, parent, this);
+    qDebug() << "SCENE 1:" << regionsScene;
+    trackRegions->updateGeometry();
+    trackRegions->setParent(parent);
+    trackRegions->setObjectName("trackRegions");
+    trackRegions->setAlignment((Qt::AlignLeft | Qt::AlignTop));
+    _mainLayout->addWidget(trackRegions);
+    trackRegions->show();
+    trackRegions->setInteractive(true);
+    trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, 8, 4);
+    qDebug() << regionsScene->items();
+   parent->update();
+   parent->repaint();
+
 
     QGraphicsScene *rulerScene = new QGraphicsScene;
-    rulerView = new GraphicsView(rulerScene);
-    rulerGraphic = new RulerGraphicWidget(rulerView, nullptr, 8);
+    qDebug() << "P-1";
     trackRuler->setScene(rulerScene);
+    rulerGraphic = new RulerGraphicWidget(trackRuler, nullptr, 8);
+
+
+
+    QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), trackControls->verticalScrollBar(), SLOT(setValue(int)));
+    QObject::connect(trackControls->verticalScrollBar(), SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
+
+
+    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), trackRuler->horizontalScrollBar(), SLOT(setValue(int)));
+    //QObject::connect(trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange(int)));
+
+    //QObject::connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
+    //connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), ui->overview, SLOT(setRange(int, int)));
+    //connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->overview, SLOT(setValue(int)));
+
+
+
 
 
     trackList = new vector<class Track *>;
@@ -51,10 +86,24 @@ void Timeline::setColorTheme(ThemeManager *_themeManager) {
     }
 }
 
-void Timeline::setHZoomFactor(int _hZoomFactor) {
+void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     hZoomFactor = _hZoomFactor;
+
     timelineGraphic->setHScaleFactor(hZoomFactor);
+
     rulerGraphic->setHScaleFactor(hZoomFactor);
+
+    if (!zoomSlider) {
+        qDebug() << "Slider is supposed to be moving";
+        //zoomSlider->setValue(hZoomFactor);
+    } else {
+        qDebug() << "little OOF";
+        if (pinchToZoom == true) {
+            qDebug() << "BIG OOF";
+        }
+    }
+
+
     for (int i = 0; i < regionCount; i++) {
         regionList->at(i)->getRegionGraphicItem()->setHScaleFactor(hZoomFactor);
     }
@@ -69,7 +118,7 @@ void Timeline::setHZoomFactor(int _hZoomFactor) {
 }
 
 void Timeline::updateViewports() {
-    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) - 10, (trackCount * 60) + 10);
+    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) - 10, (trackCount * 60) - 10);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), rulerGraphic->height());
 }
 
@@ -100,7 +149,7 @@ void Timeline::addTrack(int _index) {
 
 
     TrackControlsWidget* tcw = new TrackControlsWidget();
-    QVBoxLayout* trackControlsLayout = qobject_cast<QVBoxLayout*>(trackControls->layout());
+    QVBoxLayout* trackControlsLayout = qobject_cast<QVBoxLayout*>(trackControls->widget()->layout());
     qDebug() << "Vec Size:" << trackList->size();
     qDebug() << "Index:" << _index;
     trackControlsLayout->insertWidget(_index, tcw);

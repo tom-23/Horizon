@@ -19,11 +19,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/aboutdialog.cpp \
     src/arrangewidget.cpp \
     src/audiomanager.cpp \
     src/audioregionmanager.cpp \
     src/colorpickerwidget.cpp \
     src/effectwidget.cpp \
+    src/graphicsscene.cpp \
     src/graphicsview.cpp \
     src/grid.cpp \
     src/infowidget.cpp \
@@ -43,12 +45,14 @@ SOURCES += \
     src/trackcontrolswidget.cpp
 
 HEADERS += \
+    src/aboutdialog.h \
     src/arrangewidget.h \
     src/audiomanager.h \
     src/audioregionmanager.h \
     src/audioutil.h \
     src/colorpickerwidget.h \
     src/effectwidget.h \
+    src/graphicsscene.h \
     src/graphicsview.h \
     src/grid.h \
     src/infowidget.h \
@@ -67,6 +71,7 @@ HEADERS += \
     src/trackcontrolswidget.h
 
 FORMS += \
+    src/aboutdialog.ui \
     src/arrangewidget.ui \
     src/colorpickerwidget.ui \
     src/effectwidget.ui \
