@@ -75,6 +75,7 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
+    themeMan = new ThemeManager(this, "../Resources/themes/Nautic.json");
     themeMan->updateTheme();
     ar->tl->setColorTheme(themeMan);
 }
