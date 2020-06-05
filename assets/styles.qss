@@ -1,6 +1,6 @@
 * {
 	font-family: Titillium Web;
-	font-weight: SemiBold;
+	font-style: SemiBold;
 	font-size: 11px;
 	color: @font-color-primary;
 }
@@ -62,8 +62,6 @@
     background-color: @zoom-slider-background;
 	border: 1px Solid @zoom-slider-border;	
 	height: 2px;
-	padding: 0px;
-	margin: 0px;
 	border-radius: 5px;
 	margin-right: 5px;
 	margin-left: 5px;
@@ -73,9 +71,8 @@
 	border-radius: 6px;
 	border: 1px Solid @zoom-slider-border;
 	background-color: @zoom-slider-knob;
-	
-	margin: 0px;
-	padding: 0px;
+	height: 100px;
+	margin: -5px -5px;
 	width: 10px;
 }
 
@@ -107,6 +104,17 @@ border: none;
 	background-color: @background;
 }
 
+#trackContainer QToolButton {
+	color: @font-color-secondary;
+	border: 1px Solid @borders;	
+	background-color: @background;
+	padding: 0px;
+}
+
+#trackContainer QToolButton:checked {
+	color: @font-color-selected;
+}
+
 #trackControls {
 	border: 1px Solid @borders;	
 }
@@ -127,6 +135,10 @@ border-bottom: 1px Solid @borders;
 border-left: 1px Solid @borders;	
 }
 
+#title, #gainLabel, #number {
+	color: @font-color-secondary;
+}
+
 #arrangeCorner {
 	border: none;
 	background-color: @foreground;
@@ -142,6 +154,8 @@ border-right: 1px Solid @borders;
 #gainLabel {
 	border: 1px Solid @borders;	
 	border-radius: 5px;
+	padding: 0px;
+	padding-left: 5px;
 }
 
 #playButton, #stopButton, #recordButton {
@@ -162,6 +176,41 @@ border-right: 1px Solid @borders;
 	background-color: @foreground;
 }
 
+#armButton:checked {
+	background-color: @pushbutton-checked-secondary;
+}
+
+#soloButton:checked {
+	background-color: @pushbutton-checked-tertiary;
+}
+
+#muteButton:checked {
+	background-color: @pushbutton-checked-primary;
+}
+
+#libraryTree {
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+#libraryTree::item {
+	color: @font-color-secondary;
+}
+
+#libraryTree::item::selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
+}
+
+#libraryTree::branch::selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
+}
+
+
+#imageContainer {
+	padding: 10px;
+}
+
 
 QLabel {
 	padding: 0px;
@@ -174,14 +223,13 @@ QPushButton, QToolButton {
 	background-color: @pushbutton-background;
 	border: 1px Solid @pushbutton-border;
 	border-radius: 5px;
-	padding: 0px;
 	padding-left: 12px;
 	padding-right: 12px;
 	font-size: 11px;
 }
 
 QPushButton:checked, QToolButton:checked {
-	background-color: @pushbutton-checked;
+	background-color: @pushbutton-checked-primary;
 	color: @font-color-selected;
 }
 
@@ -193,11 +241,10 @@ QToolButton {
 
 QMenu {
 	border: 1px Solid @menu-border;
-	border-radius: 5px;
 	background-color: @menu-background;
 	menu-scrollable: 1;
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 
 QMenu::item {
@@ -212,38 +259,51 @@ QMenu::item:selected {
 	color: @font-color-selected;
 }
 
+QMenu::separator {
+    height: 2px;
+    background-color: @menu-border;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+
 QScrollBar {
 border: 1px Solid @scrollbar-border;	
-background-color: @scrollbar-background;
+background-color: @scrollbar-background;;
 padding: 2px;
 }
+QScrollBar:horizontal {
+
+border-bottom: none;
+border-left: none;
+border-right: none;
+height: 12px;
+margin: 0px 20px 0 20px;
+}
+
 QScrollBar:vertical {
 border-right: none;
 border-top: none;
 border-bottom: none;
 width: 12px;
+
 }
-QScrollBar:horizontal {
-border-left: none;
-border-bottom: none;
-border-right: none;
-height: 12px;
-}
+
 QScrollBar::handle {
 background-color: @scrollbar-handle;
 border-radius: 3px;
 }
 
-QScrollBar::handle:vertical {
-min-height: 20px;
-}
 
-QScrollBar::handle:horizontal{
-min-width: 20px;
-}
 
 QScrollBar::add-line:horizontal {
-border: none;
+
+border: 1px Solid @scrollbar-border;	
+background-color: @scrollbar-background;;
+width: 12px;
+
+subcontrol-position: right;
+    subcontrol-origin: margin;
 }
 QScrollBar::sub-line:horizontal {
 border: none;
@@ -253,4 +313,8 @@ border: none;
 }
 QScrollBar::sub-line:vertical {
 border: none;
+}
+
+QDialog {
+	background-color: @background;
 }
