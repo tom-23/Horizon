@@ -268,23 +268,19 @@ QMenu::separator {
 
 
 QScrollBar {
-border: 1px Solid @scrollbar-border;	
-background-color: @scrollbar-background;;
+border: 1px Solid @scrollbar-border;
+background-color: @scrollbar-background;
 padding: 2px;
 }
 QScrollBar:horizontal {
 
-border-bottom: none;
+border-top: none;
 border-left: none;
-border-right: none;
 height: 12px;
-margin: 0px 20px 0 20px;
 }
 
 QScrollBar:vertical {
-border-right: none;
-border-top: none;
-border-bottom: none;
+border-left: none;
 width: 12px;
 
 }
@@ -297,13 +293,7 @@ border-radius: 3px;
 
 
 QScrollBar::add-line:horizontal {
-
-border: 1px Solid @scrollbar-border;	
-background-color: @scrollbar-background;;
-width: 12px;
-
-subcontrol-position: right;
-    subcontrol-origin: margin;
+border: none;
 }
 QScrollBar::sub-line:horizontal {
 border: none;

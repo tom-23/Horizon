@@ -1,10 +1,16 @@
 #include "timeline.h"
-
+#include "debug.h"
 #include <QScrollBar>
 #include <QVBoxLayout>
 
-Timeline::Timeline(QWidget *_parent, QGraphicsView *_trackRuler, QScrollArea *_trackControls, QLayout *_mainLayout)
+Timeline::Timeline(QWidget *_parent,
+                   QGraphicsView *_trackRuler,
+                   QScrollArea *_trackControls,
+                   QLayout *_mainLayout,
+                   QScrollBar *hScrollBar,
+                   QScrollBar *vScrollBar)
 {
+    debug::out(3, "Loading timeline graphics...");
 
     trackRuler = _trackRuler;
     trackControls = _trackControls;
@@ -28,27 +34,41 @@ Timeline::Timeline(QWidget *_parent, QGraphicsView *_trackRuler, QScrollArea *_t
     _mainLayout->addWidget(trackRegions);
     trackRegions->show();
     trackRegions->setInteractive(true);
-    trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+
+
 
     timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, 8, 4);
-    qDebug() << regionsScene->items();
-   parent->update();
-   parent->repaint();
+    parent->update();
+    parent->repaint();
 
+
+
+    debug::out(3, "Init Ruler...");
 
     QGraphicsScene *rulerScene = new QGraphicsScene;
-    qDebug() << "P-1";
     trackRuler->setScene(rulerScene);
     rulerGraphic = new RulerGraphicWidget(trackRuler, nullptr, 8);
 
 
+
+    QObject::connect(vScrollBar, SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
+    QObject::connect(hScrollBar, SIGNAL(valueChanged(int)), trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
+
+    QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), vScrollBar, SLOT(setValue(int)));
+    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), hScrollBar, SLOT(setValue(int)));
+
+    QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), vScrollBar, SLOT(setRange(int, int)));
+    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), hScrollBar, SLOT(setRange(int, int)));
 
     QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), trackControls->verticalScrollBar(), SLOT(setValue(int)));
     QObject::connect(trackControls->verticalScrollBar(), SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
 
 
     QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), trackRuler->horizontalScrollBar(), SLOT(setValue(int)));
+
     //QObject::connect(trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange(int)));
 
     //QObject::connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));

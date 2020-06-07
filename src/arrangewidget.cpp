@@ -12,16 +12,10 @@ ArrangeWidget::ArrangeWidget(QWidget *parent) :
     ui(new Ui::ArrangeWidget)
 {
     ui->setupUi(this);
-    tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout());
+    tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout(), ui->hScroll, ui->vScroll);
     this->repaint();
 
-
-
     ui->overview->hide();
-
-
-
-
 }
 
 

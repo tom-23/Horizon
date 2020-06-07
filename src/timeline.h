@@ -27,10 +27,13 @@ class GraphicsView;
 class Timeline
 {
 public:
-    Timeline(QWidget *_parent, QGraphicsView *trackRuler, QScrollArea *trackControls,QLayout *_mainLayout);
+    Timeline(QWidget *_parent,
+             QGraphicsView *trackRuler,
+             QScrollArea *trackControls,
+             QLayout *_mainLayout,
+             QScrollBar *hScrollBar,
+             QScrollBar *vScollBar);
     ~Timeline();
-    GraphicsView *regionsView;
-
 
     void setColorTheme(ThemeManager *_themeManager);
 
