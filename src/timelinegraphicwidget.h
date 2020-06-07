@@ -17,7 +17,7 @@
 #include <QGraphicsItemGroup>
 #include <iostream>
 
-#include "playhead.h"
+
 #include "regiongraphicitem.h"
 #include "graphicsview.h"
 
@@ -40,15 +40,15 @@ public:
     QGraphicsScene *scene;
     QGraphicsView *view;
     //    QPoint indicatorPos;
-    QGraphicsItem *indicatorItem;
-    QGraphicsItem *indicatorHead;
-    Playhead *indicator;
+
+
 
     int frame;
     int minFrame, maxFrame;
 
 
     void setHScaleFactor(int _value);
+    void setHeights(int _value);
     void setBarAmount(int _value);
     void setBarLength(int _value);
 
@@ -75,7 +75,7 @@ private:
 
  protected:
     virtual void resizeEventSlot(QResizeEvent *event);
-    virtual void mousePressEvent(QMouseEvent *event);
+
     virtual void dragEnterEventSlot(QDragEnterEvent *event);
 
     bool eventFilter(QObject *object, QEvent *event);

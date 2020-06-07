@@ -56,14 +56,11 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
 
     }
 
-    indicator = new Playhead(height());
-    scene->addItem(indicator);
-    indicator->setZValue(101);
+
     this->setMouseTracking(true);
     this->installEventFilter(this);
     //connect(this, &TimelineGraphicWidget::mousePressEvent, this, &TimelineGraphicWidget::mousePressEventSlot);
     //connect(view, SIGNAL(dragEnterEvent(QDragEnterEvent)), this, SLOT(dragEnterEvent(QDragEnterEvent)));
-    qDebug() << "VPE";
 }
 
 
@@ -85,6 +82,15 @@ void TimelineGraphicWidget::setHScaleFactor(int _value) {
     }
 
 
+}
+
+void TimelineGraphicWidget::setHeights(int _value) {
+    for (int i = 0; i < barLines->size(); i++) {
+        for (int beat = 0; beat < barLines->at(i)->size(); beat++) {
+            barLines->at(i)->at(beat)->setLine(QLine(0, 0, 0, _value));
+        }
+
+    }
 }
 
 void TimelineGraphicWidget::setBarAmount(int _value) {

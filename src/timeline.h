@@ -20,6 +20,8 @@
 
 #include "region.h"
 #include "thememanager.h"
+#include "playhead.h"
+#include "ghostplayhead.h"
 
 
 class GraphicsView;
@@ -44,7 +46,10 @@ public:
     void setBarAmount(int _barAmount);
 
     void setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider = nullptr);
+    void updateHeights();
     void updateViewports();
+
+    void setPlayheadLocation(float _location);
 
     void addTrack(int _index);
     void removeTrack(int _index);
@@ -74,6 +79,8 @@ public:
     QString selectBoxColor;
     QString textColor;
 
+    GhostPlayhead *ghostPlayheadGraphic;
+
 
 private:
     GraphicsView *trackRegions;
@@ -82,6 +89,8 @@ private:
 
     TimelineGraphicWidget *timelineGraphic;
     RulerGraphicWidget *rulerGraphic;
+    Playhead *playheadGraphic;
+
 
     std::vector<class Track *> *trackList;
     std::vector<class Region *> *regionList;

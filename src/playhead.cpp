@@ -1,77 +1,35 @@
 #include "playhead.h"
+#include "debug.h"
 
-Playhead::Playhead(float height) : QGraphicsItem()
+Playhead::Playhead(QGraphicsView *_view) : QGraphicsItem()
 {
-    pen = QPen(Qt::white, 1);
-    brush = QBrush(Qt::RoundCap);
-    QColor brushColor = QColor("#999999");
-    brushColor.setAlpha(200);
-    brush.setColor(brushColor);
 
-    points << QPointF(0, 0)
-           << QPointF(0, 6)
-           << QPointF(6, 12)
-           << QPointF(12, 6)
-           << QPointF(12, 0);
-    setHeight(height);
+    pen = QPen(Qt::white, 1);
+    view = _view;
     setAcceptHoverEvents(true);
     this->setAcceptDrops(true);
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(ItemSendsGeometryChanges);
-    //    setFlags(ItemIsMovable);
 
-    //line.setLine(0,0,0,);
-}
+    gridLocation = 1.0f;
 
-QSizeF Playhead::calculateSize() const
-{
-    float minX = points[0].x();
-    float minY = points[0].y();
-    float maxX = points[0].x();
-    float maxY = points[0].y();
-    for (QPointF point : points)
-    {
-        if (point.x() < minX)
-        {
-            minX = point.x();
-        }
-        if (point.y() < minY)
-        {
-            minY = point.y();
-        }
-        if (point.x() > maxX)
-        {
-            maxX = point.x();
-        }
-        if (point.y() > maxY)
-        {
-            maxY = point.y();
-        }
-    }
-    return QSizeF(maxX - minX, line.p2().y());
 }
 
 QRectF Playhead::boundingRect() const
 {
-    QSizeF size = this->calculateSize();
-    return QRectF(0, 0, size.width(), size.height());
+    return QRectF(0, 0, 1, this->line.y2());
 }
+
 
 void Playhead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
     painter->setPen(pen);
-    line.setP1(QPoint(6, 0));
+    line.setP1(QPoint(0, 0));
+
     painter->drawLine(line);
-    painter->setBrush(brush);
-    //painter->translate(-boundingRect().width()/2,0);
-    painter->drawPolygon(points);
-    //painter->translate(boundingRect().width()/2,0);
-    //    QBrush b(Qt::red);
-    //    painter->setBrush(b);
-    //    painter->drawRect(boundingRect());
 }
 
 void Playhead::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -94,12 +52,14 @@ void Playhead::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Playhead::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF pos = event->scenePos();
-    qDebug() << "move";
+
     if (pressed)
     {
+        this->setPos(pos.x()-5, y());
 
-        this->setPos(pos.x(), y());
     }
+    gridLocation = (pos.x() / hScaleFactor) + 1;
+    qDebug() << "move" << gridLocation;
     QGraphicsItem::mouseMoveEvent(event);
     update();
 }
@@ -112,28 +72,6 @@ void Playhead::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
 }
 
-void Playhead::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    //qDebug()<<"hover enter";
-}
-
-void Playhead::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    //qDebug()<<"hover move";
-
-    //    if(pressed){
-
-    //        QPointF pos = event->scenePos();
-    //        qDebug()<<pos;
-    //        this->setPos(pos.x(),y());
-    //    }
-}
-
-void Playhead::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    //qDebug()<<"hover leave";
-    //    pressed=false;
-}
 
 QVariant Playhead::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -152,3 +90,24 @@ QVariant Playhead::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     return QGraphicsItem::itemChange(change, value);
 }
+
+void Playhead::setHScaleFactor(int _hScaleFactor) {
+    hScaleFactor = _hScaleFactor;
+    setX((gridLocation - 1) * hScaleFactor);
+}
+
+void Playhead::setHeight(int _height) {
+    line.setP2(QPoint(line.x1(), _height));
+    boundingRect();
+}
+
+int Playhead::getGridLocation() {
+    return gridLocation;
+}
+
+void Playhead::setGridLocation(float _location) {
+    gridLocation = _location;
+    setX((gridLocation - 1) * hScaleFactor);
+    //update();
+}
+

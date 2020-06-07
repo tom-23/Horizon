@@ -76,8 +76,19 @@ Timeline::Timeline(QWidget *_parent,
     //connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), ui->overview, SLOT(setValue(int)));
 
 
+    debug::out(3, "Init Playhead...");
 
+    playheadGraphic = new Playhead(trackRegions);
+    regionsScene->addItem(playheadGraphic);
+    playheadGraphic->setZValue(101);
 
+    debug::out(3, "Init GhostPlayhead...");
+
+    ghostPlayheadGraphic = new GhostPlayhead(trackRegions);
+    regionsScene->addItem(ghostPlayheadGraphic);
+    playheadGraphic->setZValue(101);
+
+    debug::out(3, "Init Lists...");
 
     trackList = new vector<class Track *>;
     trackList->clear();
@@ -113,16 +124,7 @@ void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
 
     rulerGraphic->setHScaleFactor(hZoomFactor);
 
-    if (!zoomSlider) {
-        qDebug() << "Slider is supposed to be moving";
-        //zoomSlider->setValue(hZoomFactor);
-    } else {
-        qDebug() << "little OOF";
-        if (pinchToZoom == true) {
-            qDebug() << "BIG OOF";
-        }
-    }
-
+    playheadGraphic->setHScaleFactor(hZoomFactor);
 
     for (int i = 0; i < regionCount; i++) {
         regionList->at(i)->getRegionGraphicItem()->setHScaleFactor(hZoomFactor);
@@ -132,14 +134,28 @@ void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     }
 
     updateViewports();
+    updateHeights();
+}
 
+void Timeline::updateHeights() {
+    int height;
+    if (trackRegions->height() > trackRegions->sceneRect().height()) {
+        height = trackRegions->height();
+    } else {
+        height = trackRegions->sceneRect().height();
+    }
 
+    playheadGraphic->setHeight(height);
+    timelineGraphic->setHeights(height);
+    ghostPlayheadGraphic->setHeight(height);
+    updateViewports();
 
 }
 
 void Timeline::updateViewports() {
-    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) - 10, (trackCount * 60) - 10);
-    rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), rulerGraphic->height());
+    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
+    rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
+
 }
 
 void Timeline::setBarAmount(int _barAmount) {
@@ -210,4 +226,11 @@ void Timeline::setZRegionValues(int _zValue) {
     for (int i = 0; i < regionCount; i++) {
         regionList->at(i)->getRegionGraphicItem()->setZValue(i + _zValue + 1);
     }
+    ghostPlayheadGraphic->setZValue((regionCount + _zValue) + 5);
+    playheadGraphic->setZValue((regionCount + _zValue) + 5);
 }
+
+void Timeline::setPlayheadLocation(float _location) {
+    playheadGraphic->setGridLocation(_location);
+}
+
