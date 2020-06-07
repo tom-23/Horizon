@@ -8,6 +8,8 @@
 #include "audiomanager.h"
 #include "thememanager.h"
 
+#include <QTimer>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -22,6 +24,9 @@ public:
 
     AudioManager *audioMan;
     ThemeManager *themeMan;
+
+
+    QTimer *uiTimer;
 
     ArrangeWidget* ar;
 
@@ -38,6 +43,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    void uiUpdate();
 protected:
 
 };

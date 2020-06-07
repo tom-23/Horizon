@@ -39,8 +39,14 @@ MainWindow::MainWindow(QWidget *parent)
     //ew = new EffectWidget(iw);
     //iw->addEffect(ew);
 
-    AudioGrid *ag = new AudioGrid();
+    uiTimer = new QTimer(parent);
+    connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
 
+
+}
+
+void MainWindow::uiUpdate() {
+    ar->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
 }
 
 MainWindow::~MainWindow()
@@ -71,6 +77,7 @@ std::shared_ptr<GainNode> gain;
 void MainWindow::on_playButton_clicked()
 {
     audioMan = new AudioManager(this);
+    uiTimer->start(30);
 }
 
 void MainWindow::on_pushButton_clicked()
