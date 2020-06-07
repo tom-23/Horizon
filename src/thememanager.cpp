@@ -1,8 +1,4 @@
 #include "thememanager.h"
-#include <QDebug>
-#include <QMessageBox>
-#include <QJsonObject>
-#include <QDir>
 
 ThemeManager::ThemeManager(QWidget *_parent, QString _themeFileName)
 {
@@ -50,6 +46,8 @@ void ThemeManager::setThemeFile(QString _themeFileName) {
     parent->setStyleSheet(finalQSS);
     parent->update();
     parent->repaint();
+
+    debug::out(3, "Theme is successfully parsed!");
 
 }
 
@@ -100,12 +98,14 @@ QString ThemeManager::colorizeSVG(QString filename) {
     QString savedFileName = tempDirLocation + "/theme_" + fileInfo.fileName();
 
     QFile outSVG(savedFileName);
-    qDebug() << finalSVG;
+
 
     if (outSVG.open(QIODevice::ReadWrite) )
     {
         outSVG.write(finalSVG.toUtf8());
     }
+
+    debug::out(3, "Returned colorized theme_" + fileInfo.fileName().toStdString());
 
     return savedFileName;
 }

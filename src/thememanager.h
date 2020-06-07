@@ -4,6 +4,11 @@
 #include <QWidget>
 #include <QJsonDocument>
 #include <QFile>
+#include <QMessageBox>
+#include <QJsonObject>
+#include <QDir>
+#include <QTextStream>
+#include "debug.h"
 
 
 class ThemeManager

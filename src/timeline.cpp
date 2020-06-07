@@ -200,7 +200,7 @@ void Timeline::addTrack(int _index) {
     tcw->show();
     trackCount = trackList->size();
     updateViewports();
-
+    updateHeights();
 }
 
 void Timeline::addRegion(int _trackIndex) {
@@ -212,6 +212,8 @@ void Timeline::addRegion(int _trackIndex) {
     Region *newRegion = new Region(_trackIndex, this, rgi);
     regionList->insert(regionList->begin(), newRegion);
     regionCount = regionList->size();
+
+    this->setZRegionValues(barCount * barLength);
 }
 
 

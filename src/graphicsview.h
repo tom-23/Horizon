@@ -15,7 +15,7 @@ class GraphicsView : public QGraphicsView
     Q_OBJECT
 
 public:
-    GraphicsView(QGraphicsScene *scene = 0, QWidget *parent = 0, Timeline *_timeline = 0);
+    GraphicsView(QGraphicsScene *_scene = 0, QWidget *parent = 0, Timeline *_timeline = 0);
 
 
 
@@ -32,9 +32,11 @@ public:
 
 protected:
 
-    //bool viewportEvent(QEvent *event) override;
+    virtual bool viewportEvent(QEvent *event) override;
+
 private:
     qreal totalScaleFactor;
     Timeline *timeline;
+    QGraphicsScene *scene;
 };
 #endif //GraphicsView.h
