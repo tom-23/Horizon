@@ -24,7 +24,9 @@ SOURCES += \
     src/audiomanager.cpp \
     src/audioregionmanager.cpp \
     src/colorpickerwidget.cpp \
+    src/debug.cpp \
     src/effectwidget.cpp \
+    src/ghostplayhead.cpp \
     src/graphicsscene.cpp \
     src/graphicsview.cpp \
     src/grid.cpp \
@@ -51,7 +53,9 @@ HEADERS += \
     src/audioregionmanager.h \
     src/audioutil.h \
     src/colorpickerwidget.h \
+    src/debug.h \
     src/effectwidget.h \
+    src/ghostplayhead.h \
     src/graphicsscene.h \
     src/graphicsview.h \
     src/grid.h \
