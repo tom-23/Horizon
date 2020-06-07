@@ -14,3 +14,4 @@ int Region::getTrackIndex() {
 RegionGraphicItem* Region::getRegionGraphicItem() {
     return regionGraphicsItem;
 }
+

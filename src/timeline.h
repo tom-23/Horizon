@@ -8,10 +8,10 @@
 #include <QSlider>
 #include <iostream>
 #include <vector>
+#include <QTimer>
 
 #include "timelinegraphicwidget.h"
 #include "rulergraphicwidget.h"
-
 
 #include "graphicsscene.h"
 #include "graphicsview.h"
@@ -97,8 +97,6 @@ private:
 
     int trackCount;
     int regionCount;
-
-
 
     void setZRegionValues(int _zValue);
 

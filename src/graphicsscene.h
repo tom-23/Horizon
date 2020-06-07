@@ -12,10 +12,10 @@ class GraphicsScene : public QGraphicsScene
 public:
     explicit GraphicsScene(QObject *parent = nullptr);
 
-signals:
-
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;
+
+
 };
 
 #endif // GRAPHICSSCENE_H

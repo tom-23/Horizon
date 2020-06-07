@@ -40,10 +40,13 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_stopButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     void uiUpdate();
+
 protected:
 
 };

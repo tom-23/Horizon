@@ -45,6 +45,7 @@ void RulerGraphicWidget::setHScaleFactor(int _value) {
 }
 
 
+
 void RulerGraphicWidget::setBarAmount(int _value) {
     QFont font = scene->font();
     font.setPointSize(10);

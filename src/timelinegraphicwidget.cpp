@@ -220,10 +220,14 @@ void TimelineGraphicWidget::dragEnterEventSlot(QDragEnterEvent *event) {
     event->acceptProposedAction();
     qDebug() << "Drag enter!";
 
+
+
+
+
 }
 
 bool TimelineGraphicWidget::eventFilter(QObject *watched, QEvent *event) {
-    qDebug() << watched;
+
     if(event->type() == QEvent::MouseButtonPress)
         {
              mousePressEvent(static_cast<QMouseEvent*>(event));
