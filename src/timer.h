@@ -1,26 +1,47 @@
 #ifndef TIMER_H
 #define TIMER_H
-#include <chrono>
-#include <iostream>
+
 #include <thread>
+#include <chrono>
+#include "LabSound/LabSound.h"
+
 
 class Timer
 {
-    bool clear = false;
 public:
-    Timer();
+    typedef std::chrono::milliseconds Interval;
+    typedef std::function<void(void)> Timeout;
 
-    template<typename Function>
-    void setTimeout(Function function, int delay);
+    Timer(const Timeout &timeout);
+    Timer(const Timeout &timeout,
+          const Interval &interval,
+          bool singleShot = true);
 
-    template<typename Function>
-    void setInterval(Function function, int interval);
-
+    void start(bool multiThread = false);
     void stop();
 
+    bool running() const;
+
+    void setSingleShot(bool singleShot);
+    bool isSingleShot() const;
+
+    void setInterval(const Interval &interval);
+    const Interval &interval() const;
+
+    void setTimeout(const Timeout &timeout);
+    const Timeout &timeout() const;
+
 private:
+    std::thread _thread;
 
+    bool _running = false;
+    bool _isSingleShot = true;
 
+    Interval _interval = Interval(0);
+    Timeout _timeout = nullptr;
+
+    void _temporize();
+    void _sleepThenTimeout();
 };
 
 #endif // TIMER_H
