@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
     ar->show();
     ar->tl->setColorTheme(themeMan);
 
+    audioMan = new AudioManager();
+    audioMan->setBPM(120.0);
+    audioMan->setDivision(4);
 
     //InfoWidget* iw;
     //iw = new InfoWidget(this);
@@ -76,8 +79,8 @@ std::shared_ptr<GainNode> gain;
 
 void MainWindow::on_playButton_clicked()
 {
-    audioMan = new AudioManager(this);
     uiTimer->start(30);
+    audioMan->play();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -91,4 +94,11 @@ void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog *ab = new AboutDialog(this, themeMan);
     ab->show();
+}
+
+
+void MainWindow::on_stopButton_clicked()
+{
+    uiTimer->stop();
+    audioMan->stop();
 }
