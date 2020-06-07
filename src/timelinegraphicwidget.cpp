@@ -6,7 +6,6 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     view = _view;
 
     scene = view->scene();
-    qDebug() << "SCENE 2" << view->scene();
     view->setRenderHint(QPainter::Antialiasing);
     setMouseTracking(true);
     barLines = new QList<QList<QGraphicsLineItem *>*>;
@@ -137,7 +136,6 @@ void TimelineGraphicWidget::setBarAmount(int _value) {
 void TimelineGraphicWidget::setColorTheme(QColor primaryLinesColor, QColor secondaryLinesColor) {
     primaryColor = primaryLinesColor;
     seconardColor = secondaryLinesColor;
-    qDebug() << "Color Changed";
     for (int i = 0; i < barLines->size(); i++) {
         for (int beat = 0; beat < barLines->at(i)->size(); beat++) {
             if (beat == 0) {
@@ -160,7 +158,6 @@ void TimelineGraphicWidget::setBarLength(int _value) {
 
     for (int i = 0; i < barLines->size(); i++) {
         for (int beat = 0; beat < barLines->at(i)->size(); beat++) {
-            qDebug() << barLines->at(i)->size();
             scene->removeItem(barLines->at(i)->at(beat));
 
         }
@@ -204,12 +201,6 @@ void TimelineGraphicWidget::resizeEventSlot(QResizeEvent *event) {
 
 
 }
-
-
-void TimelineGraphicWidget::mousePressEvent(QMouseEvent *event) {
-    qDebug() << "MOUSE PRESS";
-}
-
 
 TimelineGraphicWidget::~TimelineGraphicWidget()
 {

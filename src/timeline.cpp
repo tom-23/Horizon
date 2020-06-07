@@ -22,11 +22,11 @@ Timeline::Timeline(QWidget *_parent,
     barLength = 4;
 
 
+    debug::out(3, "Init Timeline...");
 
     QGraphicsScene *regionsScene = new GraphicsScene();
 
     trackRegions = new GraphicsView(regionsScene, parent, this);
-    qDebug() << "SCENE 1:" << regionsScene;
     trackRegions->updateGeometry();
     trackRegions->setParent(parent);
     trackRegions->setObjectName("trackRegions");
@@ -99,13 +99,17 @@ Timeline::Timeline(QWidget *_parent,
     this->setHZoomFactor(100);
 
 
+
+
+    debug::out(3, "Timeline Loaded!");
+
 }
 
 Timeline::~Timeline() {
     trackList->clear();
 
     delete trackList;
-    qDebug() << "Clearing tracklist...";
+    debug::out(3, "Clearing trackList...");
 
 }
 

@@ -14,16 +14,17 @@ ThemeManager::ThemeManager(QWidget *_parent, QString _themeFileName)
 void ThemeManager::setThemeFile(QString _themeFileName) {
 
     themeFileName = _themeFileName;
+    debug::out(3, "Loading theme...");
 
     QFile styleQSS(":/base/styles.qss");
     QFile themeFile(themeFileName);
 
     if(!styleQSS.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0, "error", styleQSS.errorString());
+        debug::out(1, styleQSS.errorString().toStdString());
     }
 
     if(!themeFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::information(0, "error", styleQSS.errorString() + " with opening theme definition");
+        debug::out(1, themeFile.errorString().toStdString());
     }
 
     QTextStream styleQSSTS(&styleQSS);
