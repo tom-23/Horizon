@@ -1,1 +1,8 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><defs><style>.cls-1{fill:#f23d2e;}</style></defs><title>record</title><circle class="cls-1" cx="8" cy="8" r="8"/></svg>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <defs>
+        <style>.cls-1{fill:@pushbutton-background;}</style>
+        <style>.cls-2{fill:@pushbutton-border;}</style>
+    </defs>
+    <circle class="cls-1" cx="8" cy="8" r="7.5" />
+    <path class="cls-2" d="M8,1A7,7,0,1,1,1,8,7,7,0,0,1,8,1M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0Z" />
+</svg>

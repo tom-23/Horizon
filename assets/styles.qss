@@ -137,6 +137,7 @@ border-left: 1px Solid @borders;
 
 #title, #gainLabel, #number {
 	color: @font-color-secondary;
+	background: none;
 }
 
 #arrangeCorner {
@@ -226,6 +227,11 @@ QPushButton, QToolButton {
 	padding-left: 12px;
 	padding-right: 12px;
 	font-size: 11px;
+}
+
+QPushButton:pressed, QToolButton:pressed {
+	background-color: @pushbutton-border;
+	color: @font-color-secondary;
 }
 
 QPushButton:checked, QToolButton:checked {
