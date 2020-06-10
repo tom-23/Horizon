@@ -24,5 +24,6 @@
     "lines-primary" : "#4F79B1",
     "lines-secondary" : "#355384",
     "list-item-selected" : "#feff00",
-    "list-item-hover" : "#d4fffd"
+    "list-item-hover" : "#d4fffd",
+    "track-selected": "#ffffff"
 }
