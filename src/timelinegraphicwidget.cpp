@@ -150,9 +150,7 @@ void TimelineGraphicWidget::setColorTheme(QColor primaryLinesColor, QColor secon
     this->update();
 }
 
-QColor TimelineGraphicWidget::getPrimaryColor() {
-    return primaryColor;
-}
+
 
 void TimelineGraphicWidget::setBarLength(int _value) {
 

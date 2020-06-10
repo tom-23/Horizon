@@ -1,21 +1,68 @@
 #include "track.h"
 #include <iostream>
 
-Track::Track(TrackControlsWidget *controlsWidget, TimelineGraphicWidget *_timeLineWidget, int _index) {
-    index = _index;
+Track::Track(Timeline *_timeLine, AudioManager *_audioMan) {
+
+    audioMan = _audioMan;
+    timeline = _timeLine;
+    context = audioMan->getAudioContext();
+    trackNode = new std::shared_ptr<GainNode>;
     selected = false;
-
-    timeLineWidget = _timeLineWidget;
-    seperator = timeLineWidget->scene->addLine(QLine(0, 0, timeLineWidget->scene->width(), 0), _timeLineWidget->getPrimaryColor());
-    seperator->setY(((index + 1) * 60) - 1);
+    regionList = new std::vector<class Region *>;
 
 }
 
-void Track::setColorTheme(QColor primaryColor) {
-    seperator->setPen(primaryColor);
+void Track::setTrackControlsWidget(TrackControlsWidget *_tcw) {
+    trackControlWidget = _tcw;
 }
 
+void Track::setTrackGraphicsItem(TrackGraphicItem *_tgi) {
+    trackGraphicItem = _tgi;
+}
 
 void Track::setHScaleFactor(int _hScaleFactor) {
-    seperator->setLine(QLine(0, 0, (timeLineWidget->getBarAmount() * _hScaleFactor), 0));
+
 }
+
+AudioRegion* Track::addAudioRegion() {
+    AudioRegion *audioRegion = new AudioRegion(timeline, this);
+    regionList->push_back(audioRegion);
+    return audioRegion;
+}
+
+void Track::setRegion(Region *_region) {
+    regionList->insert(regionList->end(), _region);
+}
+
+AudioManager* Track::getAudioManager() {
+    return audioMan;
+}
+
+std::shared_ptr<AudioContext>* Track::getAudioContext() {
+    return audioMan->getAudioContext();
+}
+
+int Track::getIndex() {
+    return index;
+}
+
+void Track::setIndex(int _index) {
+    index = _index;
+}
+
+void Track::setSelected(bool _selected) {
+    selected = _selected;
+    trackControlWidget->setSelected(selected);
+}
+
+bool Track::getSelected() {
+    return selected;
+}
+
+//void Track::removeRegion(int position) {
+//    std::vector<class Region *>::iterator it = std::find(regionList->begin(), regionList->end(), _region);
+//    if (it != regionList->end()) {
+//
+//        regionList->erase(std::distance(regionList->begin(), it));
+//    }
+//}

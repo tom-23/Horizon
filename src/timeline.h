@@ -16,6 +16,7 @@
 #include "graphicsscene.h"
 #include "graphicsview.h"
 #include "trackcontrolswidget.h"
+#include "trackgraphicitem.h"
 #include "track.h"
 
 #include "region.h"
@@ -23,8 +24,9 @@
 #include "playhead.h"
 #include "ghostplayhead.h"
 
-
 class GraphicsView;
+class Track;
+class Region;
 
 class Timeline
 {
@@ -38,7 +40,7 @@ public:
     ~Timeline();
 
     void setColorTheme(ThemeManager *_themeManager);
-
+    QColor getPrimaryColor();
 
     void setNoteLength(int _noteLength);
     void setBarLength(int _barLength);
@@ -46,19 +48,20 @@ public:
     void setBarAmount(int _barAmount);
 
     void setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider = nullptr);
+    QGraphicsScene* getScene();
     void updateHeights();
     void updateViewports();
 
     void setPlayheadLocation(float _location);
 
-    void addTrack(int _index);
-    void removeTrack(int _index);
+    void addTrack(Track *_track);
+    void removeTrack(Track *_track);
 
     int getTrackCount();
 
 
-    void addRegion(int _trackIndex);
-    void removeRegion(int _index);
+    void addRegion(Region *_region);
+    void removeRegion(Region *_region);
     void setRegionTrack(int _oldTrackIndex, int _newTrackIndex);
 
     int getRegionCount();
@@ -84,16 +87,18 @@ public:
 
 private:
     GraphicsView *trackRegions;
+    GraphicsScene *trackRegionsScene;
     QGraphicsView *trackRuler;
     QScrollArea *trackControls;
+
+    QColor primaryColor;
 
     TimelineGraphicWidget *timelineGraphic;
     RulerGraphicWidget *rulerGraphic;
     Playhead *playheadGraphic;
 
 
-    std::vector<class Track *> *trackList;
-    std::vector<class Region *> *regionList;
+    std::vector<class TrackControlsWidget *> *trackWidgetList;
 
     int trackCount;
     int regionCount;

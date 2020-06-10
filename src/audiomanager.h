@@ -2,8 +2,9 @@
 #define AUDIOMANAGER_H
 
 #include "LabSound/LabSound.h"
-#include "audioregionmanager.h"
-#include "trackaudio.h"
+#include "audioregion.h"
+#include "region.h"
+#include "track.h"
 #include "audioutil.h"
 #include "timer.h"
 #include <iostream>
@@ -16,6 +17,11 @@
 #include "timeline.h"
 
 
+class Metronome;
+class AudioTrackManager;
+class Track;
+
+
 using namespace lab;
 
 using namespace std::chrono_literals;
@@ -26,26 +32,37 @@ using namespace std::chrono_literals;
 class AudioManager
 {
 public:
-    AudioManager();
+    AudioManager(Timeline *_timeline);
 
     void play();
     void pause();
     void stop();
     void updateSchedule();
 
-
     void setDivision(int _division);
     void setBPM(double _beatsPerMinuet);
+    void setLookAhead(double _value);
 
     float getCurrentGridTime();
     void setCurrentGridTime(float _value);
 
+    double gridTimeToContextSeconds(float _gridTime);
+
+
+
+    Track* addTrack();
+    Track* getTrackByIndex(int index);
+    Track* getSelectedTrack(int index);
+    std::vector<class Track*>* getSelectedTracks();
+    void setTrackSelected(Track *track, bool selected);
+    void setTrackRangeSelected(Track *firstTrack, Track *lastTrack);
+
+    std::shared_ptr<AudioContext>* getAudioContext();
 
 
     std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
 
-    std::vector<class TrackAudio *> trackAudioList;
-    std::vector<class AudioRegionManager *> audioRegionManagerList;
+
 
 
 private:
@@ -53,11 +70,14 @@ private:
     std::shared_ptr<AudioContext> context;
     std::shared_ptr<GainNode> outputNode;
 
-    std::shared_ptr<AudioBus> metPrimaryBus;
-    std::shared_ptr<SampledAudioNode> metPrimaryNode;
 
-    std::shared_ptr<AudioBus> metSecondaryBus;
-    std::shared_ptr<SampledAudioNode> metSecondaryNode;
+    std::vector<class Track *> *trackList;
+    std::vector<class Track *> *selectedTrackList;
+
+    Metronome *metronome;
+
+
+
 
     Timeline *timeline;
 
@@ -72,11 +92,16 @@ private:
 
     int division;
     int currentPos;
+    double lookAhead;
 
     float currentGridTime;
 
     double startTime;
     double stopTime;
+
+    bool scheduled;
+
+     void updateMetSchedule();
 
 };
 

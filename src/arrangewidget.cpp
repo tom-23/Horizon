@@ -7,11 +7,12 @@
 #include <QImage>
 
 
-ArrangeWidget::ArrangeWidget(QWidget *parent) :
+ArrangeWidget::ArrangeWidget(QWidget *parent, AudioManager *_audioMan) :
     QWidget(parent),
     ui(new Ui::ArrangeWidget)
 {
     ui->setupUi(this);
+    audioMan = _audioMan;
     tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout(), ui->hScroll, ui->vScroll);
     this->repaint();
 
@@ -49,8 +50,9 @@ void ArrangeWidget::on_pushButton_4_clicked()
 void ArrangeWidget::on_pushButton_5_clicked()
 {
 
-    tl->addTrack(tl->getTrackCount());
-
+    Track *newTrack = audioMan->addTrack();
+    tl->addTrack(newTrack);
+    audioMan->setTrackSelected(newTrack, true);
 
 }
 
@@ -69,12 +71,7 @@ void ArrangeWidget::on_zoomSlider_valueChanged(int value)
 
 void ArrangeWidget::on_pushButton_clicked()
 {
-    tl->addRegion(0);
+
+    tl->addRegion(audioMan->getSelectedTrack(0)->addAudioRegion());
 }
 
-
-void ArrangeWidget::on_zoomSlider_sliderMoved(int position)
-{
-
-
-}

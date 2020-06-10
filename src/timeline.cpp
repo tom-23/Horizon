@@ -24,9 +24,9 @@ Timeline::Timeline(QWidget *_parent,
 
     debug::out(3, "Init Timeline...");
 
-    QGraphicsScene *regionsScene = new GraphicsScene();
+    trackRegionsScene = new GraphicsScene();
 
-    trackRegions = new GraphicsView(regionsScene, parent, this);
+    trackRegions = new GraphicsView(trackRegionsScene, parent, this);
     trackRegions->updateGeometry();
     trackRegions->setParent(parent);
     trackRegions->setObjectName("trackRegions");
@@ -79,22 +79,16 @@ Timeline::Timeline(QWidget *_parent,
     debug::out(3, "Init Playhead...");
 
     playheadGraphic = new Playhead(trackRegions);
-    regionsScene->addItem(playheadGraphic);
+    trackRegionsScene->addItem(playheadGraphic);
     playheadGraphic->setZValue(101);
 
     debug::out(3, "Init GhostPlayhead...");
 
     ghostPlayheadGraphic = new GhostPlayhead(trackRegions);
-    regionsScene->addItem(ghostPlayheadGraphic);
+    trackRegionsScene->addItem(ghostPlayheadGraphic);
     playheadGraphic->setZValue(101);
 
     debug::out(3, "Init Lists...");
-
-    trackList = new vector<class Track *>;
-    trackList->clear();
-
-    regionList = new vector<class Region *>;
-    regionList->clear();
 
     this->setHZoomFactor(100);
 
@@ -106,19 +100,23 @@ Timeline::Timeline(QWidget *_parent,
 }
 
 Timeline::~Timeline() {
-    trackList->clear();
-
-    delete trackList;
-    debug::out(3, "Clearing trackList...");
 
 }
 
 void Timeline::setColorTheme(ThemeManager *_themeManager) {
     rulerGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("font-color-secondary"));
     timelineGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("lines-secondary"));
-    for (int i = 0; i < trackCount; i++) {
-        trackList->at(i)->setColorTheme(_themeManager->getColor("lines-primary"));
-    }
+    primaryColor = _themeManager->getColor("lines-primary");
+
+    timelineGraphic->repaint();
+    timelineGraphic->update();
+    timelineGraphic->view->update();
+    timelineGraphic->view->repaint();
+}
+
+
+QColor Timeline::getPrimaryColor() {
+    return primaryColor;
 }
 
 void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
@@ -129,14 +127,10 @@ void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     rulerGraphic->setHScaleFactor(hZoomFactor);
 
     playheadGraphic->setHScaleFactor(hZoomFactor);
-
-    for (int i = 0; i < regionCount; i++) {
-        regionList->at(i)->getRegionGraphicItem()->setHScaleFactor(hZoomFactor);
-    }
-    for (int i = 0; i < trackCount; i++) {
-        trackList->at(i)->setHScaleFactor(hZoomFactor);
-    }
-
+    timelineGraphic->repaint();
+    timelineGraphic->update();
+    timelineGraphic->view->update();
+    timelineGraphic->view->repaint();
     updateViewports();
     updateHeights();
 }
@@ -148,7 +142,6 @@ void Timeline::updateHeights() {
     } else {
         height = trackRegions->sceneRect().height();
     }
-
     playheadGraphic->setHeight(height);
     timelineGraphic->setHeights(height);
     ghostPlayheadGraphic->setHeight(height);
@@ -159,7 +152,6 @@ void Timeline::updateHeights() {
 void Timeline::updateViewports() {
     timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
-
 }
 
 void Timeline::setBarAmount(int _barAmount) {
@@ -185,40 +177,37 @@ int Timeline::getRegionCount() {
     return regionCount;
 }
 
-void Timeline::addTrack(int _index) {
+void Timeline::addTrack(Track *_track) {
 
+    TrackControlsWidget* tcw = new TrackControlsWidget(nullptr, _track);
+    _track->setTrackControlsWidget(tcw);
 
-    TrackControlsWidget* tcw = new TrackControlsWidget();
     QVBoxLayout* trackControlsLayout = qobject_cast<QVBoxLayout*>(trackControls->widget()->layout());
-    qDebug() << "Vec Size:" << trackList->size();
-    qDebug() << "Index:" << _index;
-    trackControlsLayout->insertWidget(_index, tcw);
+    trackControlsLayout->insertWidget(trackControlsLayout->count() - 1, tcw);
 
-    Track *newTrack = new Track(tcw, timelineGraphic, _index);
-    trackList->insert(trackList->begin() + _index, newTrack);
+    TrackGraphicItem *tgi = new TrackGraphicItem(timelineGraphic->scene, this, _track);
 
+    timelineGraphic->scene->addItem(tgi);
     tcw->show();
-    trackCount = trackList->size();
+
+    trackCount += 1;
+
     updateViewports();
     updateHeights();
+
+
 }
 
-void Timeline::addRegion(int _trackIndex) {
-
-    RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, QColor("#42f59b"), this);
-    rgi->setHScaleFactor(hZoomFactor);
+void Timeline::addRegion(Region *_region) {
+qDebug() << timelineGraphic->scene->items().count();
+    RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, QColor("#42f59b"), this, _region);
     timelineGraphic->scene->addItem(rgi);
-
-    Region *newRegion = new Region(_trackIndex, this, rgi);
-    regionList->insert(regionList->begin(), newRegion);
-    regionCount = regionList->size();
 
     this->setZRegionValues(barCount * barLength);
 }
 
 
-void Timeline::removeTrack(int _index) {
-    trackCount = trackCount - 1;
+void Timeline::removeRegion(Region *_region) {
 
 }
 
@@ -229,9 +218,9 @@ void Timeline::setRegionTrack(int _oldTrackIndex, int _newTrackIndex) {
 
 
 void Timeline::setZRegionValues(int _zValue) {
-    for (int i = 0; i < regionCount; i++) {
-        regionList->at(i)->getRegionGraphicItem()->setZValue(i + _zValue + 1);
-    }
+    //for (int i = 0; i < regionCount; i++) {
+    //    regionList->at(i)->getRegionGraphicItem()->setZValue(i + _zValue + 1);
+    //}
     ghostPlayheadGraphic->setZValue((regionCount + _zValue) + 5);
     playheadGraphic->setZValue((regionCount + _zValue) + 5);
 }
@@ -240,3 +229,7 @@ void Timeline::setPlayheadLocation(float _location) {
     playheadGraphic->setGridLocation(_location);
 }
 
+
+QGraphicsScene* Timeline::getScene() {
+    return trackRegionsScene;
+}

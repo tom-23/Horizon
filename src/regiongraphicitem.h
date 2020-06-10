@@ -9,16 +9,17 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 
+#include "region.h"
+
 class Timeline;
+class Region;
 
 
 class RegionGraphicItem : public QGraphicsItem
 {
 public:
-    RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline);
-    RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline);
-
-    void setHScaleFactor(int _value);
+    RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region);
+    RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region);
     float getGridLocation();
     void setGridLocation(float _value);
 
@@ -47,9 +48,9 @@ protected:
     bool pressed = false;
     QPointF oldPos, oldMousePos;
     int oldTrackIndex;
-    int hScaleFactor;
     float gridLocation;
     QGraphicsScene *scene;
+    Region *region;
     // QGraphicsItem interface
 
     Timeline *timeline;

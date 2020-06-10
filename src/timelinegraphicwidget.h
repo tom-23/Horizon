@@ -55,7 +55,7 @@ public:
     int getBarAmount();
 
     void setColorTheme(QColor primaryLinesColor, QColor secondaryLinesColor);
-    QColor getPrimaryColor();
+
 
 
 private:

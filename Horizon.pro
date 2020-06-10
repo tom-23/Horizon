@@ -22,7 +22,7 @@ SOURCES += \
     src/aboutdialog.cpp \
     src/arrangewidget.cpp \
     src/audiomanager.cpp \
-    src/audioregionmanager.cpp \
+    src/audioregion.cpp \
     src/colorpickerwidget.cpp \
     src/debug.cpp \
     src/effectwidget.cpp \
@@ -34,6 +34,7 @@ SOURCES += \
     src/librarywidget.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/metronome.cpp \
     src/playhead.cpp \
     src/region.cpp \
     src/regiongraphicitem.cpp \
@@ -43,14 +44,14 @@ SOURCES += \
     src/timelinegraphicwidget.cpp \
     src/timer.cpp \
     src/track.cpp \
-    src/trackaudio.cpp \
-    src/trackcontrolswidget.cpp
+    src/trackcontrolswidget.cpp \
+    src/trackgraphicitem.cpp
 
 HEADERS += \
     src/aboutdialog.h \
     src/arrangewidget.h \
     src/audiomanager.h \
-    src/audioregionmanager.h \
+    src/audioregion.h \
     src/audioutil.h \
     src/colorpickerwidget.h \
     src/debug.h \
@@ -62,6 +63,7 @@ HEADERS += \
     src/infowidget.h \
     src/librarywidget.h \
     src/mainwindow.h \
+    src/metronome.h \
     src/playhead.h \
     src/region.h \
     src/regiongraphicitem.h \
@@ -71,8 +73,8 @@ HEADERS += \
     src/timelinegraphicwidget.h \
     src/timer.h \
     src/track.h \
-    src/trackaudio.h \
-    src/trackcontrolswidget.h
+    src/trackcontrolswidget.h \
+    src/trackgraphicitem.h
 
 FORMS += \
     src/aboutdialog.ui \

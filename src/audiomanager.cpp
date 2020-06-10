@@ -1,11 +1,14 @@
 #include "audiomanager.h"
 #include "debug.h"
+#include "metronome.h"
 
-AudioManager::AudioManager()
+AudioManager::AudioManager(Timeline *_timeline)
 {
 
+    timeline = _timeline;
     stopTime = 0.0;
-    currentGridTime = 1.0;
+    currentGridTime = 0.0;
+    scheduled = false;
     debug::out(3, "Starting audio engine...");
 
     const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
@@ -14,24 +17,15 @@ AudioManager::AudioManager()
     outputNode = std::make_shared<GainNode>();
     outputNode->gain()->setValue(1.0f);
 
+
     context->connect(context->device(), outputNode);
-
-    TrackAudio *tn = new TrackAudio(context, outputNode, 0);
-    AudioRegionManager *arm = new AudioRegionManager(context, tn->getTrackNode(), 0, 0);
-
-    debug::out(3, "Loading metronome samples...");
-
-    metPrimaryBus = MakeBusFromSampleFile("../Resources/core/metronome/Primary.wav");
-    metPrimaryBus = MakeBusFromSampleFile("../Resources/core/metronome/Secondary.wav");
+    trackList = new std::vector<class Track *>();
+    selectedTrackList = new std::vector<class Track *>();
 
 
-    metPrimaryNode = std::make_shared<SampledAudioNode>();
-    {
-        ContextRenderLock r(context.get(), "met_primary");
-        metPrimaryNode->setBus(r, metPrimaryBus);
-    }
+    debug::out(3, "Loading metronome...");
 
-    context->connect(outputNode, metPrimaryNode);
+    metronome = new Metronome(context, outputNode, this);
 
 
     debug::out(3, "Starting event loop...");
@@ -51,7 +45,9 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
 
 
 void AudioManager::play() {
+
     startTime = context->currentTime();
+    updateMetSchedule();
     eventTimer->start(true);
 
 
@@ -70,7 +66,47 @@ void AudioManager::stop() {
     currentGridTime = 0.0;
 }
 
+void AudioManager::setLookAhead(double _value) {
+    lookAhead = _value;
+}
+
+void AudioManager::updateMetSchedule() {
+    metronome->schedulePrimary(floor(currentGridTime) + 1);
+    double divGrid = 1.00 / division;
+    std::vector<double> scheduleQueue;
+    for (int i = 1; i < division; i++) {
+        scheduleQueue.insert(scheduleQueue.end(), (floor(currentGridTime) + 1) + (i * divGrid));
+
+    }
+
+    metronome->scheduleSecondary(scheduleQueue);
+
+}
 void AudioManager::updateSchedule() {
+    double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
+    if (toNearestBar < lookAhead || currentGridTime == 0) {
+        //metPrimaryNode->start(floor(currentGridTime));
+        //debug::out(3, "Buffered Primary Met");
+        if (toNearestBar < 0.01) {
+            //qDebug() << "CALLED";
+            if (scheduled == true) {
+                //qDebug() << "Boop!";
+                scheduled = false;
+            }
+
+        } else {
+            if (scheduled == false) {
+                updateMetSchedule();
+                debug::out(3, "Scheduling...");
+                scheduled = true;
+            }
+        }
+
+    }
+
+
+    metronome->update();
+    //qDebug() << (floor(currentGridTime) - 0.001) + 1.0;
 
 }
 
@@ -79,10 +115,8 @@ void AudioManager::eventLoop() {
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
     //qDebug() << "CURRENT TIME" << relativeTime;
     //qDebug() << "GRID TIME" << currentGridTime;
-    if ((floor(currentGridTime) - 0.8) < currentGridTime || (floor(currentGridTime) - 0.8) > currentGridTime) {
-        //metPrimaryNode->start(floor(currentGridTime));
-        //debug::out(3, "Buffered Primary Met");
-    }
+
+    updateSchedule();
 }
 
 void AudioManager::setDivision(int _division) {
@@ -98,4 +132,88 @@ void AudioManager::setBPM(double _beatsPerMinuet) {
 
 float AudioManager::getCurrentGridTime() {
     return currentGridTime;
+}
+
+double AudioManager::gridTimeToContextSeconds(float _gridTime) {
+    double secondsTime = ((_gridTime - 1.0) * beatLength) * division;
+    return startTime + secondsTime;
+}
+
+Track* AudioManager::addTrack() {
+    debug::out(3, "Creating new track...");
+    Track *newTrack = new Track(timeline, this);
+    debug::out(3, "Pushing to list...");
+    trackList->push_back(newTrack);
+    newTrack->setIndex(trackList->size() - 1);
+
+    debug::out(3, "Dispatching to UI...");
+    return newTrack;
+}
+
+Track* AudioManager::getTrackByIndex(int index) {
+    return trackList->at(index);
+}
+
+Track* AudioManager::getSelectedTrack(int index) {
+    return selectedTrackList->at(index);
+}
+
+std::vector<class Track*>* AudioManager::getSelectedTracks() {
+    return selectedTrackList;
+}
+
+std::shared_ptr<AudioContext>* AudioManager::getAudioContext() {
+    return &context;
+}
+
+void AudioManager::setTrackSelected(Track *track, bool selected) {
+    if (selected == true) {
+        debug::out(3, "Pushing track to vector...");
+        for (int i = 0; i < int(selectedTrackList->size()); i++ ) {
+            setTrackSelected(selectedTrackList->at(i), false);
+        }
+        selectedTrackList->clear();
+        selectedTrackList->push_back(track);
+        debug::out(3, "Setting as selected...");
+        track->setSelected(true);
+    } else {
+        auto iterator = std::find(selectedTrackList->begin(), selectedTrackList->end(), track);
+
+        if (iterator != selectedTrackList->end()) {
+            int index = std::distance(selectedTrackList->begin(), iterator);
+            selectedTrackList->erase(selectedTrackList->begin() + index);
+            track->setSelected(false);
+        }
+    }
+}
+
+void AudioManager::setTrackRangeSelected(Track *firstTrack, Track *lastTrack) {
+
+    for (int i = 0; i < int(selectedTrackList->size()); i++ ) {
+        setTrackSelected(selectedTrackList->at(i), false);
+    }
+    selectedTrackList->clear();
+
+    auto firstIterator = std::find(trackList->begin(), trackList->end(), firstTrack);
+    auto lastIterator = std::find(trackList->begin(), trackList->end(), lastTrack);
+
+    int firstIndex;
+    int lastIndex;
+
+    if (firstIterator != trackList->end()) {
+        firstIndex = std::distance(trackList->begin(), firstIterator);
+    } else {
+        return;
+    }
+
+    if (lastIterator != trackList->end()) {
+        lastIndex = std::distance(trackList->begin(), lastIterator);
+    } else {
+        return;
+    }
+
+    for (int i = firstIndex; i < lastIndex; i++) {
+        selectedTrackList->push_back(trackList->at(i));
+        trackList->at(i)->setSelected(true);
+    }
 }

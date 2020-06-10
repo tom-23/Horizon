@@ -26,7 +26,9 @@ bool GraphicsView::viewportEvent(QEvent *event) {
         case QEvent::MouseMove: {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
             timeline->ghostPlayheadGraphic->setLocation(mapToScene(mouseEvent->pos()).x());
-
+        }
+         case QEvent::Resize: {
+            timeline->updateHeights();
         }
         default:
 

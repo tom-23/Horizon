@@ -1,7 +1,7 @@
 #include "regiongraphicitem.h"
 #include "timeline.h"
 
-RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline)
+RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region)
 {
     setFlags(ItemIsMovable);
     color = _color;
@@ -15,14 +15,14 @@ RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene 
     pen = QPen(outlineColor, penWidth);
     pen.setCapStyle(Qt::RoundCap);
     length = _length;
-    hScaleFactor = 100;
     height = 60;
     oldPos = scenePos();
     scene = _scene;
+    region = _region;
 }
 
 
-RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline) : QGraphicsItem()
+RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region) : QGraphicsItem()
 {
     setFlags(ItemIsMovable);
     color = _color;
@@ -35,19 +35,20 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     brush = QBrush(color);
     pen = QPen(outlineColor, 1);
     pen.setCapStyle(Qt::RoundCap);
-    hScaleFactor = 100;
     length = 1;
     height = 56;
     oldPos = pos();
     scene = _scene;
+    region = _region;
     timeline = _timeline;
     gridLocation = 1;
+    setY((region->getTrack()->getIndex() * 60) + 1);
 }
 
 
 QRectF RegionGraphicItem::boundingRect() const
 {
-    return QRectF(0, 1, length * hScaleFactor, height);
+    return QRectF(0, 1, length * timeline->hZoomFactor, height);
 }
 
 void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -63,6 +64,10 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     QString text("Audio Region #1");
     int heightFont = fontMetrics.boundingRect(text).height();
     painter->drawText(5, heightFont + 3, text);
+    if (pressed == false ) {
+        setX((gridLocation - 1) * timeline->hZoomFactor);
+    }
+
 }
 
 
@@ -123,18 +128,12 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         // Code below handles the X movement of the region:
 
-        gridLocation = (scenePos().x() / hScaleFactor) + 1;
+        gridLocation = (scenePos().x() / timeline->hZoomFactor) + 1;
 
         int dx = (newPos - oldMousePos).x();
         setX(oldPos.x() + dx);
         //        setY(newPos.y());
     }
-}
-
-void RegionGraphicItem::setHScaleFactor(int _value) {
-    hScaleFactor = _value;
-    setX((gridLocation - 1) * hScaleFactor);
-
 }
 
 float RegionGraphicItem::getGridLocation() {

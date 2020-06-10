@@ -1,5 +1,6 @@
 #ifndef TRACK_H
 #define TRACK_H
+
 #include "timeline.h"
 #include <QWidget>
 #include <QGraphicsScene>
@@ -15,26 +16,60 @@
 #include <QPoint>
 #include <iostream>
 
+#include "region.h"
+#include "audioregion.h"
+#include "audiomanager.h"
+#include "trackgraphicitem.h"
 
-class Track : public std::vector<Track>
+using namespace lab;
+
+class Region;
+class AudioRegion;
+class AudioManager;
+class TrackGraphicItem;
+class TrackControlsWidget;
+
+class Track
 {
 public:
-    Track();
-    Track(TrackControlsWidget *controlsWidget, TimelineGraphicWidget *_timeLineWidget, int _index);
-    QGraphicsLineItem* seperator;
-    QGraphicsRectItem* selectionRect;
+    Track(Timeline *_timeLine, AudioManager *_audioMan);
 
-    void setIndex(int _value);
     void setSelected(bool _selected);
+    bool getSelected();
 
-    void setColorTheme(QColor primaryColor);
+    void setTrackControlsWidget(TrackControlsWidget *_tcw);
+    void setTrackGraphicsItem(TrackGraphicItem *_tgi);
+
+    // void setColorTheme(QColor primaryColor);
     void setHScaleFactor(int _hScaleFactor);
 
-private:
-    int index;
-    bool selected;
+    AudioRegion* addAudioRegion();
+    void setRegion(Region *_region);
 
-    TimelineGraphicWidget *timeLineWidget;
+    int getIndex();
+    void setIndex(int _index);
+
+    // void removeRegion(Region *_region);
+
+    std::shared_ptr<AudioContext>* getAudioContext();
+    std::shared_ptr<GainNode>* getTrackNode();
+    AudioManager* getAudioManager();
+
+private:
+    bool selected;
+    int index;
+
+
+    std::vector<class Region *> *regionList;
+
+    std::shared_ptr<AudioContext> *context;
+    std::shared_ptr<GainNode> *trackNode;
+    AudioManager *audioMan;
+
+    Timeline *timeline;
+
+    TrackControlsWidget *trackControlWidget;
+    TrackGraphicItem *trackGraphicItem;
 
 };
 

@@ -1,17 +1,23 @@
 #include "region.h"
-#include "timeline.h"
 
-Region::Region(int _trackIndex, Timeline *timeline, RegionGraphicItem *_regionGraphicsItem)
+Region::Region(Timeline *_timeline, Track *_track)
 {
-    trackIndex = _trackIndex;
-    regionGraphicsItem = _regionGraphicsItem;
+    timeline = _timeline;
+    track = _track;
 }
 
-int Region::getTrackIndex() {
-    return trackIndex;
+Track* Region::getTrack() {
+    return track;
+}
+
+Timeline* Region::getTimeline() {
+    return timeline;
 }
 
 RegionGraphicItem* Region::getRegionGraphicItem() {
     return regionGraphicsItem;
 }
 
+void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
+    regionGraphicsItem = rgi;
+}

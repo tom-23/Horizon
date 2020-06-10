@@ -30,6 +30,8 @@ public:
 
     ArrangeWidget* ar;
 
+    void updateIconThemes();
+
 
 private slots:
 
