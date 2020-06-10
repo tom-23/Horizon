@@ -1,6 +1,7 @@
 <img src="http://tom-butcher.ml:2233/git/tom/Horizon/raw/branch/master/main_brand.png" width="500"></img>
 #
 A digital audio workstation written in c++ and using the Labsound library for audio playback.
+
 ## Getting started
 First clone the git repository to a directory with the following git command:
 ```
@@ -25,3 +26,6 @@ Finally, I would open the project up in QT Creator to start developing or follow
 - [ ] MIDI / Software instruments
 - [ ] Audio Effects (Reverb etc...)
 - [ ] The 'node' editor
+
+Trello:
+https://trello.com/b/yox3T1Iv/horizon-daw
