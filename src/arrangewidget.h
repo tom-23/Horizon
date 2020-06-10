@@ -7,6 +7,7 @@
 #include "timeline.h"
 #include "audiomanager.h"
 
+
 namespace Ui {
 class ArrangeWidget;
 }

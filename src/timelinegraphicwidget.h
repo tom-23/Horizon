@@ -17,8 +17,6 @@
 #include <QGraphicsItemGroup>
 #include <iostream>
 
-
-#include "regiongraphicitem.h"
 #include "graphicsview.h"
 
 

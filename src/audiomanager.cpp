@@ -1,6 +1,5 @@
 #include "audiomanager.h"
-#include "debug.h"
-#include "metronome.h"
+
 
 AudioManager::AudioManager(Timeline *_timeline)
 {
@@ -162,8 +161,12 @@ std::vector<class Track*>* AudioManager::getSelectedTracks() {
     return selectedTrackList;
 }
 
-std::shared_ptr<AudioContext>* AudioManager::getAudioContext() {
-    return &context;
+std::shared_ptr<AudioContext> AudioManager::getAudioContext() {
+    return context;
+}
+
+std::shared_ptr<GainNode> AudioManager::getOutputNode() {
+    return outputNode;
 }
 
 void AudioManager::setTrackSelected(Track *track, bool selected) {
@@ -216,4 +219,8 @@ void AudioManager::setTrackRangeSelected(Track *firstTrack, Track *lastTrack) {
         selectedTrackList->push_back(trackList->at(i));
         trackList->at(i)->setSelected(true);
     }
+}
+
+int AudioManager::getTrackListCount() {
+    return trackList->size();
 }

@@ -4,7 +4,15 @@ Region::Region(Timeline *_timeline, Track *_track)
 {
     timeline = _timeline;
     track = _track;
+    context = track->getAudioContext();
+    outputNode = std::make_shared<GainNode>();
+    outputNode->gain()->setValue(1.0f);
+    context->connect(track->getTrackInputNode(), outputNode);
 }
+
+//Region::~Region() {
+//    context->disconnect(track->getTrackOutputNode(), outputNode);
+//}
 
 Track* Region::getTrack() {
     return track;
@@ -21,3 +29,12 @@ RegionGraphicItem* Region::getRegionGraphicItem() {
 void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
     regionGraphicsItem = rgi;
 }
+
+void Region::setTrack(Track *_track) {
+    if (track != nullptr) {
+        context->disconnect(track->getTrackOutputNode(), outputNode);
+    }
+    context->connect(_track->getTrackOutputNode(), outputNode);
+    track = _track;
+}
+

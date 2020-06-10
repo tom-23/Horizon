@@ -8,12 +8,15 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
+#include <QApplication>
 
-#include "region.h"
+
+
+//class Region;
 
 class Timeline;
-class Region;
 
+#include "timeline.h"
 
 class RegionGraphicItem : public QGraphicsItem
 {

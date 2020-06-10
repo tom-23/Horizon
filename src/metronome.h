@@ -1,7 +1,12 @@
 #ifndef METRONOME_H
 #define METRONOME_H
 
+class AudioManager;
+
 #include "audiomanager.h"
+
+using namespace lab;
+
 
 class Metronome
 {

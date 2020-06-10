@@ -15,18 +15,23 @@
 
 #include "graphicsscene.h"
 #include "graphicsview.h"
+
 #include "trackcontrolswidget.h"
 #include "trackgraphicitem.h"
-#include "track.h"
 
-#include "region.h"
+#include "regiongraphicitem.h"
+
+#include "audiomanager.h"
 #include "thememanager.h"
+
 #include "playhead.h"
 #include "ghostplayhead.h"
 
-class GraphicsView;
+//#include "debug.h"
+
 class Track;
-class Region;
+//class Region;
+class ThemeManager;
 
 class Timeline
 {

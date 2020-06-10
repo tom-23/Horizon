@@ -1,5 +1,5 @@
 #include "playhead.h"
-#include "debug.h"
+
 
 Playhead::Playhead(QGraphicsView *_view) : QGraphicsItem()
 {

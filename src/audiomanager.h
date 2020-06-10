@@ -1,12 +1,12 @@
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
+
 #include "LabSound/LabSound.h"
-#include "audioregion.h"
-#include "region.h"
-#include "track.h"
-#include "audioutil.h"
-#include "timer.h"
+
+
+
+
 #include <iostream>
 #include <stdio.h>
 #include <QtGui>
@@ -14,12 +14,27 @@
 #include <ratio>
 #include <thread>
 
-#include "timeline.h"
-
 
 class Metronome;
-class AudioTrackManager;
-class Track;
+
+#include "metronome.h"
+
+#include "track.h"
+#include "timeline.h"
+#include "region.h"
+//#include "audioregion.h"
+
+#include "audioutil.h"
+#include "timer.h"
+
+#include "debug.h"
+
+
+//class AudioTrackManager;
+//class Track;
+class Region;
+class AudioRegion;
+
 
 
 using namespace lab;
@@ -57,8 +72,10 @@ public:
     void setTrackSelected(Track *track, bool selected);
     void setTrackRangeSelected(Track *firstTrack, Track *lastTrack);
 
-    std::shared_ptr<AudioContext>* getAudioContext();
+    int getTrackListCount();
 
+    std::shared_ptr<AudioContext> getAudioContext();
+    std::shared_ptr<GainNode> getOutputNode();
 
     std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
 

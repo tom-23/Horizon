@@ -1,7 +1,7 @@
 #ifndef AUDIOUTIL_H
 #define AUDIOUTIL_H
 
-#include "LabSound/LabSound.h"
+#include "audiomanager.h"
 #include <iostream>
 
 

@@ -1,5 +1,5 @@
 #include "timeline.h"
-#include "debug.h"
+
 #include <QScrollBar>
 #include <QVBoxLayout>
 

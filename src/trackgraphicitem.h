@@ -6,10 +6,11 @@
 #include <QPen>
 #include <QPainter>
 #include <QDebug>
-#include "timeline.h"
-#include "track.h"
+
+#include "audiomanager.h"
 
 class Track;
+class Timeline;
 
 
 class TrackGraphicItem : public QGraphicsItem

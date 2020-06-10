@@ -1,5 +1,4 @@
 #include "regiongraphicitem.h"
-#include "timeline.h"
 
 RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region)
 {
@@ -91,6 +90,9 @@ void RegionGraphicItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "Press";
     pressed = true;
+    QCursor cursor(Qt::BlankCursor);
+    QApplication::setOverrideCursor(cursor);
+    QApplication::changeOverrideCursor(cursor);
     oldMousePos = event->scenePos();
     oldPos = scenePos();
     int heightDiff = height + 4;
@@ -102,7 +104,7 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if (pressed)
     {
-        qDebug() << "Mouse Location:" << event->pos().x();
+        // qDebug() << "Mouse Location:" << event->pos().x();
         // Code Below handles the Y movement of the region:
 
         QPointF newPos = event->scenePos();
@@ -111,22 +113,28 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         int heightDiff = height + 4;
 
+        int yValue;
+
         if (abs(yDiff) > heightDiff)
         {
 
 
             newPos.setY(oldPos.y() + (int)(yDiff / heightDiff) * heightDiff); //*((int)(yDiff/30))>0?1:0);
-            setY(newPos.y());
-            //qDebug() << "new";
+            yValue = newPos.y();
             //                tempOldPos.setY(newPos.y() - oldPos.y());
         }
         else
         {
-            setY(oldPos.y());
-            //qDebug() << "old";
+            yValue = oldPos.y();
         }
 
         // Code below handles the X movement of the region:
+
+        int newTrackIndex = yValue / heightDiff;
+
+        if (newTrackIndex <= (region->getTrack()->getAudioManager()->getTrackListCount() - 1)) {
+            setY(yValue);
+        }
 
         gridLocation = (scenePos().x() / timeline->hZoomFactor) + 1;
 
@@ -147,17 +155,17 @@ void RegionGraphicItem::setGridLocation(float _value) {
 
 void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Release";
     pressed = false;
+    QCursor cursor(Qt::ArrowCursor);
+    QApplication::setOverrideCursor(cursor);
+    QApplication::changeOverrideCursor(cursor);
     oldMousePos = event->scenePos();
     oldPos = scenePos();
     int heightDiff = height + 4;
     int newTrackIndex = scenePos().y() / heightDiff;
 
     if (newTrackIndex != oldTrackIndex) {
-
-        qDebug() << "Track Change!";
-        timeline->setRegionTrack(oldTrackIndex, newTrackIndex);
+        region->getTrack()->switchRegion(region, region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex));
 
     }
 }
