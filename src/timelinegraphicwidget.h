@@ -17,8 +17,11 @@
 #include <QGraphicsItemGroup>
 #include <iostream>
 
-#include "graphicsview.h"
+//#include "graphicsview.h"
+//#include "timeline.h"
 
+class Timeline;
+class GraphicsView;
 
 using namespace std;
 

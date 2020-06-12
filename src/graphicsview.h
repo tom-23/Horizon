@@ -7,7 +7,10 @@
 #include <iostream>
 #include <QDebug>
 #include <QTouchEvent>
+
 class Timeline;
+
+#include "timeline.h"
 
 class GraphicsView : public QGraphicsView
 {

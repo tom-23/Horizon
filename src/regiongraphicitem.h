@@ -2,21 +2,17 @@
 #define REGIONGRAPHICITEM_H
 
 #include <QGraphicsItem>
+#include <QColor>
 #include <QBrush>
 #include <QPen>
-#include <QPainter>
-#include <QDebug>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsScene>
-#include <QApplication>
 
 
-
-//class Region;
 
 class Timeline;
-
+class Region;
 #include "timeline.h"
+#include "audiomanager.h"
+
 
 class RegionGraphicItem : public QGraphicsItem
 {
@@ -25,7 +21,7 @@ public:
     RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region);
     float getGridLocation();
     void setGridLocation(float _value);
-
+    void setGridLength(float _value);
 
 
 
@@ -47,7 +43,8 @@ protected:
     float thresholdShadow;
     QBrush brush;
     QPen pen;
-    int length, height;
+    int height;
+    float length;
     bool pressed = false;
     QPointF oldPos, oldMousePos;
     int oldTrackIndex;

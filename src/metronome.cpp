@@ -27,7 +27,7 @@ Metronome::Metronome(std::shared_ptr<AudioContext> _context, std::shared_ptr<Gai
 
 
 void Metronome::schedulePrimary(double when) {
-    metPrimaryNode->start(audioMan->gridTimeToContextSeconds(when));
+    //metPrimaryNode->start(audioMan->gridTimeToContextSeconds(when));
 }
 
 void Metronome::scheduleSecondary(std::vector<double> _scheduleQueue) {
@@ -48,7 +48,7 @@ void Metronome::update() {
         if (timeTillClick < 0.1) {
             if (nextSchedule == true) {
                 double time = scheduleQueueTimes.at(0);
-                metSecondaryNode->start(time);
+                //metSecondaryNode->start(time);
                 scheduleQueueTimes.erase(scheduleQueueTimes.begin());
                 nextSchedule = false;
             }

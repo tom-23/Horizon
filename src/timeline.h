@@ -9,29 +9,42 @@
 #include <iostream>
 #include <vector>
 #include <QTimer>
+#include <QGraphicsItem>
+#include <QBrush>
+#include <QPen>
+#include <QPainter>
+#include <QDebug>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsScene>
+#include <QApplication>
 
-#include "timelinegraphicwidget.h"
-#include "rulergraphicwidget.h"
+
 
 #include "graphicsscene.h"
+
+class GraphicsView;
 #include "graphicsview.h"
-
-#include "trackcontrolswidget.h"
-#include "trackgraphicitem.h"
-
-#include "regiongraphicitem.h"
-
-#include "audiomanager.h"
-#include "thememanager.h"
 
 #include "playhead.h"
 #include "ghostplayhead.h"
 
-//#include "debug.h"
-
-class Track;
-//class Region;
+class RegionGraphicItem;
+#include "regiongraphicitem.h"
+class RulerGraphicWidget;
+#include "rulergraphicwidget.h"
+class TrackGraphicItem;
+#include "trackgraphicitem.h"
+class TrackControlsWidget;
+#include "trackcontrolswidget.h"
+class TimelineGraphicWidget;
+#include "timelinegraphicwidget.h"
 class ThemeManager;
+#include "thememanager.h"
+class AudioManager;
+class Track;
+class Region;
+class Debug;
+#include "debug.h"
 
 class Timeline
 {

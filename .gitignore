@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+
+lib/LabSound/CMakeFiles
+lib/LabSound/.cmake

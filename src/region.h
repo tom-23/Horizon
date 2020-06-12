@@ -1,16 +1,29 @@
 #ifndef REGION_H
 #define REGION_H
 
-#include <QGraphicsItem>
+//#include <QGraphicsItem>
 
-class Timeline;
-class Track;
-class RegionGraphicItem;
+
+#include "LabSound/LabSound.h"
+//#include "audioregion.h"
+
+
+//class Timeline;
+//class Track;
+//class Region;
+//class RegionGraphicItem;
 //class AudioManager;
 
+//#include "track.h"
 
-#include "audiomanager.h"
-#include "regiongraphicitem.h"
+class AudioManager;
+//#include "audiomanager.h"
+class Track;
+
+
+class Timeline;
+class RegionGraphicItem;
+//#include "regiongraphicitem.h"
 
 using namespace lab;
 
@@ -20,15 +33,21 @@ public:
     Region(Timeline *_timeline, Track *_track);
     //~Region();
 
-    Track* getTrack();
-    Timeline* getTimeline();
-    RegionGraphicItem* getRegionGraphicItem();
-    void setRegionGraphicItem(RegionGraphicItem *rgi);
-    void setTrack(Track *_track);
+    virtual Track* getTrack();
+    virtual Timeline* getTimeline();
+    virtual RegionGraphicItem* getRegionGraphicItem();
+    virtual void setRegionGraphicItem(RegionGraphicItem *rgi);
+    virtual void setTrack(Track *_track);
 
-    //void disconnectTrack();
+    //virtual void disconnectTrack();
 
-private:
+    virtual void setGridLocation(double time);
+    virtual double getGridLocation();
+
+    virtual void setGridLength(double value);
+    virtual double getGridLength();
+
+protected:
 
 
 
@@ -39,7 +58,11 @@ private:
     std::shared_ptr<AudioContext> context;
     std::shared_ptr<GainNode> outputNode;
 
+    double gridLocation;
+    double length;
 
 };
+
+#include "track.h"
 
 #endif // REGION_H

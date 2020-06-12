@@ -1,6 +1,6 @@
 #include "graphicsview.h"
 #include <QDebug>
-#include "timeline.h"
+//#include "timeline.h"
 
 GraphicsView::GraphicsView(QGraphicsScene *_scene, QWidget *parent, Timeline *_timeline):QGraphicsView(_scene, parent), totalScaleFactor(1) {
     viewport()->setAttribute(Qt::WA_AcceptTouchEvents);

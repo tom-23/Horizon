@@ -3,8 +3,8 @@
 
 #include <thread>
 #include <chrono>
-#include "LabSound/LabSound.h"
 
+class AudioManager;
 
 class Timer
 {

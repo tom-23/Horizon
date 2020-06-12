@@ -2,11 +2,15 @@
 #define ARRANGEWIDGET_H
 
 #include <QWidget>
-#include "trackcontrolswidget.h"
+//#include "trackcontrolswidget.h"
 
-#include "timeline.h"
+//#include "audioregion.h"
+//#include "region.h"
+//#include "track.h"
 #include "audiomanager.h"
+#include "timeline.h"
 
+class Track;
 
 namespace Ui {
 class ArrangeWidget;

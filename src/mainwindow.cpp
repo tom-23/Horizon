@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     updateIconThemes();
 
     audioMan = new AudioManager(ar->tl);
-    audioMan->setBPM(126.0);
+    audioMan->setBPM(140.0);
     audioMan->setDivision(4);
     audioMan->setLookAhead(0.05);
 
@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::uiUpdate() {
     ar->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
+    //qDebug() << audioMan->getCurrentGridTime();
 }
 
 MainWindow::~MainWindow()
@@ -60,8 +61,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_playButton_clicked()
 {
-    uiTimer->start(30);
-    audioMan->play();
+    if (audioMan->isPlaying == false) {
+        uiTimer->start(30);
+        audioMan->play();
+    } else {
+        uiTimer->stop();
+        audioMan->pause();
+    }
+
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -81,8 +88,9 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_stopButton_clicked()
 {
-    uiTimer->stop();
     audioMan->stop();
+    uiTimer->stop();
+    ar->tl->setPlayheadLocation(0.0);
 }
 
 void MainWindow::updateIconThemes() {

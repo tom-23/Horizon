@@ -6,6 +6,7 @@ AudioManager::AudioManager(Timeline *_timeline)
 
     timeline = _timeline;
     stopTime = 0.0;
+    isPlaying = false;
     currentGridTime = 0.0;
     scheduled = false;
     debug::out(3, "Starting audio engine...");
@@ -44,23 +45,32 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
 
 
 void AudioManager::play() {
-
-    startTime = context->currentTime();
-    updateMetSchedule();
-    eventTimer->start(true);
-
-
-
+    if (isPlaying == false) {
+        startTime = context->currentTime();
+        updateMetSchedule();
+        scheduleTracks();
+        isPlaying = true;
+        eventTimer->start(true);
+    }
 }
 
 void AudioManager::pause() {
-    eventTimer->stop();
-    stopTime = currentGridTime;
+    if (isPlaying == true) {
+        isPlaying = false;
+        cancelTrackPlayback();
+        eventTimer->stop();
+        stopTime = getCurrentRelativeTime();
+    }
 }
 
 
 void AudioManager::stop() {
-    eventTimer->stop();
+
+    if (isPlaying == true) {
+        isPlaying = false;
+        cancelTrackPlayback();
+        eventTimer->stop();
+    }
     stopTime = 0.0;
     currentGridTime = 0.0;
 }
@@ -82,6 +92,7 @@ void AudioManager::updateMetSchedule() {
 
 }
 void AudioManager::updateSchedule() {
+
     double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
     if (toNearestBar < lookAhead || currentGridTime == 0) {
         //metPrimaryNode->start(floor(currentGridTime));
@@ -111,6 +122,8 @@ void AudioManager::updateSchedule() {
 
 void AudioManager::eventLoop() {
     float relativeTime = (context->currentTime() - startTime) + stopTime;
+    //qDebug() << "Rel time" << relativeTime;
+    //qDebug() << "Stop time" << stopTime;
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
     //qDebug() << "CURRENT TIME" << relativeTime;
     //qDebug() << "GRID TIME" << currentGridTime;
@@ -136,6 +149,21 @@ float AudioManager::getCurrentGridTime() {
 double AudioManager::gridTimeToContextSeconds(float _gridTime) {
     double secondsTime = ((_gridTime - 1.0) * beatLength) * division;
     return startTime + secondsTime;
+}
+
+double AudioManager::gridTimeToSeconds(float _gridTime) {
+    double secondsTime = ((_gridTime - 1.0) * beatLength) * division;
+    return secondsTime;
+}
+
+float AudioManager::contextSecondsToGridTime(double _contextSeconds) {
+    double gridTime = ((_contextSeconds / beatLength) / division) + 1.0;
+    return gridTime;
+}
+
+float AudioManager::getCurrentRelativeTime() {
+    float relativeTime = (context->currentTime() - startTime) + stopTime;
+    return relativeTime;
 }
 
 Track* AudioManager::addTrack() {
@@ -223,4 +251,22 @@ void AudioManager::setTrackRangeSelected(Track *firstTrack, Track *lastTrack) {
 
 int AudioManager::getTrackListCount() {
     return trackList->size();
+}
+
+void AudioManager::scheduleTracks() {
+    for (int i = 0; i < int(trackList->size()); i++) {
+        trackList->at(i)->scheduleAudioRegions();
+        debug::out(3, "Scheduled a track...");
+    }
+}
+
+void AudioManager::cancelTrackPlayback() {
+    for (int i = 0; i < int(trackList->size()); i++) {
+        trackList->at(i)->cancelAudioRegions();
+        debug::out(3, "Cancelling track...");
+    }
+}
+
+void AudioManager::setCurrentGridTime(float _value) {
+    currentGridTime = _value;
 }

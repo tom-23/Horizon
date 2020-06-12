@@ -1,5 +1,4 @@
 #include "track.h"
-#include "trackgraphicitem.h"
 
 Track::Track(Timeline *_timeLine, AudioManager *_audioMan) {
 
@@ -35,6 +34,7 @@ void Track::setHScaleFactor(int _hScaleFactor) {
 }
 
 AudioRegion* Track::addAudioRegion() {
+
     AudioRegion *audioRegion = new AudioRegion(timeline, this);
     regionList->push_back(audioRegion);
     return audioRegion;
@@ -86,6 +86,31 @@ int Track::getIndexByRegion(Region *region) {
         return -1;
     }
 
+}
+
+std::shared_ptr<GainNode> Track::getTrackInputNode() {
+    return trackInputNode;
+}
+
+std::shared_ptr<GainNode> Track::getTrackOutputNode() {
+    return trackOutputNode;
+}
+
+void Track::scheduleAudioRegions() {
+    for (int i = 0; i < int(regionList->size()); i++) {
+        AudioRegion* audioRegion = dynamic_cast<AudioRegion*>(regionList->at(i));
+        //double contextLocation = audioMan->gridTimeToContextSeconds(audioRegion->getGridLocation()) - audioMan->getCurrentRelativeTime();
+        audioRegion->schedule();
+        debug::out(3, "Scheduled a region...");
+    }
+}
+
+void Track::cancelAudioRegions() {
+    for (int i = 0; i < int(regionList->size()); i++) {
+        AudioRegion* audioRegion = dynamic_cast<AudioRegion*>(regionList->at(i));
+        audioRegion->cancelSchedule();
+        debug::out(3, "Cancelling a region...");
+    }
 }
 
 //void Track::removeRegion(int position) {

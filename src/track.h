@@ -17,22 +17,23 @@
 #include <iostream>
 
 //#include "audioregion.h"
+//class Region;
+//class AudioRegion;
 
-
-
-
-
-
-
-
-class Region;
-class AudioRegion;
 class AudioManager;
-class TrackGraphicItem;
+class Region;
+#include "audiomanager.h"
+
+class AudioRegion;
+
 class TrackControlsWidget;
+class TrackGraphicItem;
 class Timeline;
 
-#include "audiomanager.h"
+//#include "trackcontrolswidget.h"
+//#include "trackgraphicitem.h"
+
+//#include "LabSound/LabSound.h"
 
 using namespace lab;
 
@@ -60,7 +61,10 @@ public:
 
     int getIndexByRegion(Region *region);
 
-    // void removeRegion(Region *_region);
+    void removeRegion(Region *_region);
+
+    void scheduleAudioRegions();
+    void cancelAudioRegions();
 
     std::shared_ptr<AudioContext> getAudioContext();
     std::shared_ptr<GainNode> getTrackInputNode();

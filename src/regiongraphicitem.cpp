@@ -44,6 +44,11 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     setY((region->getTrack()->getIndex() * 60) + 1);
 }
 
+void RegionGraphicItem::setGridLength(float _value) {
+    length = _value;
+    scene->update();
+    timeline->updateViewports();
+}
 
 QRectF RegionGraphicItem::boundingRect() const
 {
@@ -168,6 +173,8 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         region->getTrack()->switchRegion(region, region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex));
 
     }
+
+    region->setGridLocation(gridLocation);
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {

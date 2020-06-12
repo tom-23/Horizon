@@ -16,6 +16,8 @@
 
 using namespace std;
 
+#include "timeline.h"
+
 class RulerGraphicWidget : public QWidget
 {
 public:

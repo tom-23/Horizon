@@ -2,10 +2,32 @@
 #define AUDIOMANAGER_H
 
 
+#include <iostream>
+#include <stdio.h>
+#include <chrono>
+#include <ratio>
+#include <thread>
+
 #include "LabSound/LabSound.h"
 
+class Metronome;
+
+#include "metronome.h"
 
 
+
+
+//#include "timer.h"
+
+#include "track.h"
+#include "region.h"
+#include "audioregion.h"
+
+#include "timeline.h"
+
+#include "audioutil.h"
+#include "timer.h"
+#include "debug.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -14,35 +36,11 @@
 #include <ratio>
 #include <thread>
 
-
-class Metronome;
-
-#include "metronome.h"
-
-#include "track.h"
-#include "timeline.h"
-#include "region.h"
-//#include "audioregion.h"
-
-#include "audioutil.h"
-#include "timer.h"
-
-#include "debug.h"
-
-
 //class AudioTrackManager;
 //class Track;
-class Region;
-class AudioRegion;
-
-
 
 using namespace lab;
-
 using namespace std::chrono_literals;
-
-
-
 
 class AudioManager
 {
@@ -52,6 +50,9 @@ public:
     void play();
     void pause();
     void stop();
+
+    bool isPlaying;
+
     void updateSchedule();
 
     void setDivision(int _division);
@@ -62,8 +63,9 @@ public:
     void setCurrentGridTime(float _value);
 
     double gridTimeToContextSeconds(float _gridTime);
-
-
+    double gridTimeToSeconds(float _gridTime);
+    float contextSecondsToGridTime(double _contextSeconds);
+    float getCurrentRelativeTime();
 
     Track* addTrack();
     Track* getTrackByIndex(int index);
@@ -73,6 +75,7 @@ public:
     void setTrackRangeSelected(Track *firstTrack, Track *lastTrack);
 
     int getTrackListCount();
+    void scheduleTracks();
 
     std::shared_ptr<AudioContext> getAudioContext();
     std::shared_ptr<GainNode> getOutputNode();
@@ -113,12 +116,13 @@ private:
 
     float currentGridTime;
 
-    double startTime;
-    double stopTime;
+    float startTime;
+    float stopTime;
 
     bool scheduled;
 
      void updateMetSchedule();
+    void cancelTrackPlayback();
 
 };
 

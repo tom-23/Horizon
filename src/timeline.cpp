@@ -18,7 +18,7 @@ Timeline::Timeline(QWidget *_parent,
     trackCount = 0;
     regionCount = 0;
 
-    barCount = 8;
+    barCount = 32;
     barLength = 4;
 
 
@@ -40,7 +40,7 @@ Timeline::Timeline(QWidget *_parent,
 
 
 
-    timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, 8, 4);
+    timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, barCount, barLength);
     parent->update();
     parent->repaint();
 
@@ -51,7 +51,7 @@ Timeline::Timeline(QWidget *_parent,
     QGraphicsScene *rulerScene = new QGraphicsScene;
     trackRuler->setScene(rulerScene);
     rulerGraphic = new RulerGraphicWidget(trackRuler, nullptr, 8);
-
+    rulerGraphic->setBarAmount(barCount);
 
 
     QObject::connect(vScrollBar, SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
@@ -158,6 +158,7 @@ void Timeline::setBarAmount(int _barAmount) {
     barCount = _barAmount;
     timelineGraphic->setBarAmount(barCount);
     rulerGraphic->setBarAmount(barCount);
+    qDebug() << "Call";
     // When adding new lines to the scene, regions will be put behind the items so we need to bring them to the foreground.
     this->setZRegionValues(barCount * barLength);
     updateViewports();
@@ -201,6 +202,7 @@ void Timeline::addTrack(Track *_track) {
 void Timeline::addRegion(Region *_region) {
 qDebug() << timelineGraphic->scene->items().count();
     RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, QColor("#42f59b"), this, _region);
+    _region->setRegionGraphicItem(rgi);
     timelineGraphic->scene->addItem(rgi);
 
     this->setZRegionValues(barCount * barLength);

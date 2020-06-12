@@ -1,10 +1,13 @@
-#include "arrangewidget.h"
-#include "ui_arrangewidget.h"
 #include <QScrollBar>
 #include <QRegion>
 #include <QDebug>
 #include <QPainter>
+#include <QFileDialog>
 #include <QImage>
+#include "ui_arrangewidget.h"
+
+#include "arrangewidget.h"
+
 
 
 ArrangeWidget::ArrangeWidget(QWidget *parent, AudioManager *_audioMan) :
@@ -71,7 +74,10 @@ void ArrangeWidget::on_zoomSlider_valueChanged(int value)
 
 void ArrangeWidget::on_pushButton_clicked()
 {
-
-    tl->addRegion(audioMan->getSelectedTrack(0)->addAudioRegion());
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Open Audio"), "/home/tombutcher", tr("Audio Files (*.wav *.mp3 *.acc)"));
+    AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
+    tl->addRegion(newAudioRegion);
+    newAudioRegion->loadFile(fileName.toStdString());
 }
 

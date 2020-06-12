@@ -7,10 +7,11 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "audiomanager.h"
+//#include "audiomanager.h"
 
 class Track;
 class Timeline;
+#include "timeline.h"
 
 
 class TrackGraphicItem : public QGraphicsItem

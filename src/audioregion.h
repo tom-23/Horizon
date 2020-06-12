@@ -2,15 +2,19 @@
 #define AUDIOREGION_H
 
 
+
+//class Timeline;
+//class Track;
+//class Region;
+//class RegionGraphicItem;
+
+//#include "LabSound/LabSound.h"
+//#include "track.h"
+#include "track.h"
+//class Region;
+#include "region.h"
 //class Track;
 //class Timeline;
-//class Region;
-class Timeline;
-class Track;
-class RegionGraphicItem;
-
-#include "LabSound/LabSound.h"
-#include "region.h"
 
 using namespace lab;
 
@@ -20,17 +24,20 @@ class AudioRegion : public Region
 public:
     AudioRegion(Timeline *_timeline, Track *_track);
 
-    //void loadFile(std::string fileName);
-    //void scheduleTime(double contextTime);
+    void loadFile(std::string fileName);
+    void schedule();
+    void cancelSchedule();
 
 private:
 
-    //std::shared_ptr<AudioBus> audioClip;
-    //std::shared_ptr<SampledAudioNode> audioClipNode;
+    std::shared_ptr<AudioBus> audioClipBus;
+    std::shared_ptr<SampledAudioNode> audioClipNode;
 
-    //std::string loadedFileName;
-
+    std::string loadedFileName;
     //double duration;
+
 };
+
+
 
 #endif // AudioRegion_H

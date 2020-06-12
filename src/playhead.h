@@ -15,6 +15,8 @@
 #include <QGraphicsView>
 #include <QBasicTimer>
 
+class Timeline;
+
 class Playhead : public QGraphicsItem
 {
 

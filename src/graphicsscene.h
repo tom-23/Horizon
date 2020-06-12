@@ -6,6 +6,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneEvent>
 
+class Timeline;
+
 class GraphicsScene : public QGraphicsScene
 {
     Q_OBJECT

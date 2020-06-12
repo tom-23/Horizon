@@ -1,5 +1,6 @@
 #include "region.h"
 
+
 Region::Region(Timeline *_timeline, Track *_track)
 {
     timeline = _timeline;
@@ -32,9 +33,24 @@ void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
 
 void Region::setTrack(Track *_track) {
     if (track != nullptr) {
-        context->disconnect(track->getTrackOutputNode(), outputNode);
+       context->disconnect(track->getTrackOutputNode(), outputNode);
     }
     context->connect(_track->getTrackOutputNode(), outputNode);
     track = _track;
 }
 
+double Region::getGridLocation() {
+    return gridLocation;
+}
+
+void Region::setGridLocation(double time) {
+    gridLocation = time;
+}
+
+double Region::getGridLength() {
+    return length;
+}
+
+void Region::setGridLength(double value) {
+    length = value;
+}
