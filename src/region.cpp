@@ -7,8 +7,9 @@ Region::Region(Timeline *_timeline, Track *_track)
     track = _track;
     context = track->getAudioContext();
     outputNode = std::make_shared<GainNode>();
-    outputNode->gain()->setValue(1.0f);
+    setGain(1.0f);
     context->connect(track->getTrackInputNode(), outputNode);
+    gridLocation = 1;
 }
 
 //Region::~Region() {
@@ -31,11 +32,15 @@ void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
     regionGraphicsItem = rgi;
 }
 
+void Region::disconnectTrack() {
+    context->disconnect(track->getTrackInputNode(), outputNode);
+    debug::out(3, "Disconnected from track");
+}
+
 void Region::setTrack(Track *_track) {
-    if (track != nullptr) {
-       context->disconnect(track->getTrackOutputNode(), outputNode);
-    }
-    context->connect(_track->getTrackOutputNode(), outputNode);
+    context->connect(_track->getTrackInputNode(), outputNode);
+    debug::out(3, "Connected to track");
+    setGain(gain);
     track = _track;
 }
 
@@ -45,6 +50,7 @@ double Region::getGridLocation() {
 
 void Region::setGridLocation(double time) {
     gridLocation = time;
+    debug::out(3, "Grid location just set!");
 }
 
 double Region::getGridLength() {
@@ -53,4 +59,21 @@ double Region::getGridLength() {
 
 void Region::setGridLength(double value) {
     length = value;
+}
+
+void Region::schedule() {
+
+}
+
+void Region::setGain(float _gain) {
+    gain = _gain;
+    outputNode->gain()->setValue(_gain);
+}
+
+float Region::getGain() {
+    return gain;
+}
+
+std::shared_ptr<GainNode> Region::getOutputNode() {
+    return outputNode;
 }

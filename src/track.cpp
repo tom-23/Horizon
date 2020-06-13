@@ -48,7 +48,10 @@ void Track::setRegion(Region *_region) {
 void Track::switchRegion(Region *_region, Track *newTrack) {
 
     regionList->erase(regionList->begin() + getIndexByRegion(_region));
+    context->disconnect(trackInputNode, _region->getOutputNode());
+
     newTrack->setRegion(_region);
+    _region->disconnectTrack();
     _region->setTrack(newTrack);
 }
 

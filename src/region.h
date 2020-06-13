@@ -39,13 +39,20 @@ public:
     virtual void setRegionGraphicItem(RegionGraphicItem *rgi);
     virtual void setTrack(Track *_track);
 
-    //virtual void disconnectTrack();
+    virtual void disconnectTrack();
 
     virtual void setGridLocation(double time);
     virtual double getGridLocation();
 
     virtual void setGridLength(double value);
     virtual double getGridLength();
+
+    virtual void schedule();
+
+    virtual float getGain();
+    virtual void setGain(float _gain);
+
+    virtual std::shared_ptr<GainNode> getOutputNode();
 
 protected:
 
@@ -60,6 +67,8 @@ protected:
 
     double gridLocation;
     double length;
+
+    float gain;
 
 };
 
