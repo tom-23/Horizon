@@ -98,9 +98,9 @@ void AudioManager::updateSchedule() {
         //metPrimaryNode->start(floor(currentGridTime));
         //debug::out(3, "Buffered Primary Met");
         if (toNearestBar < 0.01) {
-            //qDebug() << "CALLED";
+
             if (scheduled == true) {
-                //qDebug() << "Boop!";
+
                 scheduled = false;
             }
 
@@ -116,17 +116,12 @@ void AudioManager::updateSchedule() {
 
 
     metronome->update();
-    //qDebug() << (floor(currentGridTime) - 0.001) + 1.0;
 
 }
 
 void AudioManager::eventLoop() {
     float relativeTime = (context->currentTime() - startTime) + stopTime;
-    //qDebug() << "Rel time" << relativeTime;
-    //qDebug() << "Stop time" << stopTime;
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
-    //qDebug() << "CURRENT TIME" << relativeTime;
-    //qDebug() << "GRID TIME" << currentGridTime;
 
     updateSchedule();
 }

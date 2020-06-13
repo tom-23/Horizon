@@ -7,6 +7,7 @@ AudioRegion::AudioRegion(Timeline *_timeline, Track *_track) : Region(_timeline,
 }
 
 void AudioRegion::loadFile(std::string fileName) {
+
     debug::out(3, "Begining file loading...");
     loadedFileName = fileName;
     audioClipBus = track->getAudioManager()->MakeBusFromSampleFile(loadedFileName);

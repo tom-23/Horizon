@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     updateIconThemes();
 
     audioMan = new AudioManager(ar->tl);
-    audioMan->setBPM(140.0);
+    audioMan->setBPM(120.0);
     audioMan->setDivision(4);
     audioMan->setLookAhead(0.05);
 
