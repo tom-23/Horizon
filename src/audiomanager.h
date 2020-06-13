@@ -36,6 +36,9 @@ class Metronome;
 #include <ratio>
 #include <thread>
 
+#include <QJsonObject>
+#include <QJsonDocument>
+
 //class AudioTrackManager;
 //class Track;
 

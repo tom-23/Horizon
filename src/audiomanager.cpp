@@ -265,3 +265,7 @@ void AudioManager::cancelTrackPlayback() {
 void AudioManager::setCurrentGridTime(float _value) {
     currentGridTime = _value;
 }
+
+std::string AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus) {
+    return "";
+}
