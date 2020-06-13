@@ -28,6 +28,9 @@ public:
     void schedule();
     void cancelSchedule();
 
+    void disconnectTrack() override;
+    void setTrack(Track *_track) override;
+
 private:
 
     std::shared_ptr<AudioBus> audioClipBus;

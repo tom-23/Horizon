@@ -175,6 +175,10 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     region->setGridLocation(gridLocation);
+    if (region->getTrack()->getAudioManager()->isPlaying == true) {
+        region->schedule();
+    }
+
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {

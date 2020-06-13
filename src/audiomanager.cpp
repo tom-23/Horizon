@@ -7,7 +7,7 @@ AudioManager::AudioManager(Timeline *_timeline)
     timeline = _timeline;
     stopTime = 0.0;
     isPlaying = false;
-    currentGridTime = 0.0;
+    currentGridTime = 1.0;
     scheduled = false;
     debug::out(3, "Starting audio engine...");
 
@@ -72,7 +72,7 @@ void AudioManager::stop() {
         eventTimer->stop();
     }
     stopTime = 0.0;
-    currentGridTime = 0.0;
+    currentGridTime = 1.0;
 }
 
 void AudioManager::setLookAhead(double _value) {
@@ -152,12 +152,12 @@ double AudioManager::gridTimeToContextSeconds(float _gridTime) {
 }
 
 double AudioManager::gridTimeToSeconds(float _gridTime) {
-    double secondsTime = ((_gridTime - 1.0) * beatLength) * division;
+    double secondsTime = ((_gridTime) * beatLength) * division;
     return secondsTime;
 }
 
-float AudioManager::contextSecondsToGridTime(double _contextSeconds) {
-    double gridTime = ((_contextSeconds / beatLength) / division) + 1.0;
+float AudioManager::secondsToGridTime(double _seconds) {
+    double gridTime = ((_seconds / beatLength) / division) + 1.0;
     return gridTime;
 }
 

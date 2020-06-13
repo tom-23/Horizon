@@ -64,7 +64,7 @@ public:
 
     double gridTimeToContextSeconds(float _gridTime);
     double gridTimeToSeconds(float _gridTime);
-    float contextSecondsToGridTime(double _contextSeconds);
+    float secondsToGridTime(double _seconds);
     float getCurrentRelativeTime();
 
     Track* addTrack();
@@ -83,6 +83,10 @@ public:
     std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
 
 
+    float startTime;
+    float stopTime;
+
+    std::string calculatePeaks(std::shared_ptr<AudioBus> bus);
 
 
 private:
@@ -116,8 +120,7 @@ private:
 
     float currentGridTime;
 
-    float startTime;
-    float stopTime;
+
 
     bool scheduled;
 
