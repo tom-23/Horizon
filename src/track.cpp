@@ -7,12 +7,17 @@ Track::Track(Timeline *_timeLine, AudioManager *_audioMan) {
     context = audioMan->getAudioContext();
     trackInputNode = std::make_shared<GainNode>();
     trackOutputNode = std::make_shared<GainNode>();
+    analyser = std::make_shared<AnalyserNode>();
     trackInputNode->gain()->setValue(1.0f);
     trackOutputNode->gain()->setValue(1.0f);
-    context->connect(trackOutputNode, trackInputNode);
+    context->connect(analyser, trackInputNode);
+    context->connect(trackOutputNode, analyser);
     context->connect(audioMan->getOutputNode(), trackOutputNode);
     selected = false;
     regionList = new std::vector<class Region *>;
+
+    gain = 1.0f;
+    setMute(false);
 
 }
 
@@ -123,3 +128,32 @@ void Track::cancelAudioRegions() {
 //        regionList->erase(std::distance(regionList->begin(), it));
 //    }
 //}
+
+void Track::setGain(float _value) {
+    gain = _value;
+}
+
+float Track::getGain() {
+    return gain;
+}
+
+void Track::setMute(bool _mute) {
+    mute = _mute;
+    if (mute == true) {
+        trackOutputNode->gain()->setValue(0.0f);
+    } else {
+        trackOutputNode->gain()->setValue(gain);
+    }
+}
+
+void Track::setSolo(bool _solo) {
+    solo = _solo;
+}
+
+bool Track::getMute() {
+    return mute;
+}
+
+bool Track::getSolo() {
+    return solo;
+}

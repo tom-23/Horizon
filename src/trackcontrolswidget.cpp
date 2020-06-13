@@ -94,3 +94,8 @@ void TrackControlsWidget::keyReleaseEvent(QKeyEvent *event) {
     }
 }
 
+
+void TrackControlsWidget::on_muteButton_toggled(bool checked)
+{
+    track->setMute(checked);
+}

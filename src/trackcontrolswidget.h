@@ -26,7 +26,9 @@ private slots:
     void on_TrackControlsWidget_customContextMenuRequested(const QPoint &pos);
 
 
-private:
+    void on_muteButton_toggled(bool checked);
+
+ private:
     Ui::TrackControlsWidget *ui;
     Track *track;
 

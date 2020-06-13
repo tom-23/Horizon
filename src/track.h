@@ -72,6 +72,15 @@ public:
 
     AudioManager* getAudioManager();
 
+    void setMute(bool _mute);
+    void setSolo(bool _solo);
+
+    bool getMute();
+    bool getSolo();
+
+    void setGain(float _value);
+    float getGain();
+
 private:
     bool selected;
     int index;
@@ -83,12 +92,19 @@ private:
     std::shared_ptr<GainNode> trackInputNode;
     std::shared_ptr<GainNode> trackOutputNode;
 
+    std::shared_ptr<AnalyserNode> analyser;
+
     AudioManager *audioMan;
 
     Timeline *timeline;
 
     TrackControlsWidget *trackControlWidget;
     TrackGraphicItem *trackGraphicItem;
+
+    bool mute;
+    bool solo;
+
+    float gain;
 
 };
 
