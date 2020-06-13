@@ -5,7 +5,7 @@ TrackGraphicItem::TrackGraphicItem(QGraphicsScene *_scene, Timeline *_timeline, 
     scene = _scene;
     timeline = _timeline;
     track = _track;
-    length = scene->views()[0]->width();
+    length = scene->sceneRect().width();
     yValue = (track->getIndex() + 1) * 60;
 }
 
