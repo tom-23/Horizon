@@ -1,6 +1,6 @@
-#include "mainwindow.h"
-#include "debug.h"
-
+#include "gui/mainwindow.h"
+#include "common/debug.h"
+#include "common/util.h"
 #include <QApplication>
 
 

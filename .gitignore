@@ -74,3 +74,6 @@ Thumbs.db
 
 lib/LabSound/CMakeFiles
 lib/LabSound/.cmake
+build
+.vscode
+*.user
