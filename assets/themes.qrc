@@ -1,7 +1,4 @@
 <RCC>
-    <qresource prefix="/themes">
-        <file>themes/default-dark.json</file>
-    </qresource>
     <qresource prefix="/base">
         <file>styles.qss</file>
     </qresource>
