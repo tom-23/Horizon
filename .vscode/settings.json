@@ -70,7 +70,12 @@
         "fstream": "cpp",
         "list": "cpp",
         "sstream": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "qmainwindow": "cpp",
+        "qdialog": "cpp",
+        "stack": "cpp",
+        "qgraphicsview": "cpp",
+        "qgraphicsitem": "cpp"
     },
     "colorize.files_extensions": [
         ".json"

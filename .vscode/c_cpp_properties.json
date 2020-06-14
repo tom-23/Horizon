@@ -3,7 +3,8 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/Users/tombutcher/Qt/5.14.2/clang_64/include"
             ],
             "defines": [],
             "macFrameworkPath": [
