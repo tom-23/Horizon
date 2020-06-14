@@ -64,6 +64,7 @@ else()
                       "${CMAKE_CURRENT_SOURCE_DIR}/../assets/app_icon/icon.icns")
 
   add_executable(${HORIZON_EXECUTABLE_NAME} MACOSX_BUNDLE ${horizon_COMPILE})
+  
 endif()
 
 add_dependencies(${HORIZON_EXECUTABLE_NAME} generate_version_header)
@@ -101,6 +102,12 @@ install(TARGETS ${HORIZON_EXECUTABLE_NAME}
 
 else()
     set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../shared/Info.plist")
+    
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${LOCATION_FOR_THE_APP} DEPENDS "${PROJECT_SOURCE_DIR}/assets" COMMAND -E copy_directory ${PROJECT_SOURCE_DIR}/assets "${CMAKE_CURRENT_BINARY_DIR}/Horizon.app/Contents/Resources")
+    # add_custom_target("${CMAKE_CURRENT_BINARY_DIR}/Horizon.app/Contents/Resources" DEPENDS)
+
+
+
 
     set(qtconf_dest_dir "${HORIZON_EXECUTABLE_NAME}.app/Contents/Resources")
 

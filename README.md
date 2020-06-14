@@ -25,6 +25,11 @@ Finally to bulld Horizon, run:
 make
 ```
 
+## On macOS:
+Once Horizon as built, you should be left with an app bundle (Horizon.app) which, when opened, should crash. This is because there are no core files within the app bundle itself causing Horizon to crash when it trys to use them
+
+To solve this, copy the contents of: ``./assets/bundle`` to the application's resource folder: ``Horizon.app/Contents/Resources``. 
+
 ## TODO List:
 - [ ] Ensure it builds on Windows and not just macOS
 - [x] Make the UI look SEXCCCCC.
