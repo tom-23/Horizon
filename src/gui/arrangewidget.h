@@ -7,8 +7,8 @@
 //#include "audioregion.h"
 //#include "region.h"
 //#include "track.h"
-#include "audiomanager.h"
-#include "timeline.h"
+
+#include "app/audiomanager.h"
 
 class Track;
 
@@ -21,11 +21,12 @@ class ArrangeWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ArrangeWidget(QWidget *parent = nullptr, AudioManager *_audioMan = nullptr);
+    explicit ArrangeWidget(QWidget *parent);
     ~ArrangeWidget();
 
     Timeline *tl;
 
+    void setAudioManager(AudioManager &_audioMan);
 
 private slots:
     void on_pushButton_4_clicked();

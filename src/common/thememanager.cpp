@@ -81,18 +81,20 @@ QString ThemeManager::colorizeSVG(QString filename) {
 
     QString tempDirLocation;
 
-    #if defined(Q_OS_WIN)
+    #ifdef _WIN32
 
     if (!QDir("/Temp").exists()) {
        QDir().mkdir("/Temp");
     }
     tempDirLocation = "/Temp";
 
-    #elif defined(Q_OS_OSX)
-    if (!QDir("../Resources/temp").exists()) {
-       QDir().mkdir("../Resources/temp");
+
+    #else
+    QString appBundlePath = QString::fromUtf8(util::getResourceBundle().c_str());
+    if (!QDir(appBundlePath + "/temp").exists()) {
+       QDir().mkdir(appBundlePath + "/temp");
     }
-    tempDirLocation = "../Resources/temp";
+    tempDirLocation = appBundlePath + "/temp";
     #endif
 
     QString savedFileName = tempDirLocation + "/theme_" + fileInfo.fileName();

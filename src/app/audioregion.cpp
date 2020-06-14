@@ -14,14 +14,11 @@ void AudioRegion::loadFile(std::string fileName) {
 
     audioClipNode = std::make_shared<SampledAudioNode>();
     {
-        ContextRenderLock r(track->getAudioContext().get(), "Horizon");
+        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->setBus(r, audioClipBus);
     }
 
-
-
-    track->getAudioContext().get();
-    context->connect(outputNode, audioClipNode);
+    track->getAudioManager()->context->connect(outputNode, audioClipNode);
 
     length = track->getAudioManager()->secondsToGridTime(audioClipNode->duration()) - 1;
 
@@ -39,7 +36,7 @@ void AudioRegion::schedule() {
     float timeEnd = length + gridLocation;
 
     {
-        ContextRenderLock r(track->getAudioContext().get(), "Horizon");
+        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->reset(r);
     }
     audioClipNode->initialize();
@@ -48,13 +45,13 @@ void AudioRegion::schedule() {
 
         debug::out(3, "Scheduled region during playhead");
         float playheadDiff = track->getAudioManager()->getCurrentGridTime() - gridLocation;
-        audioClipNode->startGrain(context->currentTime(), track->getAudioManager()->gridTimeToSeconds(playheadDiff));
+        audioClipNode->startGrain(track->getAudioManager()->context->currentTime(), track->getAudioManager()->gridTimeToSeconds(playheadDiff));
         return;
     }
 
     if (track->getAudioManager()->getCurrentGridTime() <= gridLocation ) {
         debug::out(3, "Scheduled region ahead of playhead");
-        double timeToGo = context->currentTime() + (track->getAudioManager()->gridTimeToSeconds(gridLocation - track->getAudioManager()->getCurrentGridTime()));
+        double timeToGo = track->getAudioManager()->context->currentTime() + (track->getAudioManager()->gridTimeToSeconds(gridLocation - track->getAudioManager()->getCurrentGridTime()));
         audioClipNode->start(timeToGo);
         return;
     }
@@ -62,9 +59,9 @@ void AudioRegion::schedule() {
 
 void AudioRegion::cancelSchedule() {
 
-    audioClipNode->stop(context->currentTime());
+    audioClipNode->stop(track->getAudioManager()->context->currentTime());
     {
-        ContextRenderLock r(track->getAudioContext().get(), "Horizon");
+        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->reset(r);
     }
 

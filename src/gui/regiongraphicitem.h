@@ -10,8 +10,9 @@
 
 class Timeline;
 class Region;
+
 #include "timeline.h"
-#include "audiomanager.h"
+#include "app/audiomanager.h"
 
 
 class RegionGraphicItem : public QGraphicsItem

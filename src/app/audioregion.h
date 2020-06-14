@@ -25,7 +25,7 @@ public:
     AudioRegion(Timeline *_timeline, Track *_track);
 
     void loadFile(std::string fileName);
-    void schedule();
+    void schedule() override;
     void cancelSchedule();
 
     void disconnectTrack() override;

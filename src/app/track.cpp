@@ -1,18 +1,24 @@
 #include "track.h"
 
-Track::Track(Timeline *_timeLine, AudioManager *_audioMan) {
+Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
 
-    audioMan = _audioMan;
-    timeline = _timeLine;
-    context = audioMan->getAudioContext();
+    debug::out(3, "Creating track");
+    audioMan = &_audioMan;
+    debug::out(3, "setting timeline");
+    timeline = &_timeLine;
+    debug::out(3, "setting input node");
     trackInputNode = std::make_shared<GainNode>();
+    debug::out(3, "setting output node");
     trackOutputNode = std::make_shared<GainNode>();
     analyser = std::make_shared<AnalyserNode>();
     trackInputNode->gain()->setValue(1.0f);
     trackOutputNode->gain()->setValue(1.0f);
-    context->connect(analyser, trackInputNode);
-    context->connect(trackOutputNode, analyser);
-    context->connect(audioMan->getOutputNode(), trackOutputNode);
+
+
+    audioMan->context.get()->connect(analyser, trackInputNode);
+    audioMan->context->connect(trackOutputNode, analyser);
+    audioMan->context->connect(audioMan->getOutputNode(), trackOutputNode);
+
     selected = false;
     regionList = new std::vector<class Region *>;
 
@@ -22,8 +28,8 @@ Track::Track(Timeline *_timeLine, AudioManager *_audioMan) {
 }
 
 Track::~Track() {
-    context->disconnect(audioMan->getOutputNode(), trackOutputNode);
-    context->disconnect(trackInputNode, trackOutputNode);
+    audioMan->context->disconnect(audioMan->getOutputNode(), trackOutputNode);
+    audioMan->context->disconnect(trackInputNode, trackOutputNode);
 }
 
 void Track::setTrackControlsWidget(TrackControlsWidget *_tcw) {
@@ -53,7 +59,7 @@ void Track::setRegion(Region *_region) {
 void Track::switchRegion(Region *_region, Track *newTrack) {
 
     regionList->erase(regionList->begin() + getIndexByRegion(_region));
-    context->disconnect(trackInputNode, _region->getOutputNode());
+    audioMan->context->disconnect(trackInputNode, _region->getOutputNode());
 
     newTrack->setRegion(_region);
     _region->disconnectTrack();
@@ -62,10 +68,6 @@ void Track::switchRegion(Region *_region, Track *newTrack) {
 
 AudioManager* Track::getAudioManager() {
     return audioMan;
-}
-
-std::shared_ptr<AudioContext> Track::getAudioContext() {
-    return audioMan->getAudioContext();
 }
 
 int Track::getIndex() {

@@ -1,28 +1,27 @@
 #include "metronome.h"
 
-Metronome::Metronome(std::shared_ptr<AudioContext> _context, std::shared_ptr<GainNode> _outputNode, AudioManager *_audioMan)
+Metronome::Metronome(std::shared_ptr<GainNode> _outputNode, AudioManager *_audioMan)
 {
-    context = _context;
     outputNode = _outputNode;
     audioMan = _audioMan;
 
-    metPrimaryBus = audioMan->MakeBusFromSampleFile("../Resources/core/metronome/Primary.wav");
-    metSecondaryBus = audioMan->MakeBusFromSampleFile("../Resources/core/metronome/Secondary.wav");
+    metPrimaryBus = audioMan->MakeBusFromSampleFile(util::getResourceBundle() + "/core/metronome/Primary.wav");
+    metSecondaryBus = audioMan->MakeBusFromSampleFile(util::getResourceBundle() + "/core/metronome/Secondary.wav");
 
     metPrimaryNode = std::make_shared<SampledAudioNode>();
     {
-        ContextRenderLock r(context.get(), "horizon");
+        ContextRenderLock r(audioMan->context.get(), "horizon");
         metPrimaryNode->setBus(r, metPrimaryBus);
     }
 
     metSecondaryNode = std::make_shared<SampledAudioNode>();
     {
-        ContextRenderLock r(context.get(), "horizon");
+        ContextRenderLock r(audioMan->context.get(), "horizon");
         metSecondaryNode->setBus(r, metSecondaryBus);
     }
 
-    context->connect(outputNode, metPrimaryNode);
-    context->connect(outputNode, metSecondaryNode);
+    audioMan->context->connect(outputNode, metPrimaryNode);
+    audioMan->context->connect(outputNode, metSecondaryNode);
 }
 
 
@@ -44,7 +43,7 @@ void Metronome::scheduleSecondary(std::vector<double> _scheduleQueue) {
 
 void Metronome::update() {
     if (scheduleQueueTimes.size() != 0) {
-        double timeTillClick = scheduleQueueTimes.at(0) - context->currentTime();
+        double timeTillClick = scheduleQueueTimes.at(0) - audioMan->context->currentTime();
         if (timeTillClick < 0.1) {
             if (nextSchedule == true) {
                 double time = scheduleQueueTimes.at(0);

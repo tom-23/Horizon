@@ -19,7 +19,6 @@
 #include <QApplication>
 
 
-
 #include "graphicsscene.h"
 
 class GraphicsView;
@@ -39,12 +38,12 @@ class TrackControlsWidget;
 class TimelineGraphicWidget;
 #include "timelinegraphicwidget.h"
 class ThemeManager;
-#include "thememanager.h"
+#include "common/thememanager.h"
 class AudioManager;
 class Track;
 class Region;
 class Debug;
-#include "debug.h"
+#include "common/debug.h"
 
 class Timeline
 {

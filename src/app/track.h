@@ -16,6 +16,15 @@
 #include <QPoint>
 #include <iostream>
 
+
+#include <vector>
+#include <memory>
+#include <cstdio>
+#include <fstream>
+#include <cassert>
+#include <functional>
+#include "LabSound/LabSound.h"
+
 //#include "audioregion.h"
 //class Region;
 //class AudioRegion;
@@ -40,7 +49,7 @@ using namespace lab;
 class Track
 {
 public:
-    Track(Timeline *_timeLine, AudioManager *_audioMan);
+    Track(Timeline &_timeLine, AudioManager &_audioMan);
     ~Track();
 
     void setSelected(bool _selected);
@@ -66,7 +75,6 @@ public:
     void scheduleAudioRegions();
     void cancelAudioRegions();
 
-    std::shared_ptr<AudioContext> getAudioContext();
     std::shared_ptr<GainNode> getTrackInputNode();
     std::shared_ptr<GainNode> getTrackOutputNode();
 
@@ -88,7 +96,6 @@ private:
 
     std::vector<class Region *> *regionList;
 
-    std::shared_ptr<AudioContext> context;
     std::shared_ptr<GainNode> trackInputNode;
     std::shared_ptr<GainNode> trackOutputNode;
 

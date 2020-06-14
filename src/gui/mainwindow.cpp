@@ -1,13 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "LabSound/LabSound.h"
-#include "grid.h"
-#include "aboutdialog.h"
-
-
-
-using namespace lab;
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,19 +8,30 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     ui->setupUi(this);
-    themeMan = new ThemeManager(this, "../Resources/themes/Nautic.json");
+    themeMan = new ThemeManager(this, QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json");
 
     updateIconThemes();
 
-    audioMan = new AudioManager(ar->tl);
-    audioMan->setBPM(120.0);
+
+    debug::out(3, "Loading audio manager...");
+
+
+    arrangeWidget = new ArrangeWidget(this);
+    audioMan = std::make_unique<AudioManager>(*arrangeWidget->tl);
+
+    arrangeWidget->setAudioManager(*audioMan);
+
+    debug::out(3, "Setting BPM");
+    audioMan->setBPM(150.0);
     audioMan->setDivision(4);
     audioMan->setLookAhead(0.05);
 
-    ar = new ArrangeWidget(this, audioMan);
-    ui->content->layout()->addWidget(ar);
-    ar->show();
-    ar->tl->setColorTheme(themeMan);
+    debug::out(3, "Loaded audio manager with default settings!");
+
+    
+    ui->content->layout()->addWidget(arrangeWidget);
+    arrangeWidget->show();
+    arrangeWidget->tl->setColorTheme(themeMan);
     //InfoWidget* iw;
     //iw = new InfoWidget(this);
     //ui->content->layout()->addWidget(iw);
@@ -49,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::uiUpdate() {
-    ar->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
+    arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
     //qDebug() << audioMan->getCurrentGridTime();
 }
 
@@ -71,14 +74,6 @@ void MainWindow::on_playButton_clicked()
 
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    themeMan = new ThemeManager(this, "../Resources/themes/default-dark.json");
-    themeMan->updateTheme();
-    updateIconThemes();
-    ar->tl->setColorTheme(themeMan);
-}
-
 void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog *ab = new AboutDialog(this, themeMan);
@@ -90,7 +85,7 @@ void MainWindow::on_stopButton_clicked()
 {
     audioMan->stop();
     uiTimer->stop();
-    ar->tl->setPlayheadLocation(0.0);
+    arrangeWidget->tl->setPlayheadLocation(0.0);
 }
 
 void MainWindow::updateIconThemes() {
@@ -98,3 +93,5 @@ void MainWindow::updateIconThemes() {
     ui->stopButton->setStyleSheet("image: url('" + themeMan->colorizeSVG(":/svg/svg/stop.svg") + "');");
     ui->recordButton->setStyleSheet("image: url('" + themeMan->colorizeSVG(":/svg/svg/record.svg") + "');");
 }
+
+

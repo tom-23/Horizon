@@ -2,7 +2,7 @@
 #define TRACKCONTROLSWIDGET_H
 
 #include <QWidget>
-#include "audiomanager.h"
+#include "app/audiomanager.h"
 class Track;
 class Timeline;
 

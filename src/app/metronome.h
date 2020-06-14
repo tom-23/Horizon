@@ -11,7 +11,7 @@ using namespace lab;
 class Metronome
 {
 public:
-    Metronome(std::shared_ptr<AudioContext> _context, std::shared_ptr<GainNode> _outputNode, AudioManager *audioMan);
+    Metronome(std::shared_ptr<GainNode> _outputNode, AudioManager *audioMan);
     bool scheduled;
     void schedulePrimary(double when);
     void scheduleSecondary(std::vector<double> _scheduleQueue);
@@ -27,7 +27,6 @@ private:
 
 
     std::shared_ptr<GainNode> outputNode;
-    std::shared_ptr<AudioContext> context;
 
     AudioManager *audioMan;
 

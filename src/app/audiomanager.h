@@ -23,11 +23,14 @@ class Metronome;
 #include "region.h"
 #include "audioregion.h"
 
-#include "timeline.h"
+#include "gui/timeline.h"
 
-#include "audioutil.h"
-#include "timer.h"
-#include "debug.h"
+#include "common/audioutil.h"
+#include "common/timer.h"
+#include "common/debug.h"
+#include "common/util.h"
+
+#include <pthread.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -35,6 +38,7 @@ class Metronome;
 #include <chrono>
 #include <ratio>
 #include <thread>
+#include <memory>
 
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -43,12 +47,12 @@ class Metronome;
 //class Track;
 
 using namespace lab;
-using namespace std::chrono_literals;
+//using namespace std::chrono_literals;
 
 class AudioManager
 {
 public:
-    AudioManager(Timeline *_timeline);
+    AudioManager(Timeline &_timeline);
 
     void play();
     void pause();
@@ -80,7 +84,6 @@ public:
     int getTrackListCount();
     void scheduleTracks();
 
-    std::shared_ptr<AudioContext> getAudioContext();
     std::shared_ptr<GainNode> getOutputNode();
 
     std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
@@ -91,10 +94,11 @@ public:
 
     std::string calculatePeaks(std::shared_ptr<AudioBus> bus);
 
+    std::shared_ptr<AudioContext> context;
 
 private:
     QObject *parent;
-    std::shared_ptr<AudioContext> context;
+
     std::shared_ptr<GainNode> outputNode;
 
 

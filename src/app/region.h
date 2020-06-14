@@ -62,7 +62,6 @@ protected:
     Timeline *timeline;
     RegionGraphicItem *regionGraphicsItem;
 
-    std::shared_ptr<AudioContext> context;
     std::shared_ptr<GainNode> outputNode;
 
     double gridLocation;

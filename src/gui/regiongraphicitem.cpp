@@ -93,7 +93,6 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void RegionGraphicItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Press";
     pressed = true;
     QCursor cursor(Qt::BlankCursor);
     QApplication::setOverrideCursor(cursor);

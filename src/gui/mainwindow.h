@@ -2,12 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "arrangewidget.h"
 #include "infowidget.h"
+#include "arrangewidget.h"
 #include "librarywidget.h"
-#include "audiomanager.h"
-#include "thememanager.h"
-
+#include "aboutdialog.h"
+#include "app/audiomanager.h"
+#include "common/thememanager.h"
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
@@ -22,23 +22,21 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    AudioManager *audioMan;
+    std::unique_ptr<AudioManager> audioMan;
     ThemeManager *themeMan;
+    Timeline *timeline;
 
 
     QTimer *uiTimer;
 
-    ArrangeWidget* ar;
+    ArrangeWidget *arrangeWidget;
 
     void updateIconThemes();
-
 
 private slots:
 
 
     void on_playButton_clicked();
-
-    void on_pushButton_clicked();
 
     void on_actionAbout_triggered();
 

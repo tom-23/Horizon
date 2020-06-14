@@ -8,7 +8,8 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QTextStream>
-#include "debug.h"
+#include "common/debug.h"
+#include "common/util.h"
 
 
 class ThemeManager

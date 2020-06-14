@@ -5,10 +5,9 @@ Region::Region(Timeline *_timeline, Track *_track)
 {
     timeline = _timeline;
     track = _track;
-    context = track->getAudioContext();
     outputNode = std::make_shared<GainNode>();
     setGain(1.0f);
-    context->connect(track->getTrackInputNode(), outputNode);
+    track->getAudioManager()->context->connect(track->getTrackInputNode(), outputNode);
     gridLocation = 1;
 }
 
@@ -33,12 +32,12 @@ void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
 }
 
 void Region::disconnectTrack() {
-    context->disconnect(track->getTrackInputNode(), outputNode);
+    track->getAudioManager()->context->disconnect(track->getTrackInputNode(), outputNode);
     debug::out(3, "Disconnected from track");
 }
 
 void Region::setTrack(Track *_track) {
-    context->connect(_track->getTrackInputNode(), outputNode);
+    track->getAudioManager()->context->connect(_track->getTrackInputNode(), outputNode);
     debug::out(3, "Connected to track");
     setGain(gain);
     track = _track;

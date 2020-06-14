@@ -10,12 +10,11 @@
 
 
 
-ArrangeWidget::ArrangeWidget(QWidget *parent, AudioManager *_audioMan) :
+ArrangeWidget::ArrangeWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ArrangeWidget)
 {
     ui->setupUi(this);
-    audioMan = _audioMan;
     tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout(), ui->hScroll, ui->vScroll);
     this->repaint();
 
@@ -52,11 +51,9 @@ void ArrangeWidget::on_pushButton_4_clicked()
 
 void ArrangeWidget::on_pushButton_5_clicked()
 {
-
-    Track *newTrack = audioMan->addTrack();
-    tl->addTrack(newTrack);
-    audioMan->setTrackSelected(newTrack, true);
-
+    Track *track = audioMan->addTrack();;
+    tl->addTrack(track);
+    audioMan->setTrackSelected(track, true);
 }
 
 void ArrangeWidget::resizeEvent(QResizeEvent *event)
@@ -79,5 +76,9 @@ void ArrangeWidget::on_pushButton_clicked()
     AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
     tl->addRegion(newAudioRegion);
     newAudioRegion->loadFile(fileName.toStdString());
+}
+
+void ArrangeWidget::setAudioManager(AudioManager &_audioMan) {
+    audioMan = &_audioMan;
 }
 

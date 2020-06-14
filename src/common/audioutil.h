@@ -1,7 +1,7 @@
 #ifndef AUDIOUTIL_H
 #define AUDIOUTIL_H
 
-#include "audiomanager.h"
+#include "app/audiomanager.h"
 #include <iostream>
 
 

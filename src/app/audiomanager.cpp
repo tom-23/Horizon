@@ -1,10 +1,10 @@
 #include "audiomanager.h"
 
 
-AudioManager::AudioManager(Timeline *_timeline)
+AudioManager::AudioManager(Timeline &_timeline)
 {
-
-    timeline = _timeline;
+    debug::out(3, "Timeline init");
+    timeline = &_timeline;
     stopTime = 0.0;
     isPlaying = false;
     currentGridTime = 1.0;
@@ -16,16 +16,14 @@ AudioManager::AudioManager(Timeline *_timeline)
 
     outputNode = std::make_shared<GainNode>();
     outputNode->gain()->setValue(1.0f);
-
-
     context->connect(context->device(), outputNode);
+
     trackList = new std::vector<class Track *>();
     selectedTrackList = new std::vector<class Track *>();
 
-
     debug::out(3, "Loading metronome...");
 
-    metronome = new Metronome(context, outputNode, this);
+    metronome = new Metronome(outputNode, this);
 
 
     debug::out(3, "Starting event loop...");
@@ -163,9 +161,10 @@ float AudioManager::getCurrentRelativeTime() {
 
 Track* AudioManager::addTrack() {
     debug::out(3, "Creating new track...");
-    Track *newTrack = new Track(timeline, this);
+    Track *newTrack = new Track(*timeline, *this);
     debug::out(3, "Pushing to list...");
     trackList->push_back(newTrack);
+    debug::out(3, "Setting index");
     newTrack->setIndex(trackList->size() - 1);
 
     debug::out(3, "Dispatching to UI...");
@@ -182,10 +181,6 @@ Track* AudioManager::getSelectedTrack(int index) {
 
 std::vector<class Track*>* AudioManager::getSelectedTracks() {
     return selectedTrackList;
-}
-
-std::shared_ptr<AudioContext> AudioManager::getAudioContext() {
-    return context;
 }
 
 std::shared_ptr<GainNode> AudioManager::getOutputNode() {

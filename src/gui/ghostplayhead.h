@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 
+
 class Timeline;
 
 class GhostPlayhead : public QGraphicsItem
