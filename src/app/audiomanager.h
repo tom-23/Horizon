@@ -30,8 +30,6 @@ class Metronome;
 #include "common/debug.h"
 #include "common/util.h"
 
-#include <pthread.h>
-
 #include <iostream>
 #include <stdio.h>
 #include <QtGui>

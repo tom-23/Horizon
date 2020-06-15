@@ -85,9 +85,6 @@ list(APPEND horizon_LIBRARIES libnyquist)
 # libwavpack
 list(APPEND horizon_LIBRARIES libwavpack)
 
-# p-Thread (THIS GAVE ME SO MANY ISSUES YOU WOULDN'T BELIEVE IT)
-list(APPEND horizon_LIBRARIES pthread)
-
 set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES COMPILE_DEFINITIONS "${horizon_DEFINITIONS}")
 
 set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "${horizon_LINK_FLAGS}")

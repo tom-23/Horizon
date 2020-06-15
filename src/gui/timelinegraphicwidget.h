@@ -79,7 +79,6 @@ private:
 
     virtual void dragEnterEventSlot(QDragEnterEvent *event);
 
-    bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // TimelineGraphicWidget_H

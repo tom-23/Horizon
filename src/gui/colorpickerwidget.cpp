@@ -16,4 +16,5 @@ ColorPickerWidget::~ColorPickerWidget()
 
 QColor ColorPickerWidget::getColor() {
     this->show();
+    return QColor("#FFFFF");
 }

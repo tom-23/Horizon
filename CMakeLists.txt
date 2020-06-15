@@ -1,6 +1,6 @@
 project(horizon)
 
-set(CMAKE_PREFIX_PATH "/Users/tombutcher/Qt/5.14.2/clang_64")
+# set(CMAKE_PREFIX_PATH "C:/Qt/5.14.2/msvc2017_6")
 
 if (APPLE)
     cmake_minimum_required(VERSION 3.1)
