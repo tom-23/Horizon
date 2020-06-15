@@ -77,3 +77,9 @@ lib/LabSound/.cmake
 build
 .vscode
 *.user
+CMakeFiles
+Horizon.app
+CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+Makefile
