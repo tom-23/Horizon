@@ -83,3 +83,4 @@ CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
 Makefile
+src/CMakeFiles
