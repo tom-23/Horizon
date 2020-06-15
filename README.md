@@ -31,7 +31,7 @@ Once Horizon as built, you should be left with an app bundle (Horizon.app) which
 To solve this, copy the contents of: ``./assets/bundle`` to the application's resource folder: ``Horizon.app/Contents/Resources``. 
 
 ## TODO List:
-- [ ] Ensure it builds on Windows and not just macOS
+- [x] Ensure it builds on Windows and not just macOS
 - [x] Make the UI look SEXCCCCC.
 - [x] Theme management using JSON
 - [x] Getting audio into a region
