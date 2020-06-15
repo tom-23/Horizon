@@ -4,14 +4,18 @@
 #include <iostream>
 #include <string>
 
-//#ifndef _WIN32
+#ifndef _WIN32
     #include "CoreFoundation/CoreFoundation.h"
-//#endif
+#else
+    #include <Windows.h>
+#endif
 
 namespace util {
-    //#ifndef _WIN32
+    #ifndef _WIN32
         std::string getResourceBundle();
-   // #endif
+    #else
+        std::string getInstallDir();
+    #endif
     
 }
 #endif

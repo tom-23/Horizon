@@ -63,7 +63,8 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->drawRoundedRect(boundingRect(), 5, 5);
     painter->setBrush(outlineColor);
     QFont font = scene->font();
-    font.setPointSize(10);
+    font.setPixelSize(10);
+    font.setBold(true);
     QFontMetricsF fontMetrics(font);
     QString text("Audio Region #1");
     int heightFont = fontMetrics.boundingRect(text).height();

@@ -8,7 +8,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     ui->setupUi(this);
-    themeMan = new ThemeManager(this, QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json");
+    QString themeLoc;
+
+    #ifndef _WIN32
+        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json";
+    #else
+        themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/default-dark.json";
+    #endif
+
+    themeMan = new ThemeManager(this, themeLoc);
+
 
     updateIconThemes();
 

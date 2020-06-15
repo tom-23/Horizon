@@ -253,6 +253,27 @@ QMenu {
 	padding-bottom: 2px;
 }
 
+QMenuBar {
+        background-color: white;
+        color: black;
+        font-size: 12px;
+}
+
+QMenuBar::item {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 6px;
+        padding-right: 6px;
+        font-style: Bold;
+}
+
+QMenuBar::item {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 6px;
+        padding-right: 6px;
+}
+
 QMenu::item {
 	/* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */

@@ -15,7 +15,7 @@ RulerGraphicWidget::RulerGraphicWidget(QGraphicsView *_view, QWidget *_parent, i
     hScaleFactor = 100;
     barAmount = _barAmount;
     QFont font = scene->font();
-    font.setPointSize(10);
+    font.setPixelSize(10);
 
     // Timeline Numbers and Lines
     for (int i = 0; i < barAmount; i++)

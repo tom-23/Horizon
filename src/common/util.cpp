@@ -1,7 +1,7 @@
 #include "util.h"
 
 namespace util {
-    //#ifndef _WIN32
+    #ifndef _WIN32
     std::string getResourceBundle() {
         
             CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
@@ -12,5 +12,14 @@ namespace util {
             return path.append("/Contents/Resources");
         
     }
-    //#endif
+    #else
+    std::string getInstallDir() {
+        char buffer[MAX_PATH];
+        GetModuleFileName(NULL, buffer, MAX_PATH);
+        std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+        std::string bsPath = std::string(buffer).substr(0, pos);
+        return bsPath;
+    }
+
+    #endif
 }

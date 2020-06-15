@@ -57,7 +57,6 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
 
 
     this->setMouseTracking(true);
-    this->installEventFilter(this);
     //connect(this, &TimelineGraphicWidget::mousePressEvent, this, &TimelineGraphicWidget::mousePressEventSlot);
     //connect(view, SIGNAL(dragEnterEvent(QDragEnterEvent)), this, SLOT(dragEnterEvent(QDragEnterEvent)));
 }
@@ -213,12 +212,4 @@ void TimelineGraphicWidget::dragEnterEventSlot(QDragEnterEvent *event) {
 
 
 
-}
-
-bool TimelineGraphicWidget::eventFilter(QObject *watched, QEvent *event) {
-
-    if(event->type() == QEvent::MouseButtonPress)
-        {
-             mousePressEvent(static_cast<QMouseEvent*>(event));
-        }
 }
