@@ -1,8 +1,0 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
-    <defs>
-        <style>.cls-1{fill:@pushbutton-background;}</style>
-        <style>.cls-2{fill:@pushbutton-border;}</style>
-    </defs>
-    <rect class="cls-1" x="0.5" y="0.5" width="11" height="11" />
-    <path class="cls-2" d="M13,3V13H3V3H13m1-1H2V14H14V2Z" transform="translate(-2 -2)" />
-</svg>

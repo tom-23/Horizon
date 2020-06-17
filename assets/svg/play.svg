@@ -1,8 +1,0 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-    <defs>
-        <style>.cls-1{fill:@pushbutton-background;}</style>
-        <style>.cls-2{fill:@pushbutton-border;}</style>
-    </defs>
-    <polygon class="cls-1" points="0.5 0.81 14.88 8 0.5 15.19 0.5 0.81" />
-    <path class="cls-2" d="M1,1.62,13.76,8,1,14.38V1.62M0,0V16L16,8,0,0Z" />
-</svg>
