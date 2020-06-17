@@ -18,11 +18,10 @@
         <file>svg/logo_base.svg</file>
     </qresource>
     <qresource prefix="/fonts">
-        <file>fonts/TitilliumWeb-Bold.ttf</file>
-        <file>fonts/TitilliumWeb-BoldItalic.ttf</file>
-        <file>fonts/TitilliumWeb-Italic.ttf</file>
-        <file>fonts/TitilliumWeb-SemiBold-Italic.ttf</file>
-        <file>fonts/TitilliumWeb-SemiBold.ttf</file>
-        <file>fonts/TitilliumWeb.ttf</file>
+        <file>fonts/Raleway/Raleway-Bold.ttf</file>
+        <file>fonts/Raleway/Raleway-Italic.ttf</file>
+        <file>fonts/Raleway/Raleway-Medium.ttf</file>
+        <file>fonts/Raleway/Raleway-Regular.ttf</file>
+        <file>fonts/Raleway/Raleway-SemiBold.ttf</file>
     </qresource>
 </RCC>
