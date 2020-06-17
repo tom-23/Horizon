@@ -1,6 +1,6 @@
 * {
-	font-family: Titillium Web;
-	font-style: SemiBold;
+        font-family: Raleway;
+        font-style: Medium;
 	font-size: 11px;
 	color: @font-color-primary;
 }
@@ -214,7 +214,7 @@ border-right: 1px Solid @borders;
 
 
 QLabel {
-	padding: 0px;
+        padding: 0px;
 	margin: 0px;
 	font-size: 11px;
 	border: 0px;
@@ -224,6 +224,8 @@ QPushButton, QToolButton {
 	background-color: @pushbutton-background;
 	border: 1px Solid @pushbutton-border;
 	border-radius: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
 	padding-left: 12px;
 	padding-right: 12px;
 	font-size: 11px;
@@ -241,6 +243,7 @@ QPushButton:checked, QToolButton:checked {
 
 QToolButton {
 	padding: 0px;
+
 	margin: 0px;
 }
 
@@ -335,3 +338,4 @@ border: none;
 QDialog {
 	background-color: @background;
 }
+
