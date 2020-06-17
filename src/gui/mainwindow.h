@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "infowidget.h"
 #include "arrangewidget.h"
+#include "preferenceswindow.h"
 #include "librarywidget.h"
 #include "aboutdialog.h"
 #include "app/audiomanager.h"
@@ -41,6 +42,8 @@ private slots:
     void on_actionAbout_triggered();
 
     void on_stopButton_clicked();
+
+    void on_actionPreferences_triggered();
 
 private:
     Ui::MainWindow *ui;

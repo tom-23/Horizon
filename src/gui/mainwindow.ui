@@ -614,6 +614,7 @@
     <addaction name="separator"/>
     <addaction name="actionExport"/>
     <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuEd9t">
@@ -707,6 +708,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

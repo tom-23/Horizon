@@ -104,3 +104,9 @@ void MainWindow::updateIconThemes() {
 }
 
 
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    PreferencesWindow *pw = new PreferencesWindow(this);
+    pw->show();
+}
