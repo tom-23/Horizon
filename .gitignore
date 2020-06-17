@@ -84,3 +84,5 @@ CPackConfig.cmake
 CPackSourceConfig.cmake
 Makefile
 src/CMakeFiles
+bin/LabSound.framework
+cmake_install.cmake
