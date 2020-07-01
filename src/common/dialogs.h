@@ -13,20 +13,21 @@ namespace dialogs {
     namespace  {
         QWidget *dialogParent;
         ThemeManager *dialogThemeManager;
+        LoadingDialogWidget *loadingDialogWidget;
+
     }
 
     void setParent(QWidget *parent);
+
     void setThemeManager(ThemeManager *themeManager);
 
 
     class ProgressDialog {
-        public:
-            ProgressDialog(int min, int max, std::string message);
-            void updateValue(int value);
-            bool isVisible();
-            void close();
-        private:
-            LoadingDialogWidget *ld;
+    public:
+        static void updateValue(int value);
+        static bool isVisible();
+        static void show(int min, int max, std::string message);
+        static void close();
     };
 
     class AboutDialog {

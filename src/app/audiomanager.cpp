@@ -277,11 +277,6 @@ std::vector<float> AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus) {
         for (int j = 0; j < blockSize; ++j) {
             sum = sum + abs(bus->channel(0)->data()[blockStart + j]);
         }
-        qDebug() << i;
-
-        std::thread::id this_id = std::this_thread::get_id();
-        std::cout << "thread " << this_id << " running...\n";
-        std::this_thread::sleep_for(2s);
         filteredSamples.push_back(sum / blockSize);
 
     }

@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     QString themeLoc;
 
+    ui->progressBar->hide();
+
     #ifndef _WIN32
         themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json";
     #else

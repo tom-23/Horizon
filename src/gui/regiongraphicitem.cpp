@@ -3,7 +3,8 @@
 RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region)
 {
     setFlags(ItemIsMovable);
-    color = _color;
+    regionColor = _color;
+    color = Qt::transparent;
     outlineColor = color.lighter(30);
     selectedColor = QColor(200,30,180);
     selectedColorOutline = selectedColor.lighter(30);
@@ -24,7 +25,8 @@ RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene 
 RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region) : QGraphicsItem()
 {
     setFlags(ItemIsMovable);
-    color = _color;
+    regionColor = _color;
+    color = Qt::transparent;
     outlineColor = QColor("#0f0f0f");
     selectedColor = selectedColor.lighter(30);
     selectedColorOutline = QColor("#0f0f0f");
@@ -40,6 +42,7 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     scene = _scene;
     region = _region;
     timeline = _timeline;
+    ghost = true;
     gridLocation = 1;
     setY((region->getTrack()->getIndex() * 60) + 1);
 }
@@ -188,4 +191,15 @@ void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void RegionGraphicItem::keyPressEvent(QKeyEvent *event) {
     qDebug() << "Key press captured";
+}
+
+void RegionGraphicItem::setGhost(bool _isGhost) {
+    ghost = _isGhost;
+    if (ghost == true) {
+        color = Qt::transparent;
+        brush = QBrush(color);
+    } else {
+        color = regionColor;
+        brush = QBrush(color);
+    }
 }

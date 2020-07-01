@@ -24,6 +24,7 @@ public:
     void setGridLocation(float _value);
     void setGridLength(float _value);
 
+    void setGhost(bool _isGhost);
 
 
 
@@ -38,6 +39,7 @@ protected:
     QColor outlineColor;
     QColor selectedColor;
     QColor selectedColorOutline;
+    QColor regionColor;
     int penWidth;
     int rounded;
     bool hasShadow;
@@ -52,6 +54,8 @@ protected:
     float gridLocation;
     QGraphicsScene *scene;
     Region *region;
+
+    bool ghost;
     // QGraphicsItem interface
 
     Timeline *timeline;

@@ -37,6 +37,9 @@ private:
     std::shared_ptr<SampledAudioNode> audioClipNode;
 
     std::string loadedFileName;
+
+    void loadFileThread(std::function<void()> callback);
+    void loadedFileCallBack();
     //double duration;
 
 };

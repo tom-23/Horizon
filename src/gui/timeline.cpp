@@ -152,6 +152,7 @@ void Timeline::updateHeights() {
 void Timeline::updateViewports() {
     timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
+    timelineGraphic->view->update();
 }
 
 void Timeline::setBarAmount(int _barAmount) {

@@ -11,26 +11,28 @@ void setThemeManager(ThemeManager *themeManager) {
     dialogThemeManager = themeManager;
 }
 
-    ProgressDialog::ProgressDialog(int min, int max, std::string message) {
-        ld = new LoadingDialogWidget(dialogParent, min, max, QString::fromUtf8(message.c_str()));
-        ld->show();
+
+    void ProgressDialog::show(int min, int max, std::string message) {
+        loadingDialogWidget = new LoadingDialogWidget(dialogParent, min, max, QString::fromUtf8(message.c_str()));
+        loadingDialogWidget->show();
     }
 
     void ProgressDialog::updateValue(int value) {
-        if (ld != nullptr) {
-            ld->updateProgress(value);
-        }
-    }
-
-    void ProgressDialog::close() {
-        if (ld != nullptr) {
-            ld->close();
+        if (loadingDialogWidget != nullptr) {
+            loadingDialogWidget->updateProgress(value);
         }
     }
 
     bool ProgressDialog::isVisible() {
-        return ld->isVisible();
+        return loadingDialogWidget->isVisible();
     }
+
+    void ProgressDialog::close() {
+        loadingDialogWidget->close();
+    }
+
+
+
 
     AboutDialog::AboutDialog() {
         ab = new AboutDialogWidget(dialogParent, dialogThemeManager->colorizeSVG(":/svg/svg/logo_base.svg"));
