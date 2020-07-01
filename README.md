@@ -1,5 +1,9 @@
+[![Build Status](http://tom-butcher.ml:2233/jenkins/job/Horizon-Darwin/badge/icon?subject=Darwin)](http://tom-butcher.ml:2233/jenkins/job/Horizon-Darwin/)
+<br>
 <img src="http://tom-butcher.ml:2233/git/tom/Horizon/raw/branch/master/main_brand.png" width="500"></img>
-#
+# Horizon Digital Audio Workstation
+
+
 A digital audio workstation written in c++ and using the Labsound library for audio playback.
 
 ## Getting started
