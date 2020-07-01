@@ -34,7 +34,7 @@
    </property>
    <item>
     <widget class="QStackedWidget" name="container">
-     <widget class="QWidget" name="page">
+     <widget class="QWidget" name="settingsgrid">
       <widget class="QFrame" name="frame">
        <property name="geometry">
         <rect>

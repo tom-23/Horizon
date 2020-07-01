@@ -71,11 +71,30 @@ void ArrangeWidget::on_zoomSlider_valueChanged(int value)
 
 void ArrangeWidget::on_pushButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Open Audio"), "/home/tombutcher", tr("Audio Files (*.wav *.mp3 *.acc)"));
+    QFileDialog *dialog = new QFileDialog(this);
+    dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
+    dialog->setModal(false);
+    QString fileName = dialog->getOpenFileName();
+
     AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
     tl->addRegion(newAudioRegion);
-    newAudioRegion->loadFile(fileName.toStdString());
+
+
+
+    auto future  = std::async(std::launch::async, [newAudioRegion, fileName] {
+        std::thread::id this_id = std::this_thread::get_id();
+        std::cout << "thread " << this_id << " running...\n";
+
+
+        newAudioRegion->loadFile(fileName.toStdString());
+    });
+    std::thread::id this_id = std::this_thread::get_id();
+    std::cout << "thread " << this_id << " running...\n";
+    while (dialog->isHidden() == false) {
+        qDebug() << "NOT HIDDEN";
+    }
+    future.get();
+
 }
 
 void ArrangeWidget::setAudioManager(AudioManager &_audioMan) {

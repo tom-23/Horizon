@@ -6,9 +6,10 @@
 #include "arrangewidget.h"
 #include "preferenceswindow.h"
 #include "librarywidget.h"
-#include "aboutdialog.h"
+
 #include "app/audiomanager.h"
 #include "common/thememanager.h"
+#include "common/dialogs.h"
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE

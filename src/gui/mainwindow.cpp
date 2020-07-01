@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
     #endif
 
     themeMan = new ThemeManager(this, themeLoc);
+    dialogs::setParent(this);
+    dialogs::setThemeManager(themeMan);
 
 
     updateIconThemes();
@@ -85,8 +87,7 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    AboutDialog *ab = new AboutDialog(this, themeMan);
-    ab->show();
+    new dialogs::AboutDialog();
 }
 
 

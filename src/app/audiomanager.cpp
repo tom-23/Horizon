@@ -261,6 +261,31 @@ void AudioManager::setCurrentGridTime(float _value) {
     currentGridTime = _value;
 }
 
-std::string AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus) {
-    return "";
+std::vector<float> AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus) {
+
+
+    int samples = 40;
+    int blockSize = floor(bus->channel(0)->length() / samples);
+    std::vector<float> filteredSamples{};
+
+    std::future<std::vector<float>*> val;
+
+    for (int i = 0; i < samples; i++) {
+        int blockStart = blockSize * i;
+        float sum = 0.0;
+
+        for (int j = 0; j < blockSize; ++j) {
+            sum = sum + abs(bus->channel(0)->data()[blockStart + j]);
+        }
+        qDebug() << i;
+
+        std::thread::id this_id = std::this_thread::get_id();
+        std::cout << "thread " << this_id << " running...\n";
+        std::this_thread::sleep_for(2s);
+        filteredSamples.push_back(sum / blockSize);
+
+    }
+
+    //progressDiag->close();
+    return filteredSamples;
 }

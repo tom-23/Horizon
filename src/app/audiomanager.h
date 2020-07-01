@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ratio>
 #include <thread>
+#include <math.h>
 
 #include "LabSound/LabSound.h"
 
@@ -28,6 +29,7 @@ class Metronome;
 #include "common/audioutil.h"
 #include "common/timer.h"
 #include "common/debug.h"
+#include "common/dialogs.h"
 #include "common/util.h"
 
 #include <iostream>
@@ -90,7 +92,7 @@ public:
     float startTime;
     float stopTime;
 
-    std::string calculatePeaks(std::shared_ptr<AudioBus> bus);
+    std::vector<float> calculatePeaks(std::shared_ptr<AudioBus> bus);
 
     std::shared_ptr<AudioContext> context;
 
@@ -131,7 +133,6 @@ private:
 
      void updateMetSchedule();
     void cancelTrackPlayback();
-
 };
 
 #endif // AUDIOMANAGER_H
