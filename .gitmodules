@@ -1,6 +1,3 @@
 [submodule "lib/LabSound"]
 	path = lib/LabSound
 	url = https://github.com/LabSound/LabSound.git
-[submodule "assets"]
-	path = assets
-	url = http://tom-butcher.ml:2233/git/tom/Horizon-Assets.git

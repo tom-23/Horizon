@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>358</height>
+    <width>300</width>
+    <height>426</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>200</width>
+    <width>300</width>
     <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>200</width>
+    <width>400</width>
     <height>16777215</height>
    </size>
   </property>
@@ -47,39 +47,7 @@ QPushButton {
 	font-size: 11px;
 }
 
-QTabWidget::pane { /* The tab widget frame */
-border-top: 1px solid #0f0f0f;
-
-border: 1px Solid #0f0f0f;	
-	border-radius: 5px;
-background-color: #282828;
-}
-QTabWidget::tab-bar {
-
-}
-/* Style the tab using the tab sub-control. Note that it reads QTabBar _not_ QTabWidget */
-QTabBar::tab {
-font-size: 11px;
-background-color: #1e1e1e;
-border: 1px Solid #0f0f0f;	
-border-bottom-color: #1e1e1e; /* same as the pane color */
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
-min-width: 8ex;
-padding: 2px;
-padding-left: 5px;
-padding-right: 5px;
-margin-left: 2px;
-margin-right: 2px;
-}
-
-QTabBar::tab:selected {
-border: 1px Solid #0f0f0f;	
-background-color: #323232;
-border-bottom-color: #323232;
-}
-QTabBar::tab:!selected {
-}</string>
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
@@ -105,12 +73,56 @@ QTabBar::tab:!selected {
      <property name="elideMode">
       <enum>Qt::ElideLeft</enum>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="trackTab">
       <attribute name="title">
        <string>Track</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="title">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QProgressBar" name="outputMeter">
+         <property name="value">
+          <number>24</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="fxTab">
       <attribute name="title">
        <string>Effects</string>
       </attribute>
@@ -181,8 +193,8 @@ QTabBar::tab:!selected {
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>188</width>
-            <height>297</height>
+            <width>284</width>
+            <height>360</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -225,6 +237,11 @@ QTabBar::tab:!selected {
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Master</string>
+      </attribute>
      </widget>
     </widget>
    </item>

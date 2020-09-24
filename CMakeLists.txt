@@ -28,7 +28,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-list(APPEND horizon_LIBRARIES Qt5::Widgets)
+find_package(Qt5 COMPONENTS webenginewidgets REQUIRED)
+list(APPEND horizon_LIBRARIES Qt5::Widgets Qt5::WebEngine Qt5::WebEngineWidgets)
 
 set(horizon_APP_ID      com.horizon-daw.horizon)
 set(horizon_ICON_PREFIX assets/app_icon/icon)

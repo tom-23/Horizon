@@ -76,7 +76,6 @@ public:
 
     int getTrackCount();
 
-
     void addRegion(Region *_region);
     void removeRegion(Region *_region);
     void setRegionTrack(int _oldTrackIndex, int _newTrackIndex);
@@ -88,9 +87,14 @@ public:
     int barLength;
     int barCount;
 
+
+
     bool pinchToZoom;
 
     int hZoomFactor;
+
+    bool suspendGhostPlayhead;
+    bool regionSnapping;
 
 
     QString backgroundColor;
@@ -123,6 +127,8 @@ private:
     void setZRegionValues(int _zValue);
 
     QWidget *parent;
+
+    QTimer *uiTimer;
 
 };
 

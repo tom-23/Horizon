@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QBrush>
 #include <QPen>
+#include <QPainterPath>
 
 
 
@@ -25,6 +26,8 @@ public:
     void setGridLength(float _value);
 
     void setGhost(bool _isGhost);
+
+    void setWaveform(std::vector<std::vector<float>> waveForm);
 
 
 
@@ -56,6 +59,7 @@ protected:
     Region *region;
 
     bool ghost;
+    std::vector<std::vector<float>> waveFormPoints;
     // QGraphicsItem interface
 
     Timeline *timeline;

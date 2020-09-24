@@ -4,6 +4,23 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>hzp</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>project.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Horizon Project File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>${COPYQ_EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>

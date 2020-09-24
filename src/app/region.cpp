@@ -76,3 +76,11 @@ float Region::getGain() {
 std::shared_ptr<GainNode> Region::getOutputNode() {
     return outputNode;
 }
+
+std::string Region::getRegionName() {
+    return regionName;
+}
+
+void Region::setRegionName(std::string _name) {
+    regionName = _name;
+}

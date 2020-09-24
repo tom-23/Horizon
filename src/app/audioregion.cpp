@@ -13,7 +13,8 @@ void AudioRegion::loadFile(std::string fileName) {
     dialogs::ProgressDialog::show(0, 0, "Loading Audio file...");
 
 
-
+    QFileInfo fileInfo(QString::fromStdString(fileName));
+    setRegionName(fileInfo.fileName().toStdString());
 
     loadedFileName = fileName;
 
@@ -34,7 +35,7 @@ void AudioRegion::loadFileThread(std::function<void()> callback) {
         audioClipNode->setBus(r, audioClipBus);
     }
     debug::out(3, "Calculating peaks...");
-    track->getAudioManager()->calculatePeaks(audioClipBus);
+    regionGraphicsItem->setWaveform(track->getAudioManager()->calculatePeaks(audioClipBus, loadedFileName));
     debug::out(3, "Thread Finished Bye ;)");
     callback();
 }
@@ -99,6 +100,31 @@ void AudioRegion::disconnectTrack() {
 
 void AudioRegion::setTrack(Track *_track) {
 
-    schedule();
-    Region::setTrack(_track);
+
+    {
+        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
+        audioClipNode->reset(r);
+
+    }
+
+    debug::out(3, "Switching Tracks...");
+    //outputNode->uninitialize();
+
+    track->getTrackInputNode()->input(0)->junctionDisconnectAllOutputs();
+    qDebug() << track->getTrackInputNode()->numberOfInputs();
+    qDebug() << _track->getTrackInputNode()->numberOfInputs();
+
+    _track->getAudioManager()->context->connect(_track->getTrackInputNode(), outputNode);
+
+
+
+    audioClipNode->initialize();
+    debug::out(3, "Connected to track");
+    setGain(gain);
+    qDebug() << outputNode->numberOfOutputs();
+    track = _track;
+}
+
+std::string AudioRegion::getLoadedFileName() {
+    return loadedFileName;
 }

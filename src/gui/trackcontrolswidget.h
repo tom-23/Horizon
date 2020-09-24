@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "app/audiomanager.h"
+#include "gui/colorpickerwidget.h"
 class Track;
 class Timeline;
 
@@ -28,18 +29,28 @@ private slots:
 
     void on_muteButton_toggled(bool checked);
 
- private:
+    void on_armButton_clicked();
+
+    void on_peakdBLabel_clicked();
+
+private:
     Ui::TrackControlsWidget *ui;
     Track *track;
 
     bool shiftDown;
 
+    QTimer *uiTimer;
+    void uiUpdate();
+
+    int lastMeterValue;
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+
+    void changeColor();
 
 };
 

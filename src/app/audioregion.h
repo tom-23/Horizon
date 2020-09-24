@@ -31,6 +31,8 @@ public:
     void disconnectTrack() override;
     void setTrack(Track *_track) override;
 
+    std::string getLoadedFileName();
+
 private:
 
     std::shared_ptr<AudioBus> audioClipBus;

@@ -26,11 +26,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-font-family: SF Display;
-font-size: 11px;
-}
-#centralwidget {
+   <string notr="true">#centralwidget {
 	border: none;
 	border-bottom: 1px Solid #0f0f0f;	
 	border-radius: 0px;
@@ -83,7 +79,7 @@ background-color: #282828;
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Effect01</string>
+         <string>Reverb MK1</string>
         </property>
        </widget>
       </item>
@@ -101,23 +97,12 @@ background-color: #282828;
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="toolButton">
-        <property name="styleSheet">
-         <string notr="true">border: none;
-background-color: transparent;</string>
-        </property>
+       <widget class="QPushButton" name="pushButton">
         <property name="text">
-         <string/>
+         <string>BYPASS</string>
         </property>
-        <property name="icon">
-         <iconset resource="../assets/resources.qrc">
-          <normaloff>:/svg/svg/power.svg</normaloff>:/svg/svg/power.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>14</width>
-          <height>14</height>
-         </size>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -126,8 +111,6 @@ background-color: transparent;</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../assets/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

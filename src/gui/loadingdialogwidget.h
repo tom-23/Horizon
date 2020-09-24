@@ -23,8 +23,6 @@ public:
 private:
     Ui::LoadingDialogWidget *ui;
 
-protected:
-    void showEvent(QShowEvent *) override;
 };
 
 #endif // LoadingDialogWidget_H

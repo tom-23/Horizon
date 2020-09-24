@@ -92,9 +92,14 @@ public:
     float startTime;
     float stopTime;
 
-    std::vector<float> calculatePeaks(std::shared_ptr<AudioBus> bus);
+    std::vector<std::vector<float>> calculatePeaks(std::shared_ptr<AudioBus> bus, std::string fileName);
 
     std::shared_ptr<AudioContext> context;
+
+    void engageSolo();
+    void disengageSolo();
+
+    bool soloEnabled;
 
 private:
     QObject *parent;

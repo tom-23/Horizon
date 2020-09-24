@@ -49,12 +49,6 @@ void ArrangeWidget::on_pushButton_4_clicked()
     //ui->overview->update();
 }
 
-void ArrangeWidget::on_pushButton_5_clicked()
-{
-    Track *track = audioMan->addTrack();;
-    tl->addTrack(track);
-    audioMan->setTrackSelected(track, true);
-}
 
 void ArrangeWidget::resizeEvent(QResizeEvent *event)
 {
@@ -69,26 +63,38 @@ void ArrangeWidget::on_zoomSlider_valueChanged(int value)
 }
 
 
-void ArrangeWidget::on_pushButton_clicked()
-{
-    QFileDialog *dialog = new QFileDialog(this);
-    dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
-    dialog->setModal(false);
-    QString fileName = dialog->getOpenFileName();
-
-    AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
-    tl->addRegion(newAudioRegion);
-
-    newAudioRegion->loadFile(fileName.toStdString());
-
-    std::thread::id this_id = std::this_thread::get_id();
-    std::cout << "thread " << this_id << " running...\n";
-    while (dialog->isHidden() == false) {
-        qDebug() << "NOT HIDDEN";
-    }
-}
-
 void ArrangeWidget::setAudioManager(AudioManager &_audioMan) {
     audioMan = &_audioMan;
 }
 
+void ArrangeWidget::importAudio() {
+    if (audioMan->getSelectedTrack(0) != nullptr) {
+        QFileDialog *dialog = new QFileDialog(this);
+        dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
+        dialog->setModal(false);
+        QString fileName = dialog->getOpenFileName();
+
+        if (fileName.toStdString() != "") {
+            AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
+            tl->addRegion(newAudioRegion);
+            newAudioRegion->loadFile(fileName.toStdString());
+        }
+    } else {
+
+    }
+
+
+
+}
+
+void ArrangeWidget::addNewAudioTrack() {
+    Track *track = audioMan->addTrack();;
+    tl->addTrack(track);
+    audioMan->setTrackSelected(track, true);
+}
+
+
+void ArrangeWidget::on_soloDisableButton_clicked()
+{
+
+}

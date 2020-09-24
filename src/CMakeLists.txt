@@ -1,7 +1,7 @@
-file(GLOB horizon_SOURCES main.cpp app/*.cpp common/*.cpp gui/*.cpp)
+file(GLOB horizon_SOURCES main.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
 
-file(GLOB horizon_FORMS gui/*.ui)
-
+file(GLOB horizon_FORMS gui/*.ui gui/audio_effects/*.ui
+    )
 set(horizon_RESOURCES ../assets/resources.qrc ../assets/core.qrc
                       ../assets/themes.qrc)
 
@@ -69,8 +69,9 @@ endif()
 add_dependencies(${HORIZON_EXECUTABLE_NAME} generate_version_header)
 
 # Qt modules
-list(APPEND horizon_qt_modules)
+list(APPEND horizon_qt_modules "WebSockets" "WebEngine" "WebEngineWidgets")
 foreach(horizon_qt_module ${horizon_qt_modules})
+  message(STATUS "Finding QT Plugin ${horizon_qt_module}")
   find_package(Qt5${horizon_qt_module} REQUIRED)
   list(APPEND horizon_LIBRARIES Qt5::${horizon_qt_module})
 endforeach()
@@ -87,6 +88,11 @@ list(APPEND horizon_LIBRARIES libwavpack)
 set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES COMPILE_DEFINITIONS "${horizon_DEFINITIONS}")
 
 set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "${horizon_LINK_FLAGS}")
+
+foreach(module ${horizon_LIBRARIES})
+  message(STATUS "Target link module ${module}")
+endforeach()
+
 target_link_libraries(${HORIZON_EXECUTABLE_NAME} ${horizon_LIBRARIES})
 
 install(TARGETS ${HORIZON_EXECUTABLE_NAME}
@@ -117,12 +123,15 @@ else()
     endmacro()
 
     # Install needed Qt plugins
-    foreach(_horizon_qt_module ${horizon_qt_modules} "Gui" "Widgets")
+
+    foreach(_horizon_qt_module ${horizon_qt_modules} "Gui" "Widgets" "SVG" "WebSockets" "WebEngineCore" "WebEngineWidgets")
         set(_module_plugins "${Qt5${_horizon_qt_module}_PLUGINS}")
         foreach(_plugin ${_module_plugins})
+            message(STATUS "Installing QT Plugin ${_plugin}")
             install_qt5_plugin("${_plugin}" FIXUP_BUNDLE_QT_PLUGINS)
         endforeach()
     endforeach()
+
 
     # install a qt.conf file
     # this inserts some cmake code into the install script to write the file
@@ -138,6 +147,21 @@ else()
 
     # Directories to look for dependencies
     set(FIXUP_BUNDLE_DEP_DIRS "${CMAKE_BINARY_DIR};${QT_LIBRARY_DIRS}")
+
+    # Get reference to deployqt
+    get_target_property(uic_location Qt5::uic IMPORTED_LOCATION)
+    get_filename_component( _dir ${uic_location} DIRECTORY)
+    set(deployqt "${_dir}/macdeployqt")
+    if(NOT EXISTS ${deployqt})
+      message(FATAL_ERROR "Failed to locate deployqt executable: [${deployqt}]")
+    endif()
+
+    # Execute deployqt during package creation
+    # See https://doc.qt.io/qt-5/osx-deployment.html#macdeploy
+    install(CODE "set(deployqt \"${deployqt}\")" COMPONENT Runtime)
+    install(CODE [===[
+    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/Horizon.app")
+    ]===] COMPONENT Runtime)
 
     install(CODE "
         include(BundleUtilities)

@@ -20,7 +20,3 @@ LoadingDialogWidget::~LoadingDialogWidget()
 void LoadingDialogWidget::updateProgress(int value) {
     ui->progressBar->setValue(value);
 }
-
-void LoadingDialogWidget::showEvent(QShowEvent *) {
-    qDebug() << "NOW VISIBLE";
-}

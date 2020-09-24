@@ -19,6 +19,7 @@ RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene 
     oldPos = scenePos();
     scene = _scene;
     region = _region;
+    timeline = _timeline;
 }
 
 
@@ -44,6 +45,7 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     timeline = _timeline;
     ghost = true;
     gridLocation = 1;
+    waveFormPoints = {};
     setY((region->getTrack()->getIndex() * 60) + 1);
 }
 
@@ -58,6 +60,29 @@ QRectF RegionGraphicItem::boundingRect() const
     return QRectF(0, 1, length * timeline->hZoomFactor, height);
 }
 
+void RegionGraphicItem::setWaveform(std::vector<std::vector<float>> waveForm) {
+
+    qDebug() << "Setting Waveform...";
+
+    int samples = this->length * 1000;
+    qDebug() << samples;
+    int blockSize = floor((int)waveForm.at(0).size() / samples);
+
+    waveFormPoints.push_back({});
+
+    for (int i = 0; i < samples; i++) {
+        int blockStart = blockSize * i;
+        float sum = 0.0;
+
+        for (int j = 0; j < blockSize; j++) {
+            sum = sum + waveForm.at(0).at(blockStart + j);
+        }
+        waveFormPoints.at(0).push_back(sum / blockSize);
+    }
+
+
+}
+
 void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
@@ -65,17 +90,51 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->setPen(pen);
     painter->drawRoundedRect(boundingRect(), 5, 5);
     painter->setBrush(outlineColor);
+
+
+    qDebug() << "Draw..." << waveFormPoints.size();
+
+    if (waveFormPoints.size() != 0) {
+        qDebug() << "Starting paint";
+
+        QPainterPath waveformPath;
+
+        waveformPath.moveTo(0, 0);
+
+        QVector<QPointF> points;
+        int midPoint = this->height / 2;
+
+        for (int i = 0; i < (int)waveFormPoints.at(0).size(); i++) {
+
+            float dataPointY = (waveFormPoints.at(0).at(i) * midPoint) + midPoint;
+            qDebug() << dataPointY;
+            points.push_back(QPointF(i / 10, dataPointY));
+        }
+
+        QPolygonF waveformPolygon(points);
+
+
+
+        waveformPath.addPolygon(waveformPolygon);
+
+        painter->drawPath(waveformPath);
+
+
+    }
+
+
+
+
     QFont font = scene->font();
     font.setPixelSize(10);
     font.setBold(true);
     QFontMetricsF fontMetrics(font);
-    QString text("Audio Region #1");
+    QString text = QString::fromStdString(region->getRegionName());
     int heightFont = fontMetrics.boundingRect(text).height();
     painter->drawText(5, heightFont + 3, text);
     if (pressed == false ) {
         setX((gridLocation - 1) * timeline->hZoomFactor);
     }
-
 }
 
 
@@ -105,6 +164,8 @@ void RegionGraphicItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     oldPos = scenePos();
     int heightDiff = height + 4;
     oldTrackIndex = scenePos().y() / heightDiff;
+    timeline->suspendGhostPlayhead = true;
+    timeline->ghostPlayheadGraphic->setLocation(this->x());
 }
 void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -144,11 +205,29 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             setY(yValue);
         }
 
-        gridLocation = (scenePos().x() / timeline->hZoomFactor) + 1;
+
 
         int dx = (newPos - oldMousePos).x();
-        setX(oldPos.x() + dx);
-        //        setY(newPos.y());
+
+        if (timeline->regionSnapping == false) {
+            setX(oldPos.x() + dx);
+
+        } else {
+
+
+            float division = 0.0f;
+            if (timeline->hZoomFactor >= 150) {
+                    division = timeline->barLength * 2;
+            } else {
+                    division = float(timeline->barLength);
+            }
+            float gridLoc = ((oldPos.x() + dx) / timeline->hZoomFactor);
+            float glr = float(round((gridLoc + 1) * division)) / division;
+            setX((glr - 1) * timeline->hZoomFactor);
+        }
+
+        gridLocation = (scenePos().x() / timeline->hZoomFactor) + 1;
+        timeline->ghostPlayheadGraphic->setLocation(this->x());
     }
 }
 
@@ -173,7 +252,12 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     int newTrackIndex = scenePos().y() / heightDiff;
 
     if (newTrackIndex != oldTrackIndex) {
-        region->getTrack()->switchRegion(region, region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex));
+
+        Track *newTrack = region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex);
+        region->getTrack()->removeRegion(region);
+
+        newTrack->setRegion(region);
+        region->setTrack(newTrack);
 
     }
 
@@ -181,6 +265,8 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (region->getTrack()->getAudioManager()->isPlaying == true) {
         region->schedule();
     }
+    timeline->ghostPlayheadGraphic->setLocation(mapToScene(event->pos()).x());
+    timeline->suspendGhostPlayhead = false;
 
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

@@ -5,6 +5,7 @@
 
 
 #include "LabSound/LabSound.h"
+//#include <QString>
 //#include "audioregion.h"
 
 
@@ -52,6 +53,9 @@ public:
     virtual float getGain();
     virtual void setGain(float _gain);
 
+    virtual std::string getRegionName();
+    virtual void setRegionName(std::string _name);
+
     virtual std::shared_ptr<GainNode> getOutputNode();
 
 protected:
@@ -66,6 +70,8 @@ protected:
 
     double gridLocation;
     double length;
+
+    std::string regionName;
 
     float gain;
 

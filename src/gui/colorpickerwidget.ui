@@ -10,6 +10,12 @@
     <height>47</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -107,180 +113,7 @@ border: none;
        <number>5</number>
       </property>
       <item>
-       <widget class="QFrame" name="arrangeContents">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
-        </property>
-        <property name="lineWidth">
-         <number>0</number>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item row="0" column="1">
-          <widget class="QToolButton" name="toolButton_6">
-           <property name="styleSheet">
-            <string notr="true">background-color: #e6732e;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="7">
-          <widget class="QToolButton" name="toolButton_15">
-           <property name="styleSheet">
-            <string notr="true">background-color: #d0d0d0;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QToolButton" name="toolButton">
-           <property name="styleSheet">
-            <string notr="true">background-color: #ec4a40;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <widget class="QToolButton" name="toolButton_3">
-           <property name="styleSheet">
-            <string notr="true">background-color: #a4fa7a;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="4">
-          <widget class="QToolButton" name="toolButton_16">
-           <property name="styleSheet">
-            <string notr="true">background-color: #eb52ce;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QToolButton" name="toolButton_8">
-           <property name="styleSheet">
-            <string notr="true">background-color: #6ae6fc;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QToolButton" name="toolButton_18">
-           <property name="styleSheet">
-            <string notr="true">background-color: #327dbb;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
-          <widget class="QToolButton" name="toolButton_17">
-           <property name="styleSheet">
-            <string notr="true">background-color: #8271dd;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QToolButton" name="toolButton_5">
-           <property name="styleSheet">
-            <string notr="true">background-color: #937350;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QToolButton" name="toolButton_4">
-           <property name="styleSheet">
-            <string notr="true">background-color: #fcef5e;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="6">
-          <widget class="QToolButton" name="toolButton_14">
-           <property name="styleSheet">
-            <string notr="true">background-color: #d55e9d;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="7">
-          <widget class="QToolButton" name="toolButton_7">
-           <property name="styleSheet">
-            <string notr="true">background-color: #54bcaf;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QToolButton" name="toolButton_19">
-           <property name="styleSheet">
-            <string notr="true">background-color: #47a4e8;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="6">
-          <widget class="QToolButton" name="toolButton_2">
-           <property name="styleSheet">
-            <string notr="true">background-color: #67bf38;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QHBoxLayout" name="colorButtonsLayout"/>
       </item>
      </layout>
     </widget>

@@ -25,6 +25,8 @@ Timeline::Timeline(QWidget *_parent,
     debug::out(3, "Init Timeline...");
 
     trackRegionsScene = new GraphicsScene();
+    suspendGhostPlayhead = false;
+    regionSnapping = true;
 
     trackRegions = new GraphicsView(trackRegionsScene, parent, this);
     trackRegions->updateGeometry();
@@ -127,11 +129,6 @@ void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     rulerGraphic->setHScaleFactor(hZoomFactor);
 
     playheadGraphic->setHScaleFactor(hZoomFactor);
-    timelineGraphic->repaint();
-    timelineGraphic->update();
-    timelineGraphic->view->update();
-    timelineGraphic->view->repaint();
-    updateViewports();
     updateHeights();
 }
 
@@ -152,6 +149,8 @@ void Timeline::updateHeights() {
 void Timeline::updateViewports() {
     timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
+    timelineGraphic->repaint();
+    timelineGraphic->update();
     timelineGraphic->view->update();
 }
 
@@ -174,6 +173,7 @@ void Timeline::setBarLength(int _barLength) {
 int Timeline::getTrackCount() {
     return trackCount;
 }
+
 
 int Timeline::getRegionCount() {
     return regionCount;
@@ -208,7 +208,6 @@ qDebug() << timelineGraphic->scene->items().count();
 
     this->setZRegionValues(barCount * barLength);
 }
-
 
 void Timeline::removeRegion(Region *_region) {
 

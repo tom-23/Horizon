@@ -14,6 +14,7 @@
 #include <QBrush>
 #include <QGraphicsItem>
 #include <QPoint>
+#include <QColor>
 #include <iostream>
 
 
@@ -23,6 +24,7 @@
 #include <fstream>
 #include <cassert>
 #include <functional>
+#include <math.h>
 #include "LabSound/LabSound.h"
 
 //#include "audioregion.h"
@@ -58,15 +60,22 @@ public:
     void setTrackControlsWidget(TrackControlsWidget *_tcw);
     void setTrackGraphicsItem(TrackGraphicItem *_tgi);
 
+    QColor getColor();
+    void setColor(QColor *_color);
+
     // void setColorTheme(QColor primaryColor);
     void setHScaleFactor(int _hScaleFactor);
 
     AudioRegion* addAudioRegion();
     void setRegion(Region *_region);
-    void switchRegion(Region *_region, Track *newTrack);
+    void removeRegion(Region *_region, Track *newTrack);
 
     int getIndex();
     void setIndex(int _index);
+
+    AudioRegion* getAudioRegionByIndex(int index);
+    int getAudioRegionListCount();
+
 
     int getIndexByRegion(Region *region);
 
@@ -89,6 +98,12 @@ public:
     void setGain(float _value);
     float getGain();
 
+    int getMeterData();
+
+    float peakdB;
+
+
+
 private:
     bool selected;
     int index;
@@ -107,6 +122,8 @@ private:
 
     TrackControlsWidget *trackControlWidget;
     TrackGraphicItem *trackGraphicItem;
+
+    QColor color;
 
     bool mute;
     bool solo;

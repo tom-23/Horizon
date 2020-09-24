@@ -71,26 +71,9 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QPushButton" name="pushButton_5">
-          <property name="font">
-           <font>
-            <family>SF Display</family>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="contextMenuPolicy">
-           <enum>Qt::CustomContextMenu</enum>
-          </property>
+         <widget class="QPushButton" name="soloDisableButton">
           <property name="text">
-           <string>T</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>R</string>
+           <string>S</string>
           </property>
          </widget>
         </item>
@@ -279,7 +262,7 @@ border: none;
            </property>
            <property name="minimumSize">
             <size>
-             <width>250</width>
+             <width>300</width>
              <height>0</height>
             </size>
            </property>
@@ -376,8 +359,8 @@ border: none;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>284</width>
-                 <height>235</height>
+                 <width>300</width>
+                 <height>229</height>
                 </rect>
                </property>
                <property name="sizePolicy">

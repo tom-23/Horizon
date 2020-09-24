@@ -37,7 +37,10 @@ AudioManager::AudioManager(Timeline &_timeline)
 std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileName) {
 
         std::shared_ptr<AudioBus> bus = MakeBusFromFile(fileName, false);
-        if (!bus) debug::out(3, "COULD NOT OPEN FILE: " + fileName);
+        if (!bus) {
+            debug::out(1, "COULD NOT OPEN FILE: " + fileName);
+            return nullptr;
+        }
         return bus;
 }
 
@@ -176,7 +179,12 @@ Track* AudioManager::getTrackByIndex(int index) {
 }
 
 Track* AudioManager::getSelectedTrack(int index) {
-    return selectedTrackList->at(index);
+    if (selectedTrackList->size() != 0) {
+        return selectedTrackList->at(index);
+    } else {
+        return nullptr;
+    }
+
 }
 
 std::vector<class Track*>* AudioManager::getSelectedTracks() {
@@ -261,26 +269,40 @@ void AudioManager::setCurrentGridTime(float _value) {
     currentGridTime = _value;
 }
 
-std::vector<float> AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus) {
+std::vector<std::vector<float>> AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus, std::string fileName) {
+
+    std::vector<std::vector<float>> calculatedStereoSamples;
 
 
-    int samples = 40;
-    int blockSize = floor(bus->channel(0)->length() / samples);
-    std::vector<float> filteredSamples{};
+    for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
 
-    std::future<std::vector<float>*> val;
+         std::vector<float> channelData;
 
-    for (int i = 0; i < samples; i++) {
-        int blockStart = blockSize * i;
-        float sum = 0.0;
-
-        for (int j = 0; j < blockSize; ++j) {
-            sum = sum + abs(bus->channel(0)->data()[blockStart + j]);
-        }
-        filteredSamples.push_back(sum / blockSize);
-
+         for (int dp = 0; dp < (int)bus->channel(channelIdx)->length(); dp++) {
+             channelData.push_back(log10(bus->channel(channelIdx)->data()[dp]));
+         }
+         calculatedStereoSamples.push_back(channelData);
     }
 
-    //progressDiag->close();
-    return filteredSamples;
+    return calculatedStereoSamples;
+}
+
+void AudioManager::engageSolo() {
+    soloEnabled = true;
+    for (int i = 0; i < int(trackList->size()); i++) {
+        if (trackList->at(i)->getSolo() == false) {
+            trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
+        }
+
+    }
+}
+
+void AudioManager::disengageSolo() {
+    soloEnabled = false;
+    for (int i = 0; i < int(trackList->size()); i++) {
+        if (trackList->at(i)->getSolo() == false) {
+            trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
+        }
+
+    }
 }
