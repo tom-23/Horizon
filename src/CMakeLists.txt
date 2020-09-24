@@ -2,8 +2,8 @@ file(GLOB horizon_SOURCES main.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_ef
 
 file(GLOB horizon_FORMS gui/*.ui gui/audio_effects/*.ui
     )
-set(horizon_RESOURCES ../assets/resources.qrc ../assets/core.qrc
-                      ../assets/themes.qrc)
+set(horizon_RESOURCES ../misc/assets/resources.qrc ../misc/assets/core.qrc
+                      ../misc/assets/themes.qrc)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} .)
 include_directories(${Qt5Widgets_INCLUDES})
@@ -58,10 +58,10 @@ else()
   set(MACOSX_BUNDLE_BUNDLE_VERSION "${horizon_version}")
 
   set_source_files_properties(
-    "${CMAKE_CURRENT_SOURCE_DIR}/../assets/app_icon/icon.icns"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/icon.icns"
     PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   set(horizon_COMPILE ${horizon_COMPILE}
-                      "${CMAKE_CURRENT_SOURCE_DIR}/../assets/app_icon/icon.icns")
+                      "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/icon.icns")
 
   add_executable(${HORIZON_EXECUTABLE_NAME} MACOSX_BUNDLE ${horizon_COMPILE})
 endif()

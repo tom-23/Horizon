@@ -32,10 +32,10 @@ find_package(Qt5 COMPONENTS webenginewidgets REQUIRED)
 list(APPEND horizon_LIBRARIES Qt5::Widgets Qt5::WebEngine Qt5::WebEngineWidgets)
 
 set(horizon_APP_ID      com.horizon-daw.horizon)
-set(horizon_ICON_PREFIX assets/app_icon/icon)
-set(horizon_ICON_NORMAL assets/app_icon/icon.svg)
-set(horizon_DESKTOP     shared/${horizon_APP_ID}.desktop)
-set(horizon_APPDATA     shared/${horizon_APP_ID}.appdata.xml)
+set(horizon_ICON_PREFIX misc/assets/app_icon/icon)
+set(horizon_ICON_NORMAL misc/assets/app_icon/icon.svg)
+set(horizon_DESKTOP     misc/shared/${horizon_APP_ID}.desktop)
+set(horizon_APPDATA     misc/shared/${horizon_APP_ID}.appdata.xml)
 
 # Compiling debug version
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
