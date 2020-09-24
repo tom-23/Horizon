@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/metronome">
+        <file>bundle/core/metronome/Primary.wav</file>
+        <file>bundle/core/metronome/Secondary.wav</file>
+    </qresource>
+    <qresource prefix="/splash">
+        <file>Untitled-2-01.svg</file>
+        <file>splash-01.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,454 @@
+* {
+        font-family: Rubik;
+        font-style: Medium;
+	font-size: 11px;
+	color: @font-color-primary;
+}
+
+#centralwidget {
+	background-color: @background;
+}
+
+#header {
+	background-color: @foreground;
+	border-bottom: 1px Solid @borders;
+}
+
+#footer {
+	background-color: @foreground;
+	border-top: 1px Solid @borders;
+}
+
+#position_lcd {
+	background-color: @lcd-background;
+	border: 1px Solid @lcd-border;
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#tempo_lcd {
+	background-color: @lcd-background;
+	border: 1px Solid @lcd-border;
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#timesig_lcd {
+	background-color: @lcd-background;
+	border: 1px Solid @lcd-border;
+	font-size: 11px;
+	padding: -5px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#container {
+	border: 1px Solid @borders;
+	border-radius: 5px;
+	background-color: @foreground;
+}
+
+#container_2 {
+	border: 1px Solid @borders;
+	border-radius: 5px;
+	background-color: @foreground;
+}
+
+#zoomSlider::groove:horizontal {
+    background-color: @zoom-slider-background;
+	border: 1px Solid @zoom-slider-border;	
+	height: 2px;
+	border-radius: 5px;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+#zoomSlider::handle:horizontal {
+	border-radius: 6px;
+	border: 1px Solid @zoom-slider-border;
+	background-color: @zoom-slider-knob;
+	height: 100px;
+	margin: -5px -5px;
+	width: 10px;
+}
+
+
+#overview:horizontal {
+border: 1px Solid @borders;	
+	
+}
+
+#overview::handle:horizontal {
+border: 2px Solid rgba(255,255,255,0.25);
+background-color: none;	
+border-radius: 0px;
+margin: 2px;
+}
+#overview::add-line:horizontal {
+border: none;
+}
+#overview::sub-line:horizontal {
+border: none;
+}
+
+#masterGainSlider:horizontal {
+	background-color: @lcd-background;
+	border: 1px Solid @lcd-border;
+	border-radius: 0px;
+	padding: 0px;
+}
+
+
+#masterGainSlider::chunk:horizontal {
+	background-color: @pushbutton-checked-primary;
+	border: none;
+}
+
+	
+
+#trackContainer {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+	border-radius: 0px;
+	border-bottom: 1px Solid @borders;	
+	background-color: @background;
+}
+
+#trackContainer QToolButton {
+	color: @font-color-secondary;
+	border: 1px Solid @borders;	
+	background-color: @background;
+	padding: 0px;
+}
+
+#trackContainer QToolButton:checked {
+	color: @font-color-selected;
+}
+
+#trackControls {
+	border: 1px Solid @borders;	
+}
+
+#trackControlsContents {
+	background-color: @background;
+}
+
+#trackTools {
+	border: none;
+}
+
+
+#trackColor {
+	border: none;
+
+border-bottom: 1px Solid @borders;	
+border-left: 1px Solid @borders;	
+}
+
+#title, #peakdBLabel, #number {
+	color: @font-color-secondary;
+	background: none;
+}
+
+#arrangeCorner {
+	border: none;
+	background-color: @foreground;
+border-right: 1px Solid @borders;	
+}
+
+#timeline {
+	border: 1px Solid @borders;	
+}
+
+
+
+#peakdBLabel {
+	border: 1px Solid @borders;	
+	border-radius: 5px;
+	padding: 0px;
+	padding-left: 5px;
+}
+
+#playButton, #stopButton, #recordButton {
+	background-color: transparent;
+	border: none;
+	padding: 0px;
+}
+
+#ruler {
+	border: none;
+	border-bottom: 1px Solid @borders;	
+    border-top: 1px Solid @borders;	
+	background-color: @background;
+}
+
+#trackRegions {
+	border: none;
+	background-color: @foreground;
+}
+
+#armButton:checked {
+	background-color: @pushbutton-checked-secondary;
+}
+
+#soloButton:checked {
+	background-color: @pushbutton-checked-tertiary;
+}
+
+#soloDisableButton{
+	background-color: @pushbutton-checked-tertiary;
+	color: @font-color-selected;
+}
+
+#muteButton:checked {
+	background-color: @pushbutton-checked-primary;
+}
+
+#libraryTree {
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+#libraryTree::item {
+	color: @font-color-secondary;
+}
+
+#libraryTree::item::selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
+}
+
+#libraryTree::branch::selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
+}
+
+#clientList {
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+#clientList::item {
+	color: @font-color-secondary;
+}
+
+#clientList::item::selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
+}
+
+
+#imageContainer {
+	padding: 10px;
+}
+
+#sessionIDLabel {
+	font-size: 34px;
+}
+#sessionPasswordLabel {
+	font-size: 34px;
+}
+
+#titleLabel {
+	font-weight: 700;
+	font-size: 12px;
+}
+
+#yesButton, #noButton, #okButton, #cancelButton {
+	width: 40px;
+}
+
+
+
+QLabel {
+        padding: 0px;
+	margin: 0px;
+	font-size: 11px;
+	border: 0px;
+}
+
+QPushButton, QToolButton {
+	background-color: @pushbutton-background;
+	border: 1px Solid @pushbutton-border;
+	border-radius: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+	padding-left: 12px;
+	padding-right: 12px;
+	font-size: 11px;
+}
+
+QComboBox {
+	background-color: @combobox-background;
+	border: 1px Solid @combobox-border;
+	font-size: 11px;
+	margin-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 11px;
+	min-width: 250px;
+	
+}
+
+QCheckBox {
+	spacing: 5px;
+	border: 1px Solid @checkbox-border;
+	background-color: @checkbox-background;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+}
+
+QPushButton:pressed, QToolButton:pressed {
+	background-color: @pushbutton-border;
+	color: @font-color-secondary;
+}
+
+QPushButton:checked, QToolButton:checked {
+	background-color: @pushbutton-checked-primary;
+	color: @font-color-selected;
+}
+
+QToolButton {
+	padding: 0px;
+
+	margin: 0px;
+}
+
+
+QMenu {
+	border: 1px Solid @menu-border;
+	background-color: @menu-background;
+	menu-scrollable: 1;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+QMenuBar {
+        background-color: white;
+        color: black;
+        font-size: 12px;
+}
+
+QMenuBar::item {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 6px;
+        padding-right: 6px;
+        font-style: Bold;
+}
+
+QMenuBar::item {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 6px;
+        padding-right: 6px;
+}
+
+QMenu::item {
+	/* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	background-color: transparent;
+}
+
+QMenu::item:selected {
+	/* when user selects item using mouse or keyboard */
+	background-color: @menu-item-hover;
+	color: @font-color-selected;
+}
+
+QMenu::separator {
+    height: 1px;
+    background-color: @menu-border;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+
+QScrollBar {
+border: 1px Solid @scrollbar-border;
+background-color: @scrollbar-background;
+padding: 2px;
+}
+QScrollBar:horizontal {
+
+border-top: none;
+border-left: none;
+height: 12px;
+}
+
+QScrollBar:vertical {
+border-left: none;
+width: 12px;
+
+}
+
+QScrollBar::handle {
+background-color: @scrollbar-handle;
+border-radius: 3px;
+}
+
+
+
+QScrollBar::add-line:horizontal {
+border: none;
+}
+QScrollBar::sub-line:horizontal {
+border: none;
+}
+QScrollBar::add-line:vertical {
+border: none;
+}
+QScrollBar::sub-line:vertical {
+border: none;
+}
+
+QDialog {
+	background-color: @background;
+}
+
+QProgressBar:horizontal {
+    border: 1px solid @borders;
+    border-radius: 5px;
+    background-color: @background;
+	padding: 1px;
+	margin: 0px;
+    height: 5px;
+}
+QProgressBar::chunk:horizontal {
+    background: @pushbutton-checked-primary;
+}
+
+QTabWidget::pane {
+	top:-1px; 
+	border: 1px Solid @borders;
+	border-radius: 5px;
+	background-color: @foreground;
+  } 
+  
+  QTabBar::tab {
+	background-color: @foreground;
+	border: 1px Solid @borders;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-left: 2px;
+	margin-right: 2px;
+	font-size: 11px;
+  } 
+  
+  QTabBar::tab:selected { 
+	background-color: @foreground;
+	margin-bottom: -1px; 
+  }

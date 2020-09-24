@@ -1,0 +1,34 @@
+<RCC>
+    <qresource prefix="/svg">
+        <file>svg/add.svg</file>
+        <file>svg/minus.svg</file>
+        <file>svg/remove.svg</file>
+        <file>svg/solo.svg</file>
+        <file>svg/play.svg</file>
+        <file>svg/record.svg</file>
+        <file>svg/met_1.svg</file>
+        <file>svg/met_2.svg</file>
+        <file>svg/stop.svg</file>
+        <file>svg/start.svg</file>
+        <file>svg/redo.svg</file>
+        <file>svg/undo.svg</file>
+        <file>svg/info.svg</file>
+        <file>svg/power.svg</file>
+        <file>svg/bar.svg</file>
+        <file>svg/logo_base.svg</file>
+        <file>svg/caution.svg</file>
+        <file>svg/no.svg</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file>fonts/Rublik/Rubik-Black.ttf</file>
+        <file>fonts/Rublik/Rubik-BlackItalic.ttf</file>
+        <file>fonts/Rublik/Rubik-Bold.ttf</file>
+        <file>fonts/Rublik/Rubik-BoldItalic.ttf</file>
+        <file>fonts/Rublik/Rubik-Italic.ttf</file>
+        <file>fonts/Rublik/Rubik-Light.ttf</file>
+        <file>fonts/Rublik/Rubik-LightItalic.ttf</file>
+        <file>fonts/Rublik/Rubik-Medium.ttf</file>
+        <file>fonts/Rublik/Rubik-MediumItalic.ttf</file>
+        <file>fonts/Rublik/Rubik-Regular.ttf</file>
+    </qresource>
+</RCC>
