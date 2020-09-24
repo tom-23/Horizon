@@ -1,6 +1,4 @@
-[![Build Status](http://tom-butcher.ml:2233/jenkins/job/Horizon-Darwin/badge/icon?subject=Darwin)](http://tom-butcher.ml:2233/jenkins/job/Horizon-Darwin/)
-<br>
-<img src="http://tom-butcher.ml:2233/git/tom/Horizon/raw/branch/master/main_brand.png" width="500"></img>
+<img src="https://github.com/tom-23/Horizon/raw/master/main_brand.png" width="500"></img>
 # Horizon Digital Audio Workstation
 
 
