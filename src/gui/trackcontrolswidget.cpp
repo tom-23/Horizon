@@ -14,7 +14,9 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     ui->setupUi(this);
     track = _track;
     shiftDown = false;
+    //ui->trackMeter->setVisible(false);
     QColor color = QColor::fromRgb(QRandomGenerator::global()->generate());
+    track->setColor(color);
     QString style = QString("#trackColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
     ui->trackColor->setStyleSheet(style);
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
@@ -23,6 +25,16 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     uiTimer = new QTimer(parent);
     connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
     uiTimer->start(60);
+
+    QGraphicsScene *scene = new QGraphicsScene(ui->trackMeter);
+    mtr = new MeterWidget(ui->trackMeter, 0, 110, true);
+    scene->addItem(mtr);
+    ui->trackMeter->setScene(scene);
+
+
+    ui->trackMeter->update();
+    ui->trackMeter->repaint();
+
 
 }
 
@@ -112,19 +124,21 @@ void TrackControlsWidget::changeColor() {
 }
 
 void TrackControlsWidget::uiUpdate() {
-    int value = track->getMeterData();
+
+    std::vector<int> Lvalue = track->getLMeterData();
+    std::vector<int> Rvalue = track->getRMeterData();
 
 
-    if (value >= ui->trackMeter->value()) {
-        ui->trackMeter->setValue(value);
-    } else if (value == 0) {
 
-    }
 
-    lastMeterValue = value;
-    ui->trackMeter->setValue(ui->trackMeter->value() - 2);
+    mtr->setRMSValue(Lvalue[0] + 100, Rvalue[0] + 100);
+
+    mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
+
+    mtr->update();
+
     ui->peakdBLabel->setText(QString::number(track->peakdB) + " dB");
-    ui->trackMeter->repaint();
+
 
 }
 

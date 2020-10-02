@@ -1,42 +1,21 @@
 #include "regiongraphicitem.h"
 
-RegionGraphicItem::RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region)
-{
-    setFlags(ItemIsMovable);
-    regionColor = _color;
-    color = Qt::transparent;
-    outlineColor = color.lighter(30);
-    selectedColor = QColor(200,30,180);
-    selectedColorOutline = selectedColor.lighter(30);
-    //        rounded = 3;
-    //        hasShadow = false;
-    //        thresholdShadow=0.0f;
-    brush = QBrush(color);
-    pen = QPen(outlineColor, penWidth);
-    pen.setCapStyle(Qt::RoundCap);
-    length = _length;
-    height = 60;
-    oldPos = scenePos();
-    scene = _scene;
-    region = _region;
-    timeline = _timeline;
-}
-
-
 RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region) : QGraphicsItem()
 {
     setFlags(ItemIsMovable);
     regionColor = _color;
-    color = Qt::transparent;
+    waveFormColor = regionColor.darker(80);
+
     outlineColor = QColor("#0f0f0f");
     selectedColor = selectedColor.lighter(30);
-    selectedColorOutline = QColor("#0f0f0f");
     //        rounded = 3;
     //        hasShadow = false;
     //        thresholdShadow=0.0f;
-    brush = QBrush(color);
-    pen = QPen(outlineColor, 1);
-    pen.setCapStyle(Qt::RoundCap);
+    mainBrush = QBrush(Qt::transparent);
+    mainPen = QPen(outlineColor, 1);
+    waveformBrush = QBrush(waveFormColor);
+    waveformPen = QPen(waveFormColor.darker(70), 1);
+    mainPen.setCapStyle(Qt::RoundCap);
     length = 1;
     height = 56;
     oldPos = pos();
@@ -45,8 +24,10 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     timeline = _timeline;
     ghost = true;
     gridLocation = 1;
-    waveFormPoints = {};
+    waveForm = {};
     setY((region->getTrack()->getIndex() * 60) + 1);
+
+    waveFormRendered = false;
 }
 
 void RegionGraphicItem::setGridLength(float _value) {
@@ -60,70 +41,103 @@ QRectF RegionGraphicItem::boundingRect() const
     return QRectF(0, 1, length * timeline->hZoomFactor, height);
 }
 
-void RegionGraphicItem::setWaveform(std::vector<std::vector<float>> waveForm) {
+void RegionGraphicItem::setWaveform(std::vector<const float *> _waveForm, unsigned long long int _length) {
 
-    qDebug() << "Setting Waveform...";
+    waveForm = _waveForm;
+    samplesLength = _length;
 
-    int samples = this->length * 1000;
-    qDebug() << samples;
-    int blockSize = floor((int)waveForm.at(0).size() / samples);
+    waveFormRendered = false;
 
-    waveFormPoints.push_back({});
+    unsigned long int imgWidth = length * 300;
 
-    for (int i = 0; i < samples; i++) {
-        int blockStart = blockSize * i;
-        float sum = 0.0;
+    QPixmap pixmap(QSize(imgWidth, this->boundingRect().height()));
+    pixmap.fill(Qt::transparent);
 
-        for (int j = 0; j < blockSize; j++) {
-            sum = sum + waveForm.at(0).at(blockStart + j);
+    QPainter wavepainter(&pixmap);
+    wavepainter.setPen(QPen(waveFormColor, 1));
+
+    for (unsigned long int i = 0; i < imgWidth; i++) {
+
+        const unsigned long long int firstSampleIndexForPixel = getFirstSampleIndexForPixel(i, imgWidth, samplesLength);
+        const unsigned long long int lastSampleIndexForPixel = getFirstSampleIndexForPixel(i + 1, imgWidth, samplesLength)-1;
+
+        const float largestSampleValueForPixel = getMaximumSampleValueInRange(firstSampleIndexForPixel, lastSampleIndexForPixel, 0);
+        const float smallestSampleValueForPixel = getMinimumSampleValueInRange(firstSampleIndexForPixel, lastSampleIndexForPixel, 0);
+
+        wavepainter.drawLine(QLineF(i, getYValueForSampleValue(largestSampleValueForPixel), i, getYValueForSampleValue(smallestSampleValueForPixel)));
+
+    }
+
+    wavepainter.end();
+
+    waveFormPixmap = pixmap;
+    waveFormRendered = true;
+}
+
+unsigned long long int RegionGraphicItem::getFirstSampleIndexForPixel(unsigned long int x, unsigned long int widgetWidth, unsigned long long int totalNumSamples) {
+   return (totalNumSamples * x)/widgetWidth;
+}
+
+
+float RegionGraphicItem::getMaximumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel) {
+    float maxSample = 0.0f;
+
+    if (firstSample >= samplesLength) {
+        firstSample = samplesLength - 1;
+    }
+    if (lastSample >= samplesLength) {
+        lastSample = samplesLength - 1;
+    }
+
+    for (unsigned long long int i = firstSample; i < lastSample; i++) {
+        if (waveForm.at(channel)[i] > maxSample) {
+            maxSample = waveForm.at(channel)[i];
         }
-        waveFormPoints.at(0).push_back(sum / blockSize);
+    }
+    return maxSample;
+}
+
+float RegionGraphicItem::getMinimumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel) {
+    float minSample = 0.0f;
+
+    if (firstSample >= samplesLength) {
+        firstSample = samplesLength - 1;
+    }
+    if (lastSample >= samplesLength) {
+        lastSample = samplesLength - 1;
     }
 
 
+    for (unsigned long long int i = firstSample; i < lastSample; i++) {
+        if (waveForm.at(channel)[i] < minSample) {
+            minSample = waveForm.at(channel)[i];
+        }
+    }
+    return minSample;
 }
+
+float RegionGraphicItem::getYValueForSampleValue(float sample) {
+    int midPoint = ((this->height - 20) / 2) + 2;
+    return (sample * midPoint) + midPoint + 10;
+}
+
 
 void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
-    painter->setBrush(brush);
-    painter->setPen(pen);
+
+    painter->setBrush(mainBrush);
+    painter->setPen(mainPen);
     painter->drawRoundedRect(boundingRect(), 5, 5);
-    painter->setBrush(outlineColor);
 
+    painter->setPen(waveformPen);
+    painter->setBrush(waveformBrush);
 
-    qDebug() << "Draw..." << waveFormPoints.size();
-
-    if (waveFormPoints.size() != 0) {
-        qDebug() << "Starting paint";
-
-        QPainterPath waveformPath;
-
-        waveformPath.moveTo(0, 0);
-
-        QVector<QPointF> points;
-        int midPoint = this->height / 2;
-
-        for (int i = 0; i < (int)waveFormPoints.at(0).size(); i++) {
-
-            float dataPointY = (waveFormPoints.at(0).at(i) * midPoint) + midPoint;
-            qDebug() << dataPointY;
-            points.push_back(QPointF(i / 10, dataPointY));
-        }
-
-        QPolygonF waveformPolygon(points);
-
-
-
-        waveformPath.addPolygon(waveformPolygon);
-
-        painter->drawPath(waveformPath);
-
-
+    if (waveFormRendered == true) {
+        painter->drawPixmap(boundingRect().toRect(), waveFormPixmap);
     }
 
-
-
+    painter->setPen(mainPen);
 
     QFont font = scene->font();
     font.setPixelSize(10);
@@ -282,10 +296,8 @@ void RegionGraphicItem::keyPressEvent(QKeyEvent *event) {
 void RegionGraphicItem::setGhost(bool _isGhost) {
     ghost = _isGhost;
     if (ghost == true) {
-        color = Qt::transparent;
-        brush = QBrush(color);
+        mainBrush = QBrush(Qt::transparent);
     } else {
-        color = regionColor;
-        brush = QBrush(color);
+        mainBrush = QBrush(regionColor);
     }
 }

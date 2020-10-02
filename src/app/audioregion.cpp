@@ -34,8 +34,15 @@ void AudioRegion::loadFileThread(std::function<void()> callback) {
         ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->setBus(r, audioClipBus);
     }
-    debug::out(3, "Calculating peaks...");
-    regionGraphicsItem->setWaveform(track->getAudioManager()->calculatePeaks(audioClipBus, loadedFileName));
+
+
+
+    debug::out(3, "Getting peaks...");
+    length = track->getAudioManager()->secondsToGridTime(audioClipNode->duration()) - 1;
+
+    regionGraphicsItem->setGridLength(length);
+    regionGraphicsItem->setWaveform(track->getAudioManager()->getPeaks(audioClipBus), audioClipBus->length());
+    //regionGraphicsItem->generateWaveform();
     debug::out(3, "Thread Finished Bye ;)");
     callback();
 }
@@ -44,14 +51,13 @@ void AudioRegion::loadFileThread(std::function<void()> callback) {
 void AudioRegion::loadedFileCallBack() {
     track->getAudioManager()->context->connect(outputNode, audioClipNode);
 
-    length = track->getAudioManager()->secondsToGridTime(audioClipNode->duration()) - 1;
-
     debug::out(3, "Length calculated");
 
-    regionGraphicsItem->setGridLength(length);
     regionGraphicsItem->setGhost(false);
 
     dialogs::ProgressDialog::close();
+    timeline->updateViewports();
+
 
     debug::out(3, "Successfully Loaded File!");
 }
@@ -62,8 +68,11 @@ void AudioRegion::schedule() {
     {
         ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->reset(r);
-    }
+   }
+
     audioClipNode->initialize();
+
+    audioClipNode->gain()->setValue(1.0f);
 
     if (track->getAudioManager()->getCurrentGridTime() > gridLocation && track->getAudioManager()->getCurrentGridTime() < timeEnd) {
 
@@ -77,11 +86,14 @@ void AudioRegion::schedule() {
         debug::out(3, "Scheduled region ahead of playhead");
         double timeToGo = track->getAudioManager()->context->currentTime() + (track->getAudioManager()->gridTimeToSeconds(gridLocation - track->getAudioManager()->getCurrentGridTime()));
         audioClipNode->start(timeToGo);
+
         return;
     }
 }
 
 void AudioRegion::cancelSchedule() {
+
+    audioClipNode->gain()->setValue(0.0f);
 
     audioClipNode->stop(track->getAudioManager()->context->currentTime());
     {
@@ -111,8 +123,6 @@ void AudioRegion::setTrack(Track *_track) {
     //outputNode->uninitialize();
 
     track->getTrackInputNode()->input(0)->junctionDisconnectAllOutputs();
-    qDebug() << track->getTrackInputNode()->numberOfInputs();
-    qDebug() << _track->getTrackInputNode()->numberOfInputs();
 
     _track->getAudioManager()->context->connect(_track->getTrackInputNode(), outputNode);
 
@@ -121,7 +131,7 @@ void AudioRegion::setTrack(Track *_track) {
     audioClipNode->initialize();
     debug::out(3, "Connected to track");
     setGain(gain);
-    qDebug() << outputNode->numberOfOutputs();
+
     track = _track;
 }
 

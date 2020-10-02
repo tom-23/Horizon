@@ -44,7 +44,7 @@ namespace dialogs {
     public:
         enum buttons {okOnly, okCancel, yesNo, yesNoCancel};
         enum icons {caution, info, no};
-        static void show(std::string title, std::string message, icons icon, buttons buttonType);
+        static int show(std::string title, std::string message, icons icon, buttons buttonType);
 
     };
 

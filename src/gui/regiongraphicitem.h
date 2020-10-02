@@ -19,7 +19,6 @@ class Region;
 class RegionGraphicItem : public QGraphicsItem
 {
 public:
-    RegionGraphicItem(int _length, QColor _color, QGraphicsScene *_scene, Timeline *_timeline, Region *_region);
     RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Timeline *_timeline, Region *_region);
     float getGridLocation();
     void setGridLocation(float _value);
@@ -27,7 +26,8 @@ public:
 
     void setGhost(bool _isGhost);
 
-    void setWaveform(std::vector<std::vector<float>> waveForm);
+    void setWaveform(std::vector<const float *> _waveForm, unsigned long long int _length);
+
 
 
 
@@ -38,17 +38,21 @@ protected:
     // QGraphicsItem interface
 protected:
 
-    QColor color;
     QColor outlineColor;
     QColor selectedColor;
-    QColor selectedColorOutline;
     QColor regionColor;
+    QColor waveFormColor;
+
     int penWidth;
     int rounded;
     bool hasShadow;
     float thresholdShadow;
-    QBrush brush;
-    QPen pen;
+    QBrush mainBrush;
+    QBrush waveformBrush;
+    QPen mainPen;
+    QPen waveformPen;
+
+    QPixmap waveFormPixmap;
     int height;
     float length;
     bool pressed = false;
@@ -59,7 +63,9 @@ protected:
     Region *region;
 
     bool ghost;
-    std::vector<std::vector<float>> waveFormPoints;
+    std::vector<const float *> waveForm;
+
+    unsigned long long int samplesLength;
     // QGraphicsItem interface
 
     Timeline *timeline;
@@ -76,7 +82,12 @@ protected:
 
 private:
 
+    float getMaximumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel);
+    float getMinimumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel);
+    unsigned long long int getFirstSampleIndexForPixel(unsigned long int x, unsigned long int widgetWidth, unsigned long long int totalNumSamples);
+    float getYValueForSampleValue(float sample);
 
+    bool waveFormRendered;
 
 };
 

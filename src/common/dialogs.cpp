@@ -39,7 +39,7 @@ void setThemeManager(ThemeManager *themeManager) {
         ab->show();
     }
 
-    void MessageDialog::show(std::string title, std::string message, icons icon, buttons buttonType) {
+    int MessageDialog::show(std::string title, std::string message, icons icon, buttons buttonType) {
         bool okayOnly = false;
         bool okayCancel = false;
         bool yesNo = false;
@@ -77,18 +77,11 @@ void setThemeManager(ThemeManager *themeManager) {
 
 
         messageDialogWidget = new MessageDialogWidget(dialogParent, QString::fromStdString(title), QString::fromStdString(message), iconSVG, okayOnly, okayCancel, yesNo, yesNoCancel);
-        switch (messageDialogWidget->exec()) {
-            case 0:
-                qDebug() << "Case 0";
-            break;
-        case 1:
-            qDebug() << "Case 1";
-        break;
-        case 2:
-            qDebug() << "Case 2";
-        break;
+        return messageDialogWidget->exec();
         };
+
+
 
     }
 
-}
+

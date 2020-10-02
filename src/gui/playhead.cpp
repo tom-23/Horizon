@@ -108,6 +108,7 @@ int Playhead::getGridLocation() {
 void Playhead::setGridLocation(float _location) {
     gridLocation = _location;
     setX((gridLocation - 1) * hScaleFactor);
+
     //update();
 }
 

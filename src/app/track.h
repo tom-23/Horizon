@@ -61,7 +61,7 @@ public:
     void setTrackGraphicsItem(TrackGraphicItem *_tgi);
 
     QColor getColor();
-    void setColor(QColor *_color);
+    void setColor(QColor _color);
 
     // void setColorTheme(QColor primaryColor);
     void setHScaleFactor(int _hScaleFactor);
@@ -87,6 +87,9 @@ public:
     std::shared_ptr<GainNode> getTrackInputNode();
     std::shared_ptr<GainNode> getTrackOutputNode();
 
+
+
+
     AudioManager* getAudioManager();
 
     void setMute(bool _mute);
@@ -98,7 +101,8 @@ public:
     void setGain(float _value);
     float getGain();
 
-    int getMeterData();
+    std::vector<int> getLMeterData();
+    std::vector<int> getRMeterData();
 
     float peakdB;
 
@@ -114,7 +118,11 @@ private:
     std::shared_ptr<GainNode> trackInputNode;
     std::shared_ptr<GainNode> trackOutputNode;
 
-    std::shared_ptr<AnalyserNode> analyser;
+    std::shared_ptr<AnalyserNode> Lanalyser;
+    std::shared_ptr<AnalyserNode> Ranalyser;
+
+    std::shared_ptr<ChannelSplitterNode> channelSplitter;
+    std::shared_ptr<ChannelMergerNode> channelMerger;
 
     AudioManager *audioMan;
 

@@ -69,6 +69,14 @@ void ArrangeWidget::setAudioManager(AudioManager &_audioMan) {
 
 void ArrangeWidget::importAudio() {
     if (audioMan->getSelectedTrack(0) != nullptr) {
+        if (audioMan->isPlaying) {
+            if (dialogs::MessageDialog::show("Importing audio stops playback", "This action will pause audio. Are you sure you want to continue?",
+                                             dialogs::MessageDialog::info, dialogs::MessageDialog::yesNo) == 3) {
+                return;
+            } else {
+                audioMan->pause();
+            }
+        }
         QFileDialog *dialog = new QFileDialog(this);
         dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
         dialog->setModal(false);

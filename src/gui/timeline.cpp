@@ -106,6 +106,7 @@ Timeline::~Timeline() {
 }
 
 void Timeline::setColorTheme(ThemeManager *_themeManager) {
+    themeManager = _themeManager;
     rulerGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("font-color-secondary"));
     timelineGraphic->setColorTheme(_themeManager->getColor("lines-primary"), _themeManager->getColor("lines-secondary"));
     primaryColor = _themeManager->getColor("lines-primary");
@@ -149,9 +150,11 @@ void Timeline::updateHeights() {
 void Timeline::updateViewports() {
     timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
+    rulerGraphic->scene->update();
     timelineGraphic->repaint();
     timelineGraphic->update();
     timelineGraphic->view->update();
+    timelineGraphic->scene->update();
 }
 
 void Timeline::setBarAmount(int _barAmount) {
@@ -161,6 +164,9 @@ void Timeline::setBarAmount(int _barAmount) {
     qDebug() << "Call";
     // When adding new lines to the scene, regions will be put behind the items so we need to bring them to the foreground.
     this->setZRegionValues(barCount * barLength);
+
+    setColorTheme(themeManager);
+
     updateViewports();
 }
 
@@ -202,11 +208,12 @@ void Timeline::addTrack(Track *_track) {
 
 void Timeline::addRegion(Region *_region) {
 qDebug() << timelineGraphic->scene->items().count();
-    RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, QColor("#42f59b"), this, _region);
+    RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, _region->getTrack()->getColor(), this, _region);
     _region->setRegionGraphicItem(rgi);
     timelineGraphic->scene->addItem(rgi);
 
     this->setZRegionValues(barCount * barLength);
+
 }
 
 void Timeline::removeRegion(Region *_region) {

@@ -14,6 +14,7 @@ AudioManager::AudioManager(Timeline &_timeline)
     const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
     context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
 
+
     outputNode = std::make_shared<GainNode>();
     outputNode->gain()->setValue(1.0f);
     context->connect(context->device(), outputNode);
@@ -40,6 +41,8 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
         if (!bus) {
             debug::out(1, "COULD NOT OPEN FILE: " + fileName);
             return nullptr;
+        } else {
+            debug::out(3, "Laoded audio file" + fileName);
         }
         return bus;
 }
@@ -269,22 +272,16 @@ void AudioManager::setCurrentGridTime(float _value) {
     currentGridTime = _value;
 }
 
-std::vector<std::vector<float>> AudioManager::calculatePeaks(std::shared_ptr<AudioBus> bus, std::string fileName) {
+std::vector<const float *> AudioManager::getPeaks(std::shared_ptr<AudioBus> bus) {
 
-    std::vector<std::vector<float>> calculatedStereoSamples;
-
+    std::vector<const float *> channelSamples = {};
 
     for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
 
-         std::vector<float> channelData;
-
-         for (int dp = 0; dp < (int)bus->channel(channelIdx)->length(); dp++) {
-             channelData.push_back(log10(bus->channel(channelIdx)->data()[dp]));
-         }
-         calculatedStereoSamples.push_back(channelData);
+         channelSamples.push_back(bus->channel(channelIdx)->data());
     }
 
-    return calculatedStereoSamples;
+    return channelSamples;
 }
 
 void AudioManager::engageSolo() {

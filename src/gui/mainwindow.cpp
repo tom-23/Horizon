@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     loadedProject = "Untitled";
 
     #ifndef _WIN32
-        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/sand-castle.json";
+        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/jaffa-cake.json";
     #else
         themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/default-dark.json";
     #endif
@@ -61,9 +61,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->content->layout()->addWidget(lb);
     lb->show();
 
-    EffectWidget* ew;
-    ew = new EffectWidget(iw);
-    iw->addEffect(ew);
+    //EffectWidget* ew;
+   // ew = new EffectWidget(iw);
+    //iw->addEffect(ew);
 
     uiTimer = new QTimer(parent);
     connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
@@ -74,10 +74,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::uiUpdate() {
     arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
+    arrangeWidget->tl->updateViewports();
 
     float glr = float(floor(audioMan->getCurrentGridTime() * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
     ui->barNumberLabel->setText(QString::number(floor(audioMan->getCurrentGridTime())));
     ui->beatNumberLabel->setText(QString::number(((glr - floor(audioMan->getCurrentGridTime())) * arrangeWidget->tl->barLength) + 1));
+
 }
 
 MainWindow::~MainWindow()

@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "app/audiomanager.h"
 #include "gui/colorpickerwidget.h"
+#include "gui/meterwidget.h"
 class Track;
 class Timeline;
 
@@ -43,6 +44,10 @@ private:
     void uiUpdate();
 
     int lastMeterValue;
+
+    int currentMeterValue;
+
+    MeterWidget *mtr;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

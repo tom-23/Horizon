@@ -106,6 +106,8 @@ public:
     GhostPlayhead *ghostPlayheadGraphic;
 
 
+
+
 private:
     GraphicsView *trackRegions;
     GraphicsScene *trackRegionsScene;
@@ -118,6 +120,7 @@ private:
     RulerGraphicWidget *rulerGraphic;
     Playhead *playheadGraphic;
 
+    ThemeManager *themeManager;
 
     std::vector<class TrackControlsWidget *> *trackWidgetList;
 

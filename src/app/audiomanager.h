@@ -92,7 +92,7 @@ public:
     float startTime;
     float stopTime;
 
-    std::vector<std::vector<float>> calculatePeaks(std::shared_ptr<AudioBus> bus, std::string fileName);
+    std::vector<const float *> getPeaks(std::shared_ptr<AudioBus> bus);
 
     std::shared_ptr<AudioContext> context;
 

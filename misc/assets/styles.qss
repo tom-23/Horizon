@@ -264,6 +264,12 @@ border-right: 1px Solid @borders;
 	width: 40px;
 }
 
+#trackMeter {
+	border: 1px Solid @borders;	
+	padding: 2px;
+	background-color: transparent;
+}
+
 
 
 QLabel {

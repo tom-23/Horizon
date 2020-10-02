@@ -9,15 +9,33 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
     debug::out(3, "setting input node");
     trackInputNode = std::make_shared<GainNode>();
     debug::out(3, "setting output node");
+
     trackOutputNode = std::make_shared<GainNode>();
-    analyser = std::make_shared<AnalyserNode>();
+    Lanalyser = std::make_shared<AnalyserNode>();
+    Ranalyser = std::make_shared<AnalyserNode>();
+
+    channelSplitter = std::make_shared<ChannelSplitterNode>(2);
+    channelMerger = std::make_shared<ChannelMergerNode>(2);
+
+
     trackInputNode->gain()->setValue(1.0f);
     trackOutputNode->gain()->setValue(1.0f);
 
+    audioMan->context.get()->connect(channelSplitter, trackInputNode);
 
-    audioMan->context.get()->connect(analyser, trackInputNode);
-    audioMan->context->connect(trackOutputNode, analyser);
+
+    //channelSplitter->addOutputs(2);
+
+    audioMan->context.get()->connect(Lanalyser, channelSplitter, 0, 0);
+    audioMan->context.get()->connect(Ranalyser, channelSplitter, 0, 1);
+
+    audioMan->context.get()->connect(channelMerger, Lanalyser, 0, 0);
+    audioMan->context.get()->connect(channelMerger, Ranalyser, 1, 0);
+
+    audioMan->context->connect(trackOutputNode, channelMerger);
     audioMan->context->connect(audioMan->getOutputNode(), trackOutputNode);
+
+
 
     selected = false;
     regionList = new std::vector<class Region *>;
@@ -65,14 +83,18 @@ void Track::removeRegion(Region *_region) {
     qDebug() << "Removing Region... IDX" << index;
     regionList->erase(regionList->begin() + getIndexByRegion(_region));
     trackInputNode->uninitialize();
-    analyser->uninitialize();
+
+    Lanalyser->uninitialize();
+    Ranalyser->uninitialize();
+
     qDebug() << "Track connections before:" << trackInputNode->numberOfInputs();
     audioMan->context->disconnect(trackInputNode, _region->getOutputNode());
 
     qDebug() << "Track connections after:" << trackInputNode->numberOfInputs();
     trackInputNode->initialize();
 
-    analyser->initialize();
+    Lanalyser->initialize();
+    Ranalyser->initialize();
 }
 
 AudioManager* Track::getAudioManager() {
@@ -176,15 +198,17 @@ QColor Track::getColor() {
     return color;
 }
 
-void Track::setColor(QColor *_color) {
-    color = *_color;
+void Track::setColor(QColor _color) {
+    color = _color;
 
 }
 
-int Track::getMeterData() {
+std::vector<int> Track::getLMeterData() {
 
     std::vector<float> buffer(2048);
-    analyser->getFloatTimeDomainData(buffer);
+
+    Lanalyser->getFloatTimeDomainData(buffer);
+
     //analyser->getFloatFrequencyData(buffer);
    // qDebug() << "BUFFER" << buffer[0];
 
@@ -198,7 +222,7 @@ int Track::getMeterData() {
     float avgPowerDecibels = 10 * log10(sumOfSquares / buffer.size());
     int peakInstantaneousPower = 0;
 
-    for (int i = 0; i < buffer.size(); i++) {
+    for (int i = 0; i < (int)buffer.size(); i++) {
           int power = pow(buffer[i], 2);
           peakInstantaneousPower = max(power, peakInstantaneousPower);
     }
@@ -211,9 +235,50 @@ int Track::getMeterData() {
     }
 
 
-    return round(avgPowerDecibels);
+
+    return std::vector<int> {static_cast<int>(round(avgPowerDecibels)), static_cast<int>(round(peakInstantaneousPowerDecibels))};
 
 }
+
+std::vector<int> Track::getRMeterData() {
+
+    std::vector<float> buffer(2048);
+
+    Ranalyser->getFloatTimeDomainData(buffer);
+
+    //analyser->getFloatFrequencyData(buffer);
+   // qDebug() << "BUFFER" << buffer[0];
+
+    float sumOfSquares = 0;
+    for (int i = 0; i < (int)buffer.size(); i++) {
+        sumOfSquares += pow(buffer[i], 2);
+
+    }
+    //qDebug() << "SOS" << sumOfSquares;
+
+    float avgPowerDecibels = 10 * log10(sumOfSquares / buffer.size());
+    int peakInstantaneousPower = 0;
+
+    for (int i = 0; i < (int)buffer.size(); i++) {
+          int power = pow(buffer[i], 2);
+          peakInstantaneousPower = max(power, peakInstantaneousPower);
+    }
+
+    float peakInstantaneousPowerDecibels = 10 * log10(peakInstantaneousPower);
+
+    if (avgPowerDecibels >= peakdB) {
+        peakdB = std::ceil(avgPowerDecibels * 100.0) / 100.0;
+
+    }
+
+    //qDebug() << avgPowerDecibels;
+
+
+
+    return std::vector<int> {static_cast<int>(round(avgPowerDecibels)), static_cast<int>(round(peakInstantaneousPowerDecibels))};
+
+}
+
 
 int Track::getAudioRegionListCount() {
     return regionList->size();
