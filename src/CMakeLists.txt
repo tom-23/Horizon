@@ -101,7 +101,7 @@ install(TARGETS ${HORIZON_EXECUTABLE_NAME}
     )
 
 if (NOT APPLE)
-    set_property(TARGET ${HORIZON_EXECUTABLE_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 else()
     set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../shared/Info.plist")
 
