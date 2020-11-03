@@ -232,7 +232,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="endSessionButton">
         <property name="text">
          <string>End Session</string>
         </property>

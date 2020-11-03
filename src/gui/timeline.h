@@ -25,8 +25,6 @@ class GraphicsView;
 #include "graphicsview.h"
 
 #include "playhead.h"
-#include "ghostplayhead.h"
-
 class RegionGraphicItem;
 #include "regiongraphicitem.h"
 class RulerGraphicWidget;
@@ -73,11 +71,13 @@ public:
 
     void addTrack(Track *_track);
     void removeTrack(Track *_track);
+    void removeTrackGraphicsItem(TrackGraphicItem *tgi);
 
     int getTrackCount();
 
     void addRegion(Region *_region);
     void removeRegion(Region *_region);
+
     void setRegionTrack(int _oldTrackIndex, int _newTrackIndex);
 
     int getRegionCount();
@@ -93,7 +93,6 @@ public:
 
     int hZoomFactor;
 
-    bool suspendGhostPlayhead;
     bool regionSnapping;
 
 
@@ -102,11 +101,6 @@ public:
     QString playheadColor;
     QString selectBoxColor;
     QString textColor;
-
-    GhostPlayhead *ghostPlayheadGraphic;
-
-
-
 
 private:
     GraphicsView *trackRegions;
@@ -122,7 +116,7 @@ private:
 
     ThemeManager *themeManager;
 
-    std::vector<class TrackControlsWidget *> *trackWidgetList;
+    QList<RegionGraphicItem*> regionGraphicList;
 
     int trackCount;
     int regionCount;

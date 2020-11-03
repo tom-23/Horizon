@@ -25,12 +25,15 @@ class Metronome;
 #include "audioregion.h"
 
 #include "gui/timeline.h"
+#include "gui/mixer.h"
 
 #include "common/audioutil.h"
 #include "common/timer.h"
 #include "common/debug.h"
 #include "common/dialogs.h"
 #include "common/util.h"
+
+#include "network/session.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -43,8 +46,13 @@ class Metronome;
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#include <QThread>
+#include <QUuid>
+
 //class AudioTrackManager;
 //class Track;
+
+class Session;
 
 using namespace lab;
 //using namespace std::chrono_literals;
@@ -52,7 +60,7 @@ using namespace lab;
 class AudioManager
 {
 public:
-    AudioManager(Timeline &_timeline);
+    AudioManager(QWidget *parent, Timeline &_timeline);
 
     void play();
     void pause();
@@ -74,8 +82,9 @@ public:
     float secondsToGridTime(double _seconds);
     float getCurrentRelativeTime();
 
-    Track* addTrack();
+    Track* addTrack(std::string trackUUID);
     Track* getTrackByIndex(int index);
+
     Track* getSelectedTrack(int index);
     std::vector<class Track*>* getSelectedTracks();
     void setTrackSelected(Track *track, bool selected);
@@ -101,6 +110,10 @@ public:
 
     bool soloEnabled;
 
+    void clearAll();
+
+    Session *session;
+
 private:
     QObject *parent;
 
@@ -110,10 +123,9 @@ private:
     std::vector<class Track *> *trackList;
     std::vector<class Track *> *selectedTrackList;
 
+    std::vector<class Region *> *selectedRegionList;
+
     Metronome *metronome;
-
-
-
 
     Timeline *timeline;
 
@@ -131,12 +143,9 @@ private:
     double lookAhead;
 
     float currentGridTime;
-
-
-
     bool scheduled;
 
-     void updateMetSchedule();
+    void updateMetSchedule();
     void cancelTrackPlayback();
 };
 

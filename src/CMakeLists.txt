@@ -1,4 +1,4 @@
-file(GLOB horizon_SOURCES main.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
+file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
 
 file(GLOB horizon_FORMS gui/*.ui gui/audio_effects/*.ui
     )
@@ -28,9 +28,10 @@ else()
   find_library(ACCELERATE_LIBRARY "Accelerate")
   find_library(COCOA_LIBRARY "Cocoa")
   find_library(COREAUDIO_LIBRARY "CoreAudio")
+  find_library(CORESERVICES_LIBRARY "CoreServices")
 
   mark_as_advanced(AUDIOUNITS_LIBRARY AUDIOTOOLBOX_LIBRARY ACCELERATE_LIBRARY
-                   COCOA_LIBRARY COREAUDIO_LIBRARY)
+                   COCOA_LIBRARY COREAUDIO_LIBRARY CORESERVICES_LIBRARY)
   list(
     APPEND
     horizon_LIBRARIES
@@ -38,7 +39,8 @@ else()
     "${AUDIOTOOLBOX_LIBRARY}"
     "${ACCELERATE_LIBRARY}"
     "${COCOA_LIBRARY}"
-    "${COREAUDIO_LIBRARY}")
+    "${COREAUDIO_LIBRARY}"
+    "${CORESERVICES_LIBRARY}")
 
   set(HORIZON_VERSION_REGEX "^v([0-9]+)\.([0-9]+)\.(.*)$")
   string(REGEX REPLACE "${HORIZON_VERSION_REGEX}" "\\1"
@@ -78,6 +80,14 @@ endforeach()
 
 # LabSound
 list(APPEND horizon_LIBRARIES LabSound)
+
+#Disable LabSound related warnings. Just Annoys the hal
+if ( CMAKE_COMPILER_IS_GNUCC )
+    target_compile_options(main LabSound "-Wall -Wextra")
+endif()
+if ( MSVC )
+    target_compile_options(main LabSound "/W4")
+endif()
 
 # libnyquist
 list(APPEND horizon_LIBRARIES libnyquist)

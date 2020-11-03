@@ -3,9 +3,11 @@
 
 #include <QDialog>
 #include "common/dialogs.h"
-#include "network/session.h"
 #include "ui_rtchostwindow.h"
-#include <QtWebEngineWidgets/QtWebEngineWidgets>
+#include "mainwindow.h"
+
+class UAC;
+class Session;
 
 namespace Ui {
 class RTCHostWindow;
@@ -16,29 +18,28 @@ class RTCHostWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit RTCHostWindow(QWidget *parent = nullptr, Session *_session = nullptr);
+    explicit RTCHostWindow(QWidget *parent = nullptr, Session *_session = nullptr, UAC *_uac = nullptr);
     ~RTCHostWindow();
 
 private slots:
     void on_logoutButton_clicked();
-    void createSession();
+    void on_clientList_customContextMenuRequested(const QPoint &pos);
+
+    void on_endSessionButton_clicked();
 
 private:
     Ui::RTCHostWindow *ui;
 
-    QWebEngineView *webEng;
-    QWebEngineCookieStore *webCookieStore;
-
-    void onWebEngineViewLoaded(bool ok);
-    void onWebEngineViewLoadStarted();
-    void onWebEngineViewClosed();
-
-    void onWebDataRecieved(QString data);
-    void onWebEngineCookie(const QNetworkCookie &cookie);
-
     Session *session;
+    UAC *uac;
 
     QString sessionUUID;
+    QString userUUID;
+
+    void userUUIDCallback();
+    void createSessionCallback();
+
+    void createSession();
 
 };
 

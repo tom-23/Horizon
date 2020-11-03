@@ -1,4 +1,5 @@
 project(horizon)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14")
 
 # set(CMAKE_PREFIX_PATH "C:/Qt/5.14.2/msvc2017_6")
 

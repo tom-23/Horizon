@@ -8,6 +8,7 @@ LoadingDialogWidget::LoadingDialogWidget(QWidget *parent, int min, int max, QStr
 {
     ui->setupUi(this);
     ui->progressBar->setRange(min, max);
+    ui->progressBar->setValue(0);
     ui->label_2->setText(message);
 
 }
@@ -19,4 +20,12 @@ LoadingDialogWidget::~LoadingDialogWidget()
 
 void LoadingDialogWidget::updateProgress(int value) {
     ui->progressBar->setValue(value);
+}
+
+int LoadingDialogWidget::getProgress() {
+    return ui->progressBar->value();
+}
+
+int LoadingDialogWidget::getMaxProgress() {
+    return ui->progressBar->maximum();
 }

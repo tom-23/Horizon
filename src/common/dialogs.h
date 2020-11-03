@@ -28,6 +28,8 @@ namespace dialogs {
     class ProgressDialog {
     public:
         static void updateValue(int value);
+        static int getValue();
+        static int getMax();
         static bool isVisible();
         static void show(int min, int max, std::string message);
         static void close();

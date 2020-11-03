@@ -6,5 +6,6 @@
     <qresource prefix="/splash">
         <file>Untitled-2-01.svg</file>
         <file>splash-01.png</file>
+        <file>splash-01.svg</file>
     </qresource>
 </RCC>

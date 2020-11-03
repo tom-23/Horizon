@@ -1,7 +1,7 @@
 #include "audiomanager.h"
 
 
-AudioManager::AudioManager(Timeline &_timeline)
+AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
 {
     debug::out(3, "Timeline init");
     timeline = &_timeline;
@@ -28,8 +28,10 @@ AudioManager::AudioManager(Timeline &_timeline)
 
 
     debug::out(3, "Starting event loop...");
-    eventTimer = new Timer(std::bind(&AudioManager::eventLoop, this)), std::chrono::milliseconds(5);
+    eventTimer = new Timer(std::bind(&AudioManager::eventLoop, this)), std::chrono::milliseconds(10 );
     eventTimer->setSingleShot(false);
+
+    session = new Session(parent, *this);
 
 
     debug::out(3, "Audio engine started without any issues!");
@@ -46,7 +48,6 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
         }
         return bus;
 }
-
 
 void AudioManager::play() {
     if (isPlaying == false) {
@@ -66,7 +67,6 @@ void AudioManager::pause() {
         stopTime = getCurrentRelativeTime();
     }
 }
-
 
 void AudioManager::stop() {
 
@@ -95,31 +95,32 @@ void AudioManager::updateMetSchedule() {
     metronome->scheduleSecondary(scheduleQueue);
 
 }
+
 void AudioManager::updateSchedule() {
 
-    double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
-    if (toNearestBar < lookAhead || currentGridTime == 0) {
+    //double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
+    //if (toNearestBar < lookAhead || currentGridTime == 0) {
         //metPrimaryNode->start(floor(currentGridTime));
         //debug::out(3, "Buffered Primary Met");
-        if (toNearestBar < 0.01) {
+        //if (toNearestBar < 0.01) {
 
-            if (scheduled == true) {
+        //    if (scheduled == true) {
 
-                scheduled = false;
-            }
+        //        scheduled = false;
+        //    }
 
-        } else {
-            if (scheduled == false) {
-                updateMetSchedule();
-                debug::out(3, "Scheduling...");
-                scheduled = true;
-            }
-        }
+        //} else {
+        //    if (scheduled == false) {
+                //updateMetSchedule();
+                //debug::out(3, "Scheduling...");
+        //        scheduled = true;
+       //     }
+       // }
 
-    }
+   // }
 
 
-    metronome->update();
+    //metronome->update();
 
 }
 
@@ -127,7 +128,7 @@ void AudioManager::eventLoop() {
     float relativeTime = (context->currentTime() - startTime) + stopTime;
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
 
-    updateSchedule();
+    //updateSchedule();
 }
 
 void AudioManager::setDivision(int _division) {
@@ -165,9 +166,9 @@ float AudioManager::getCurrentRelativeTime() {
     return relativeTime;
 }
 
-Track* AudioManager::addTrack() {
+Track* AudioManager::addTrack(std::string trackUUID) {
     debug::out(3, "Creating new track...");
-    Track *newTrack = new Track(*timeline, *this);
+    Track *newTrack = new Track(*timeline, *this, trackUUID);
     debug::out(3, "Pushing to list...");
     trackList->push_back(newTrack);
     debug::out(3, "Setting index");
@@ -276,10 +277,14 @@ std::vector<const float *> AudioManager::getPeaks(std::shared_ptr<AudioBus> bus)
 
     std::vector<const float *> channelSamples = {};
 
+    std::cout << "Max size" << channelSamples.max_size();
+
     for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
 
          channelSamples.push_back(bus->channel(channelIdx)->data());
     }
+
+    std::cout << "Actual size" << channelSamples.size();
 
     return channelSamples;
 }
@@ -302,4 +307,13 @@ void AudioManager::disengageSolo() {
         }
 
     }
+}
+
+void AudioManager::clearAll() {
+    for (auto p : *trackList) {
+        delete p;
+    }
+    trackList->clear();
+    selectedTrackList->clear();
+    //selectedRegionList->clear();
 }

@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>800</height>
+    <width>900</width>
+    <height>600</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Horizon</string>
@@ -490,6 +496,13 @@
        <property name="bottomMargin">
         <number>5</number>
        </property>
+       <item>
+        <layout class="QVBoxLayout" name="contentVertical">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+        </layout>
+       </item>
       </layout>
      </widget>
     </item>
@@ -535,6 +548,9 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QListView" name="listView"/>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -634,7 +650,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>900</width>
      <height>22</height>
     </rect>
    </property>
@@ -649,7 +665,16 @@
      <addaction name="importAudioFileMenu"/>
      <addaction name="actionMIDI_Clip"/>
     </widget>
+    <widget class="QMenu" name="menuLive_Sessions">
+     <property name="title">
+      <string>Live Session</string>
+     </property>
+     <addaction name="actionManage_Live_Session"/>
+     <addaction name="actionConnect_to_Session_2"/>
+    </widget>
     <addaction name="actionNew_Project"/>
+    <addaction name="menuLive_Sessions"/>
+    <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
@@ -691,6 +716,8 @@
     <property name="title">
      <string>Window</string>
     </property>
+    <addaction name="actionArrange"/>
+    <addaction name="actionMixer"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEd9t"/>
@@ -703,20 +730,32 @@
    <property name="text">
     <string>New Project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpen">
    <property name="text">
     <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
     <string>Save Project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionSave_As">
    <property name="text">
     <string>Save Project As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionExport">
@@ -729,7 +768,7 @@
     <string>Audio Track</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+A</string>
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionMIDI_Track">
@@ -776,6 +815,47 @@
   <action name="actionMIDI_Clip">
    <property name="text">
     <string>MIDI Clip</string>
+   </property>
+  </action>
+  <action name="actionArrange">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Arrange</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionMixer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Mixer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+M</string>
+   </property>
+  </action>
+  <action name="actionManage_Live_Session">
+   <property name="text">
+    <string>Manage / Create Session</string>
+   </property>
+  </action>
+  <action name="actionConnect_to_Session_2">
+   <property name="text">
+    <string>Connect to Session...</string>
    </property>
   </action>
  </widget>

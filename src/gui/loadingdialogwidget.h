@@ -16,8 +16,8 @@ public:
     ~LoadingDialogWidget();
 
     void updateProgress(int value);
-
-
+    int getProgress();
+    int getMaxProgress();
 
 
 private:

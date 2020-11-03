@@ -22,15 +22,18 @@ protected:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+    QLinearGradient Pwrgradient;
+    QLinearGradient RMSgradient;
+
     QBrush RMSbrush;
     QBrush Pwrbrush;
     QPen pen;
 
-    QRect ch1RMSmeter;
-    QRect ch2RMSmeter;
+    QRectF ch1RMSmeter;
+    QRectF ch2RMSmeter;
 
-    QRect ch1Pwrmeter;
-    QRect ch2Pwrmeter;
+    QRectF ch1Pwrmeter;
+    QRectF ch2Pwrmeter;
 
     int ch1RMSValue;
     int ch2RMSValue;
@@ -43,8 +46,16 @@ protected:
 
     bool stereo;
 
+    bool vertical;
+
+    int padding;
 
 
+    int lastmv = 0;
+
+
+
+    void updateGradients();
 
 
 

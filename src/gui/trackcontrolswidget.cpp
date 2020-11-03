@@ -14,28 +14,22 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     ui->setupUi(this);
     track = _track;
     shiftDown = false;
-    //ui->trackMeter->setVisible(false);
-    QColor color = QColor::fromRgb(QRandomGenerator::global()->generate());
-    track->setColor(color);
-    QString style = QString("#trackColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
-    ui->trackColor->setStyleSheet(style);
+    updateColor();
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-    ui->number->setText(QString::number(track->getAudioManager()->getTrackListCount()));
+    ui->number->setText(QString::number(track->getIndex() + 1));
+    ui->muteButton->setChecked(track->getMute());
 
-    uiTimer = new QTimer(parent);
-    connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
+    QGraphicsScene *scene = new QGraphicsScene(this);
+    mtr = new MeterWidget(ui->trackMeterView, 0, 110, true);
+    scene->addItem(mtr);
+    ui->trackMeterView->setScene(scene);
+
+    uiTimer = new QTimer();
+    uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
     uiTimer->start(60);
 
-    QGraphicsScene *scene = new QGraphicsScene(ui->trackMeter);
-    mtr = new MeterWidget(ui->trackMeter, 0, 110, true);
-    scene->addItem(mtr);
-    ui->trackMeter->setScene(scene);
-
-
-    ui->trackMeter->update();
-    ui->trackMeter->repaint();
-
-
+    ui->trackMeterView->update();
+    ui->trackMeterView->repaint();
 }
 
 TrackControlsWidget::~TrackControlsWidget()
@@ -58,9 +52,15 @@ void TrackControlsWidget::on_TrackControlsWidget_customContextMenuRequested(cons
    menu.addAction("Paste")->setShortcut(QKeySequence::Copy);
    menu.addSeparator();
    menu.addAction("Rename...");
+
    QAction *chooseColor = new QAction("Choose Color", this);
    menu.addAction(chooseColor);
    connect(chooseColor, &QAction::triggered, this, &TrackControlsWidget::changeColor);
+
+   QAction *remove= new QAction("Delete", this);
+   menu.addAction(remove);
+   //connect(chooseColor, &QAction::triggered, this, &TrackControlsWidget::changeColor);
+
    menu.setWindowFlags(menu.windowFlags() | Qt::CustomizeWindowHint);
    menu.exec(mapToGlobal(pos));
 
@@ -76,6 +76,7 @@ void TrackControlsWidget::mousePressEvent(QMouseEvent *event) {
        // }
     } else {
         track->getAudioManager()->setTrackSelected(track, true);
+
     }
 
 
@@ -128,18 +129,54 @@ void TrackControlsWidget::uiUpdate() {
     std::vector<int> Lvalue = track->getLMeterData();
     std::vector<int> Rvalue = track->getRMeterData();
 
+    int LRMSValue = Lvalue[0] + 100;
+    int RRMSValue = Rvalue[0] + 100;
 
+    if (lastLRMS == LRMSValue) {
+        if (uiLRMS > 0) {
+            uiLRMS = uiLRMS -1;
+        }
+    } else {
+        if (uiLRMS < LRMSValue) {
+            uiLRMS = LRMSValue;
+        } else {
+            if (uiLRMS > 0) {
+                uiLRMS = uiLRMS -1;
+            }
+        }
 
+    }
 
-    mtr->setRMSValue(Lvalue[0] + 100, Rvalue[0] + 100);
+    lastLRMS = LRMSValue;
 
-    mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
+    if (lastRRMS == RRMSValue) {
+        if (uiRRMS > 0) {
+            uiRRMS = uiRRMS -1;
+        }
+    } else {
+        if (uiRRMS < RRMSValue) {
+            uiRRMS = RRMSValue;
+        } else {
+            if (uiRRMS > 0) {
+                uiRRMS = uiRRMS -1;
+            }
+        }
+
+    }
+
+    lastRRMS = RRMSValue;
+
+    mtr->setRMSValue(uiLRMS, uiRRMS);
+    //mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
 
     mtr->update();
-
     ui->peakdBLabel->setText(QString::number(track->peakdB) + " dB");
 
-
+    if (track->getMute() == true && ui->muteButton->isChecked() == false) {
+        ui->muteButton->setChecked(true);
+    } else if (track->getMute() == false && ui->muteButton->isChecked() == true) {
+        ui->muteButton->setChecked(false);
+    }
 }
 
 void TrackControlsWidget::on_armButton_clicked()
@@ -150,4 +187,10 @@ void TrackControlsWidget::on_armButton_clicked()
 void TrackControlsWidget::on_peakdBLabel_clicked()
 {
     track->peakdB = -100;
+}
+
+void TrackControlsWidget::updateColor() {
+    QColor color = track->getColor();
+    QString style = QString("#trackColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
+    ui->trackColor->setStyleSheet(style);
 }

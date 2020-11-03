@@ -24,25 +24,30 @@ Timeline::Timeline(QWidget *_parent,
 
     debug::out(3, "Init Timeline...");
 
-    trackRegionsScene = new GraphicsScene();
-    suspendGhostPlayhead = false;
     regionSnapping = true;
 
+    trackRegionsScene = new GraphicsScene(parent);
+
     trackRegions = new GraphicsView(trackRegionsScene, parent, this);
-    trackRegions->updateGeometry();
+
+    //trackRegions->updateGeometry();
     trackRegions->setParent(parent);
+    trackRegions->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     trackRegions->setObjectName("trackRegions");
     trackRegions->setAlignment((Qt::AlignLeft | Qt::AlignTop));
-    _mainLayout->addWidget(trackRegions);
+
     trackRegions->show();
     trackRegions->setInteractive(true);
     trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    //trackRegions->setDragMode(QGraphicsView::);
+    trackRegions->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-
+    _mainLayout->addWidget(trackRegions);
 
     timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, barCount, barLength);
+    //timelineGraphic->view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     parent->update();
     parent->repaint();
 
@@ -84,17 +89,11 @@ Timeline::Timeline(QWidget *_parent,
     trackRegionsScene->addItem(playheadGraphic);
     playheadGraphic->setZValue(101);
 
-    debug::out(3, "Init GhostPlayhead...");
-
-    ghostPlayheadGraphic = new GhostPlayhead(trackRegions);
-    trackRegionsScene->addItem(ghostPlayheadGraphic);
-    playheadGraphic->setZValue(101);
-
     debug::out(3, "Init Lists...");
 
     this->setHZoomFactor(100);
 
-
+    regionGraphicList = {};
 
 
     debug::out(3, "Timeline Loaded!");
@@ -115,6 +114,9 @@ void Timeline::setColorTheme(ThemeManager *_themeManager) {
     timelineGraphic->update();
     timelineGraphic->view->update();
     timelineGraphic->view->repaint();
+
+    trackRegions->viewport()->repaint();
+    trackRegions->viewport()->update();
 }
 
 
@@ -125,11 +127,18 @@ QColor Timeline::getPrimaryColor() {
 void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     hZoomFactor = _hZoomFactor;
 
+
+
     timelineGraphic->setHScaleFactor(hZoomFactor);
 
     rulerGraphic->setHScaleFactor(hZoomFactor);
 
     playheadGraphic->setHScaleFactor(hZoomFactor);
+
+    for (int i = 0; i < regionGraphicList.size(); i++) {
+        regionGraphicList[i]->setHScaleFactor(hZoomFactor);
+    }
+
     updateHeights();
 }
 
@@ -142,7 +151,6 @@ void Timeline::updateHeights() {
     }
     playheadGraphic->setHeight(height);
     timelineGraphic->setHeights(height);
-    ghostPlayheadGraphic->setHeight(height);
     updateViewports();
 
 }
@@ -150,11 +158,24 @@ void Timeline::updateHeights() {
 void Timeline::updateViewports() {
     timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
-    rulerGraphic->scene->update();
-    timelineGraphic->repaint();
-    timelineGraphic->update();
-    timelineGraphic->view->update();
-    timelineGraphic->scene->update();
+    trackRegions->viewport()->update();
+    //rulerGraphic->scene->update();
+    //timelineGraphic->repaint();
+
+    trackRegions->update();
+    trackRegions->repaint();
+    trackRegionsScene->update();
+
+
+    //timelineGraphic->update();
+    //timelineGraphic->view->update();
+    //timelineGraphic->scene->update();
+    //timelineGraphic->view->repaint();
+    //timelineGraphic->updateGeometry();
+    //qDebug() << "REPAINT";
+    //parent->repaint();
+    //parent->update();
+
 }
 
 void Timeline::setBarAmount(int _barAmount) {
@@ -196,6 +217,7 @@ void Timeline::addTrack(Track *_track) {
     TrackGraphicItem *tgi = new TrackGraphicItem(timelineGraphic->scene, this, _track);
 
     timelineGraphic->scene->addItem(tgi);
+    _track->setTrackGraphicsItem(tgi);
     tcw->show();
 
     trackCount += 1;
@@ -207,12 +229,21 @@ void Timeline::addTrack(Track *_track) {
 }
 
 void Timeline::addRegion(Region *_region) {
-qDebug() << timelineGraphic->scene->items().count();
-    RegionGraphicItem *rgi = new RegionGraphicItem(timelineGraphic->scene, _region->getTrack()->getColor(), this, _region);
+    RegionGraphicItem *rgi = new RegionGraphicItem(trackRegionsScene, _region->getTrack()->getColor(), this, _region);
     _region->setRegionGraphicItem(rgi);
-    timelineGraphic->scene->addItem(rgi);
+    trackRegionsScene->addItem(rgi);
+    regionGraphicList.append(rgi);
+    updateViewports();
 
     this->setZRegionValues(barCount * barLength);
+
+}
+
+void Timeline::removeTrackGraphicsItem(TrackGraphicItem *tgi) {
+    trackRegionsScene->removeItem(tgi);
+}
+
+void Timeline::removeTrack(Track *_track) {
 
 }
 
@@ -227,10 +258,10 @@ void Timeline::setRegionTrack(int _oldTrackIndex, int _newTrackIndex) {
 
 
 void Timeline::setZRegionValues(int _zValue) {
+    qDebug() << "COUNT" << trackRegionsScene->items().count();
     //for (int i = 0; i < regionCount; i++) {
     //    regionList->at(i)->getRegionGraphicItem()->setZValue(i + _zValue + 1);
     //}
-    ghostPlayheadGraphic->setZValue((regionCount + _zValue) + 5);
     playheadGraphic->setZValue((regionCount + _zValue) + 5);
 }
 

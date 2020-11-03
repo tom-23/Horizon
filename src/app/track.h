@@ -38,6 +38,7 @@ class Region;
 class AudioRegion;
 
 class TrackControlsWidget;
+class MixerChannelWidget;
 class TrackGraphicItem;
 class Timeline;
 
@@ -51,22 +52,24 @@ using namespace lab;
 class Track
 {
 public:
-    Track(Timeline &_timeLine, AudioManager &_audioMan);
+    Track(Timeline &_timeLine, AudioManager &_audioMan, std::string uuid);
     ~Track();
 
     void setSelected(bool _selected);
     bool getSelected();
 
     void setTrackControlsWidget(TrackControlsWidget *_tcw);
+    void setMixerChannelWidget(MixerChannelWidget *_mcw);
     void setTrackGraphicsItem(TrackGraphicItem *_tgi);
 
     QColor getColor();
     void setColor(QColor _color);
+    void updateColor(QColor _color);
 
     // void setColorTheme(QColor primaryColor);
     void setHScaleFactor(int _hScaleFactor);
 
-    AudioRegion* addAudioRegion();
+    AudioRegion* addAudioRegion(std::string regionUUID);
     void setRegion(Region *_region);
     void removeRegion(Region *_region, Track *newTrack);
 
@@ -92,6 +95,8 @@ public:
 
     AudioManager* getAudioManager();
 
+    std::string getUUID();
+
     void setMute(bool _mute);
     void setSolo(bool _solo);
 
@@ -101,12 +106,15 @@ public:
     void setGain(float _value);
     float getGain();
 
+    void setPan(float _value);
+    float getPan();
+
     std::vector<int> getLMeterData();
     std::vector<int> getRMeterData();
 
     float peakdB;
 
-
+    void uiUpdate();
 
 private:
     bool selected;
@@ -114,6 +122,8 @@ private:
 
 
     std::vector<class Region *> *regionList;
+
+    std::string uuid;
 
     std::shared_ptr<GainNode> trackInputNode;
     std::shared_ptr<GainNode> trackOutputNode;
@@ -124,19 +134,27 @@ private:
     std::shared_ptr<ChannelSplitterNode> channelSplitter;
     std::shared_ptr<ChannelMergerNode> channelMerger;
 
+    std::shared_ptr<StereoPannerNode> pannerNode;
+
     AudioManager *audioMan;
 
     Timeline *timeline;
 
     TrackControlsWidget *trackControlWidget;
+    MixerChannelWidget *mixerChannelWidget;
     TrackGraphicItem *trackGraphicItem;
 
     QColor color;
 
-    bool mute;
+
+
+    bool mute = false;
     bool solo;
 
-    float gain;
+    float gain = 0.0f;
+    float gainNonLog = 0.0f;
+    float pan = 0.0f;
+
 
 };
 

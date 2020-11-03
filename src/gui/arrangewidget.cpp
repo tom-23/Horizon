@@ -17,8 +17,6 @@ ArrangeWidget::ArrangeWidget(QWidget *parent) :
     ui->setupUi(this);
     tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout(), ui->hScroll, ui->vScroll);
     this->repaint();
-
-    ui->overview->hide();
 }
 
 
@@ -31,22 +29,6 @@ ArrangeWidget::~ArrangeWidget()
 void ArrangeWidget::on_pushButton_4_clicked()
 {
 
-
-//
-    //QImage capture = QImage(ui->trackRegions->scene()->sceneRect().toRect().size(), QImage::Format_RGB16);
-    //QPainter painter(&capture);
-
-    //ui->trackRegions->scene()->render(&painter);
-    //painter.end();
-    //capture = capture.scaled(ui->overview->size(), Qt::IgnoreAspectRatio);
-
-    //capture.save(QApplication::applicationDirPath() + "/image.png", "PNG");
-
-
-
-    //ui->overview->setStyleSheet("background-image: url('image.png');");
-    //ui->overview->repaint();
-    //ui->overview->update();
 }
 
 
@@ -67,25 +49,32 @@ void ArrangeWidget::setAudioManager(AudioManager &_audioMan) {
     audioMan = &_audioMan;
 }
 
-void ArrangeWidget::importAudio() {
+void ArrangeWidget::importAudio(QString path) {
     if (audioMan->getSelectedTrack(0) != nullptr) {
-        if (audioMan->isPlaying) {
-            if (dialogs::MessageDialog::show("Importing audio stops playback", "This action will pause audio. Are you sure you want to continue?",
-                                             dialogs::MessageDialog::info, dialogs::MessageDialog::yesNo) == 3) {
-                return;
-            } else {
-                audioMan->pause();
-            }
-        }
-        QFileDialog *dialog = new QFileDialog(this);
-        dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
-        dialog->setModal(false);
-        QString fileName = dialog->getOpenFileName();
+        if (path == "") {
+            if (audioMan->isPlaying) {
 
-        if (fileName.toStdString() != "") {
-            AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion();
+                if (dialogs::MessageDialog::show("Importing audio stops playback", "This action will pause audio. Are you sure you want to continue?",
+                                                 dialogs::MessageDialog::info, dialogs::MessageDialog::yesNo) == 3) {
+                    return;
+                } else {
+                    audioMan->pause();
+                }
+            }
+            path = QFileDialog::getOpenFileName(this,
+                                                tr("Load Audio"), QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
+                                                tr("Supported Audio Files (*.wav *.mp3)"));
+            //QFileDialog *dialog = new QFileDialog(this);
+            //dialog->setNameFilter(tr("Supported Audio Files (*.wav *.mp3 *.acc)"));
+            //dialog->setModal(false);
+            //path = dialog->getOpenFileName();
+        }
+
+
+        if (path.toStdString() != "") {
+            AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion(QUuid::createUuid().toString().toStdString());
             tl->addRegion(newAudioRegion);
-            newAudioRegion->loadFile(fileName.toStdString());
+            newAudioRegion->loadFile(path.toStdString(), true);
         }
     } else {
 
@@ -95,14 +84,27 @@ void ArrangeWidget::importAudio() {
 
 }
 
-void ArrangeWidget::addNewAudioTrack() {
-    Track *track = audioMan->addTrack();;
+Track* ArrangeWidget::addAudioTrack(Track *track, std::string uuid) {
+    if (!track) {
+        track = audioMan->addTrack(uuid);
+    }
     tl->addTrack(track);
+    mixer->addChannel(track);
     audioMan->setTrackSelected(track, true);
+    return track;
 }
 
 
 void ArrangeWidget::on_soloDisableButton_clicked()
 {
+    //mixer->clearAll();
+    audioMan->clearAll();
+}
 
+void ArrangeWidget::setMixer(Mixer *_mixer) {
+    mixer = _mixer;
+}
+
+void ArrangeWidget::setHZoomFactor(int hZoomFactor) {
+    ui->zoomSlider->setValue(hZoomFactor);
 }

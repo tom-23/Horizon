@@ -15,6 +15,9 @@ public:
     explicit SplashScreen(QWidget *parent = nullptr);
     ~SplashScreen();
 
+    void setText(QString text);
+    void setVersion(QString version);
+
 private:
     Ui::SplashScreen *ui;
 };

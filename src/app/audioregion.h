@@ -13,8 +13,11 @@
 #include "track.h"
 //class Region;
 #include "region.h"
-//class Track;
+#include "fileloading.h"
+class FileLoading;
 //class Timeline;
+
+//#include <QThread>
 
 using namespace lab;
 
@@ -22,9 +25,9 @@ using namespace lab;
 class AudioRegion : public Region
 {
 public:
-    AudioRegion(Timeline *_timeline, Track *_track);
+    AudioRegion(Timeline *_timeline, Track *_track, std::string uuid);
 
-    void loadFile(std::string fileName);
+    void loadFile(std::string fileName, bool progressDialog);
     void schedule() override;
     void cancelSchedule();
 
@@ -32,6 +35,7 @@ public:
     void setTrack(Track *_track) override;
 
     std::string getLoadedFileName();
+    std::string preLoadedFile;
 
 private:
 
@@ -40,8 +44,15 @@ private:
 
     std::string loadedFileName;
 
-    void loadFileThread(std::function<void()> callback);
+
+    //void loadFileThread(std::function<void()> callback);
     void loadedFileCallBack();
+
+    std::queue<std::function<void()>> callbackQueue;
+
+    FileLoading *fileLoading;
+
+    bool progressDialog;
     //double duration;
 
 };

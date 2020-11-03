@@ -94,6 +94,9 @@
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>-1</number>
+        </property>
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
         </property>
@@ -159,7 +162,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QGraphicsView" name="trackMeter">
+         <widget class="QGraphicsView" name="trackMeterView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -169,13 +172,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>19</height>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>19</height>
+            <height>17</height>
            </size>
           </property>
           <property name="frameShape">
@@ -185,6 +188,9 @@
            <enum>QFrame::Plain</enum>
           </property>
           <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <property name="midLineWidth">
            <number>0</number>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -207,7 +213,7 @@
            </size>
           </property>
           <property name="text">
-           <string>0.0 dB</string>
+           <string>-100 dB</string>
           </property>
          </widget>
         </item>

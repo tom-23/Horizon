@@ -9,9 +9,13 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    Client(const QUrl &_url, bool _debug = false, QString token = "", QObject *_parent = nullptr);
+    Client(const QUrl &_url, bool _debug = false, QString token = "", QObject *_parent = nullptr, QString userUUID = "", std::function<void()> callback = nullptr, std::function<void(QJsonObject)> onMessage = nullptr);
 
     void authenticate();
+    void sendCommand(QString cmnd = "blank", QList<QString> args = {});
+    void sendCommandObject(QString cmnd, QJsonObject object);
+
+    void sendJSONObject(QString type, QJsonObject object);
 
 private Q_SLOTS:
     void onConnected();
@@ -23,6 +27,10 @@ private:
         QWebSocket webSocket;
         QUrl url;
         QString token;
+        QString userUUID;
+
+        std::function<void()> callback;
+        std::function<void(QJsonObject)> onMessage;
 };
 
 #endif // CLIENT_H

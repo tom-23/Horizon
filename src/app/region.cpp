@@ -1,8 +1,9 @@
 #include "region.h"
 
 
-Region::Region(Timeline *_timeline, Track *_track)
+Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
 {
+    uuid = _uuid;
     timeline = _timeline;
     track = _track;
     outputNode = std::make_shared<GainNode>();
@@ -11,9 +12,10 @@ Region::Region(Timeline *_timeline, Track *_track)
     gridLocation = 1;
 }
 
-//Region::~Region() {
-//    context->disconnect(track->getTrackOutputNode(), outputNode);
-//}
+Region::~Region() {
+    delete regionGraphicsItem;
+    track->getAudioManager()->context->disconnect(track->getTrackOutputNode(), outputNode);
+}
 
 Track* Region::getTrack() {
     return track;
@@ -83,4 +85,8 @@ std::string Region::getRegionName() {
 
 void Region::setRegionName(std::string _name) {
     regionName = _name;
+}
+
+std::string Region::getUUID() {
+    return uuid;
 }

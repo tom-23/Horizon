@@ -1,6 +1,6 @@
 #include "track.h"
 
-Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
+Track::Track(Timeline &_timeLine, AudioManager &_audioMan, std::string _uuid) {
 
     debug::out(3, "Creating track");
     audioMan = &_audioMan;
@@ -10,9 +10,15 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
     trackInputNode = std::make_shared<GainNode>();
     debug::out(3, "setting output node");
 
+    uuid = _uuid;
+
     trackOutputNode = std::make_shared<GainNode>();
+    pannerNode = std::make_shared<StereoPannerNode>();
     Lanalyser = std::make_shared<AnalyserNode>();
     Ranalyser = std::make_shared<AnalyserNode>();
+
+     Lanalyser->setSmoothingTimeConstant(0.0);
+     Ranalyser->setSmoothingTimeConstant(0.0);
 
     channelSplitter = std::make_shared<ChannelSplitterNode>(2);
     channelMerger = std::make_shared<ChannelMergerNode>(2);
@@ -21,8 +27,9 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
     trackInputNode->gain()->setValue(1.0f);
     trackOutputNode->gain()->setValue(1.0f);
 
-    audioMan->context.get()->connect(channelSplitter, trackInputNode);
-
+    audioMan->context.get()->connect(trackOutputNode, trackInputNode);
+    audioMan->context.get()->connect(pannerNode, trackOutputNode);
+    audioMan->context.get()->connect(channelSplitter, pannerNode);
 
     //channelSplitter->addOutputs(2);
 
@@ -32,8 +39,8 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
     audioMan->context.get()->connect(channelMerger, Lanalyser, 0, 0);
     audioMan->context.get()->connect(channelMerger, Ranalyser, 1, 0);
 
-    audioMan->context->connect(trackOutputNode, channelMerger);
-    audioMan->context->connect(audioMan->getOutputNode(), trackOutputNode);
+
+    audioMan->context->connect(audioMan->getOutputNode(), channelMerger);
 
 
 
@@ -41,21 +48,37 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan) {
     regionList = new std::vector<class Region *>;
 
 
-    gain = 1.0f;
+    //setGain(0.0f);
+   // setPan(0.0f);
+    //gain = 1.0f;
     peakdB = -100;
     setMute(false);
 
-
-
 }
 
+
+
 Track::~Track() {
+
+    for (auto r : *regionList) {
+        delete r;
+    }
+    delete trackControlWidget;
+    delete mixerChannelWidget;
+    delete trackGraphicItem;
+
     audioMan->context->disconnect(audioMan->getOutputNode(), trackOutputNode);
     audioMan->context->disconnect(trackInputNode, trackOutputNode);
+    qDebug() << "distroying";
 }
 
 void Track::setTrackControlsWidget(TrackControlsWidget *_tcw) {
     trackControlWidget = _tcw;
+
+}
+
+void Track::setMixerChannelWidget(MixerChannelWidget *_mcw) {
+    mixerChannelWidget = _mcw;
 }
 
 void Track::setTrackGraphicsItem(TrackGraphicItem *_tgi) {
@@ -66,9 +89,9 @@ void Track::setHScaleFactor(int _hScaleFactor) {
 
 }
 
-AudioRegion* Track::addAudioRegion() {
+AudioRegion* Track::addAudioRegion(std::string regionUUID) {
 
-    AudioRegion *audioRegion = new AudioRegion(timeline, this);
+    AudioRegion *audioRegion = new AudioRegion(timeline, this, regionUUID);
     regionList->push_back(audioRegion);
     return audioRegion;
 }
@@ -112,6 +135,7 @@ void Track::setIndex(int _index) {
 void Track::setSelected(bool _selected) {
     selected = _selected;
     trackControlWidget->setSelected(selected);
+    mixerChannelWidget->setSelected(selected);
 }
 
 bool Track::getSelected() {
@@ -163,11 +187,24 @@ void Track::cancelAudioRegions() {
 //}
 
 void Track::setGain(float _value) {
-    gain = _value;
+    gain = pow(10, (_value / 20));
+    gainNonLog = _value;
+    qDebug() << "Setting Gain" << gain;
+    trackOutputNode->gain()->setValue(gain);
 }
 
 float Track::getGain() {
-    return gain;
+
+    return gainNonLog;
+}
+
+void Track::setPan(float _value) {
+    pan = _value;
+    pannerNode->pan()->setValue(_value);
+}
+
+float Track::getPan() {
+    return pan;
 }
 
 void Track::setMute(bool _mute) {
@@ -200,7 +237,12 @@ QColor Track::getColor() {
 
 void Track::setColor(QColor _color) {
     color = _color;
+}
 
+void Track::updateColor(QColor _color) {
+    color = _color;
+    trackControlWidget->updateColor();
+    mixerChannelWidget->updateColor();
 }
 
 std::vector<int> Track::getLMeterData() {
@@ -288,3 +330,6 @@ AudioRegion* Track::getAudioRegionByIndex(int index) {
     return dynamic_cast<AudioRegion*>(regionList->at(index));
 }
 
+std::string Track::getUUID() {
+    return uuid;
+}

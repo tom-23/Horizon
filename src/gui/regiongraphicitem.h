@@ -7,7 +7,7 @@
 #include <QPen>
 #include <QPainterPath>
 
-
+#include <stdint.h>
 
 class Timeline;
 class Region;
@@ -26,8 +26,8 @@ public:
 
     void setGhost(bool _isGhost);
 
-    void setWaveform(std::vector<const float *> _waveForm, unsigned long long int _length);
-
+    void setWaveform(std::vector<const float *> _waveForm, uint64_t _length);
+    void setHScaleFactor(int value);
 
 
 
@@ -43,6 +43,8 @@ protected:
     QColor regionColor;
     QColor waveFormColor;
 
+    bool selected;
+
     int penWidth;
     int rounded;
     bool hasShadow;
@@ -54,7 +56,7 @@ protected:
 
     QPixmap waveFormPixmap;
     int height;
-    float length;
+    float gridLength;
     bool pressed = false;
     QPointF oldPos, oldMousePos;
     int oldTrackIndex;
@@ -65,10 +67,12 @@ protected:
     bool ghost;
     std::vector<const float *> waveForm;
 
-    unsigned long long int samplesLength;
+    uint64_t samplesLength;
     // QGraphicsItem interface
 
     Timeline *timeline;
+
+    int oldHScaleFactor;
 
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -82,12 +86,14 @@ protected:
 
 private:
 
-    float getMaximumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel);
-    float getMinimumSampleValueInRange(unsigned long long int firstSample, unsigned long long int lastSample, int channel);
-    unsigned long long int getFirstSampleIndexForPixel(unsigned long int x, unsigned long int widgetWidth, unsigned long long int totalNumSamples);
+    float getMaximumSampleValueInRange(uint64_t firstSample, uint64_t lastSample, int channel);
+    float getMinimumSampleValueInRange(uint64_t firstSample, uint64_t lastSample, int channel);
+    uint64_t getFirstSampleIndexForPixel(uint64_t x, uint64_t widgetWidth, uint64_t totalNumSamples);
     float getYValueForSampleValue(float sample);
 
     bool waveFormRendered;
+
+    int hScaleFactor;
 
 };
 

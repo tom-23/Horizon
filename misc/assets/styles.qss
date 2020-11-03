@@ -61,7 +61,7 @@
 	background-color: @foreground;
 }
 
-#zoomSlider::groove:horizontal {
+QSlider::groove:horizontal {
     background-color: @zoom-slider-background;
 	border: 1px Solid @zoom-slider-border;	
 	height: 2px;
@@ -70,13 +70,33 @@
 	margin-left: 5px;
 }
 
-#zoomSlider::handle:horizontal {
+QSlider::handle:horizontal {
 	border-radius: 6px;
 	border: 1px Solid @zoom-slider-border;
 	background-color: @zoom-slider-knob;
 	height: 100px;
 	margin: -5px -5px;
 	width: 10px;
+}
+
+
+
+#gainSlider::groove:vertical {
+    background-color: @zoom-slider-background;
+	border: 1px Solid @zoom-slider-border;	
+	width: 2px;
+	border-radius: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#gainSlider::handle:vertical {
+	border-radius: 6px;
+	border: 1px Solid @zoom-slider-border;
+	background-color: @zoom-slider-knob;
+	width: 100px;
+	margin: -5px -5px;
+	height: 10px;
 }
 
 
@@ -122,6 +142,15 @@ border: none;
 	background-color: @background;
 }
 
+#channelContainer {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+	border-radius: 0px;
+	border-right: 1px Solid @borders;	
+	background-color: @background;
+}
+
 #trackContainer QToolButton {
 	color: @font-color-secondary;
 	border: 1px Solid @borders;	
@@ -130,6 +159,17 @@ border: none;
 }
 
 #trackContainer QToolButton:checked {
+	color: @font-color-selected;
+}
+
+#channelContainer QToolButton {
+	color: @font-color-secondary;
+	border: 1px Solid @borders;	
+	background-color: @background;
+	padding: 0px;
+}
+
+#channelContainer QToolButton:checked {
 	color: @font-color-selected;
 }
 
@@ -153,7 +193,14 @@ border-bottom: 1px Solid @borders;
 border-left: 1px Solid @borders;	
 }
 
-#title, #peakdBLabel, #number {
+#channelColor {
+	border: none;
+
+border-top: 1px Solid @borders;	
+border-right: 1px Solid @borders;	
+}
+
+#title, #peakdBLabel, #number, #gainLabel, #panLabel {
 	color: @font-color-secondary;
 	background: none;
 }
@@ -175,6 +222,17 @@ border-right: 1px Solid @borders;
 	border-radius: 5px;
 	padding: 0px;
 	padding-left: 5px;
+}
+
+#gainLabel, #panLabel, #leftLabel, #rightLabel {
+
+	padding: 0px;
+}
+
+#leftLabel, #rightLabel {
+	color: @font-color-secondary;
+	font-size: 10px;
+	font-weight: 700;
 }
 
 #playButton, #stopButton, #recordButton {
@@ -248,11 +306,15 @@ border-right: 1px Solid @borders;
 	padding: 10px;
 }
 
-#sessionIDLabel {
+#sessionIDLabel, #sessionPasswordLabel {
 	font-size: 34px;
+	font-family: 'Courier New', Courier, monospace;
+	font-weight: bold;
 }
-#sessionPasswordLabel {
-	font-size: 34px;
+
+#sessionID, #sessionPassword {
+	font-family: 'Courier New', Courier, monospace;
+	font-weight: bold;
 }
 
 #titleLabel {
@@ -264,10 +326,43 @@ border-right: 1px Solid @borders;
 	width: 40px;
 }
 
-#trackMeter {
-	border: 1px Solid @borders;	
-	padding: 2px;
+#trackMeterView {
+	border: 1px Solid @borders;
 	background-color: transparent;
+}
+
+#channelMeter {
+	border: 1px Solid @borders;
+	background-color: transparent;
+}
+
+#mixerContainer {
+	border: 1px Solid @borders;	
+}
+
+#mixerContainerWidget {
+	background-color: @background;
+}
+
+#inputBox {
+	min-width: 0px;
+}
+
+
+#muteSoloSection {
+	border-bottom: 1px Solid @borders;	
+}
+
+#effectsSection {
+	border-bottom: 1px Solid @borders;	
+}
+
+#panSection {
+	border-bottom: 1px Solid @borders;	
+}
+
+#inputSection {
+	border-bottom: 1px Solid @borders;	
 }
 
 
@@ -298,9 +393,21 @@ QComboBox {
 	padding-left: 10px;
 	padding-right: 10px;
 	font-size: 11px;
-	min-width: 250px;
-	
+	min-width: 250px;	
 }
+
+QLineEdit {
+	background-color: @combobox-background;
+	border: 1px Solid @combobox-border;
+	font-size: 11px;
+	margin-bottom: 1px;
+	padding-left: 1px;
+	padding-right: 1px;
+	font-size: 11px;
+	qproperty-frame: false;
+}
+
+
 
 QCheckBox {
 	spacing: 5px;
@@ -415,6 +522,14 @@ border: none;
 }
 QScrollBar::sub-line:vertical {
 border: none;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
 }
 
 QDialog {

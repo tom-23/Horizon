@@ -21,6 +21,10 @@ public:
     ~TrackControlsWidget();
 
     void setSelected(bool selected);
+    void uiUpdate();
+
+
+    void updateColor();
 
 private slots:
 
@@ -40,14 +44,21 @@ private:
 
     bool shiftDown;
 
-    QTimer *uiTimer;
-    void uiUpdate();
+
+
 
     int lastMeterValue;
 
     int currentMeterValue;
 
     MeterWidget *mtr;
+    QTimer *uiTimer;
+
+    int lastLRMS = 0;
+    int lastRRMS = 0;
+
+    int uiLRMS = 0;
+    int uiRRMS = 0;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

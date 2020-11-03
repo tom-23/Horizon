@@ -31,8 +31,8 @@ using namespace lab;
 class Region
 {
 public:
-    Region(Timeline *_timeline, Track *_track);
-    //~Region();
+    Region(Timeline *_timeline, Track *_track, std::string uuid);
+    ~Region();
 
     virtual Track* getTrack();
     virtual Timeline* getTimeline();
@@ -58,6 +58,8 @@ public:
 
     virtual std::shared_ptr<GainNode> getOutputNode();
 
+    virtual std::string getUUID();
+
 protected:
 
 
@@ -74,6 +76,8 @@ protected:
     std::string regionName;
 
     float gain;
+
+    std::string uuid;
 
 };
 

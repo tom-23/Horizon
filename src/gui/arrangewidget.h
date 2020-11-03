@@ -8,9 +8,15 @@
 //#include "region.h"
 //#include "track.h"
 
-#include "app/audiomanager.h"
+#include "mainwindow.h"
 
+//#include "app/audiomanager.h"
+
+class AudioManager;
 class Track;
+class Timeline;
+class Mixer;
+
 
 namespace Ui {
 class ArrangeWidget;
@@ -27,11 +33,14 @@ public:
     Timeline *tl;
 
     void setAudioManager(AudioManager &_audioMan);
-    void importAudio();
-    void addNewAudioTrack();
+    void setMixer(Mixer *_mixer);
+    void importAudio(QString path = "");
+    Track* addAudioTrack(Track *track = nullptr, std::string uuid = "");
+    void setHZoomFactor(int hZoomFactor);
 
 private slots:
     void on_pushButton_4_clicked();
+
     void on_zoomSlider_valueChanged(int value);
 
     void on_soloDisableButton_clicked();
@@ -39,6 +48,7 @@ private slots:
 private:
     Ui::ArrangeWidget *ui;
     AudioManager *audioMan;
+    Mixer *mixer;
 
 
 protected:

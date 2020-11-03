@@ -17,18 +17,6 @@ bool GraphicsView::viewportEvent(QEvent *event) {
         case QEvent::WindowActivate: {
             timeline->updateHeights();
         }
-        case QEvent::Enter: {
-            timeline->ghostPlayheadGraphic->showGhostPlayhead();
-        }
-        case QEvent::Leave: {
-            timeline->ghostPlayheadGraphic->hideGhostPlayhead();
-        }
-        case QEvent::MouseMove: {
-            if (timeline->suspendGhostPlayhead == false) {
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-                timeline->ghostPlayheadGraphic->setLocation(mapToScene(mouseEvent->pos()).x());
-            }
-        }
          case QEvent::Resize: {
             timeline->updateHeights();
         }

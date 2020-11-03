@@ -31,6 +31,14 @@ void setThemeManager(ThemeManager *themeManager) {
         loadingDialogWidget->close();
     }
 
+    int ProgressDialog::getValue() {
+        return loadingDialogWidget->getProgress();
+    }
+
+    int ProgressDialog::getMax() {
+        return loadingDialogWidget->getMaxProgress();
+    }
+
 
 
 
