@@ -12,7 +12,7 @@ Session::Session(QWidget *parent, AudioManager &_audioMan)
     isActive = false;
     mainWindow = qobject_cast<MainWindow *>(parent);
 
-    QObject::connect(netManager, &QNetworkAccessManager::finished, this, &Session::netManagerFinished);
+    QObject::connect(netManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(netManagerFinished(QNetworkReply*)));
 
     heartbeatTimer = new QTimer(parent);
     QObject::connect(heartbeatTimer, &QTimer::timeout, this, QOverload<>::of(&Session::heartbeat));
@@ -70,13 +70,13 @@ void Session::netManagerFinished(QNetworkReply *reply) {
         return;
     }
 
-    QString response = reply->readAll();
+    //QByteArray response = reply->readAll();
     //QString endPoint = netRequest.url().toString().split("/").at(netRequest.url().toString().split("/").size() - 1);
 
     if (endPoint == "connectSession") {
 
         dialogs::ProgressDialog::close();
-        QJsonDocument responseJSON = QJsonDocument::fromJson(response.toUtf8());
+        QJsonDocument responseJSON = QJsonDocument::fromJson(reply->readAll());
         QJsonObject *responseObject = new QJsonObject(responseJSON.object());
 
         qDebug() << "TOKEN" << responseObject->value("token").toString();
@@ -119,18 +119,20 @@ void Session::netManagerFinished(QNetworkReply *reply) {
 
         QDir dir(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
         QString filename = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon" + downloadQueue.at(filesDownloaded);
-        dir.mkpath("/com.horizon.horizon" + downloadQueue.at(filesDownloaded));
-
+        dir.mkpath("/com.horizon.horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2]);
+        //qDebug() << "/com.horizon.horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2];
+        qDebug() << "FILE NAME" << filename;
         QFile file(filename);
         if (!file.open(QIODevice::WriteOnly)) {
             debug::out(1, "Could not download file from server.");
         }
-
-        file.write(reply->readAll());
+        QByteArray resp = reply->readAll();
+        qDebug() << "STATUS CODE" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        file.write(resp);
         file.close();
 
         filesDownloaded = filesDownloaded + 1;
-        dialogs::ProgressDialog::updateValue(filesUploaded);
+        dialogs::ProgressDialog::updateValue(filesDownloaded);
         if (filesDownloaded == downloadQueue.size()) {
             downloadQueue.clear();
             dialogs::ProgressDialog::close();
@@ -337,6 +339,10 @@ void Session::closeSession() {
 void Session::uploadFile(QString fileName, QString hash) {
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
     QHttpPart filePart;
+
+
+    fileName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon" + fileName;
+    qDebug() << "FILE NAME" << fileName;
     //filePart.setRawHeader("token", webSockClient->getToken().toUtf8());
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"audioFile\"; filename=\"" + QFileInfo(fileName).fileName() + "\""));
     QFile *file = new QFile(fileName);
@@ -365,11 +371,12 @@ void Session::startUploads() {
 
 void Session::downloadFile(QString fileName) {
     qDebug() << "DOWNLOADING FILE";
-     QNetworkRequest uploadRequest;
-     uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
+     QNetworkRequest downloadRequest;
+
+     downloadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
      endPoint = "download";
-     uploadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/download" + fileName));
-     netManager->get(uploadRequest);
+     downloadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/download/" + fileName.split("/")[1] + "/" + fileName.split("/")[2]));
+     netManager->get(downloadRequest);
 }
 
 void Session::startDownloads() {
