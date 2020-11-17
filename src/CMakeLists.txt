@@ -81,14 +81,6 @@ endforeach()
 # LabSound
 list(APPEND horizon_LIBRARIES LabSound)
 
-#Disable LabSound related warnings. Just Annoys the hal
-if ( CMAKE_COMPILER_IS_GNUCC )
-    target_compile_options(main LabSound "-Wall -Wextra")
-endif()
-if ( MSVC )
-    target_compile_options(main LabSound "/W4")
-endif()
-
 # libnyquist
 list(APPEND horizon_LIBRARIES libnyquist)
 
