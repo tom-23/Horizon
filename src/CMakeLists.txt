@@ -1,4 +1,7 @@
-file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp common/*.m gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
+file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
+
+
+file(GLOB horizon_DARWIN_SOURCES common/darwin/*.m common/darwin/*.h common/darwin/*.cpp)
 
 file(GLOB horizon_FORMS gui/*.ui gui/audio_effects/*.ui
     )
@@ -22,6 +25,7 @@ set(horizon_COMPILE
 if(NOT APPLE)
   add_executable(${HORIZON_EXECUTABLE_NAME} ${horizon_COMPILE})
 else()
+  list(APPEND horizon_COMPILE ${horizon_DARWIN_SOURCES})
   # On Macs we must ensure the required frameworks are linked
   find_library(AUDIOUNITS_LIBRARY "AudioUnit")
   find_library(AUDIOTOOLBOX_LIBRARY "AudioToolbox")

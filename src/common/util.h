@@ -7,7 +7,7 @@
 
 #ifndef _WIN32
     #include "CoreFoundation/CoreFoundation.h"
-    #include "haptictouchpad.h"
+    #include "darwin/haptictouchpad.h"
 #else
     #include <Windows.h>
 #endif
