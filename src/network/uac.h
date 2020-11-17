@@ -30,7 +30,7 @@ private:
 
     QString sid;
     bool sidSet;
-    QString baseURI = "http://127.0.0.1";
+    QString baseURI = "http://horizon-rtc.systems";
 
     QWidget *dialogParent;
 

@@ -58,7 +58,7 @@ void Session::connect(QString _id, QString _password, QString _userUUID, bool _i
 
     netRequest.setRawHeader("Content-Length", postDataSize);
     endPoint = "connectSession";
-    netRequest.setUrl(QUrl("http://127.0.0.1/sessions/connectSession"));
+    netRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/connectSession"));
     netManager->post(netRequest, doc.toJson());
 }
 
@@ -85,7 +85,7 @@ void Session::netManagerFinished(QNetworkReply *reply) {
         if (responseObject->value("result").toString() == "ok") {
             debug::out(3, "Got connection token, setting up websockets...");
             sessionUUID = responseObject->value("uuid").toString();
-            webSockClient = new Client(QUrl("ws://127.0.0.1:81/ws-session/" + responseObject->value("uuid").toString())
+            webSockClient = new Client(QUrl("ws://horizon-rtc.systems/ws-session/" + responseObject->value("uuid").toString())
                                        , false
                                        , responseObject->value("token").toString()
                                        , this
@@ -327,7 +327,7 @@ void Session::closeSession() {
 
         netRequest.setRawHeader("Content-Length", postDataSize);
         endPoint = "deleteSession";
-        netRequest.setUrl(QUrl("http://127.0.0.1/sessions/deleteSession"));
+        netRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/deleteSession"));
         netManager->post(netRequest, doc.toJson());
         delete webSockClient;
         isActive = false;
@@ -353,7 +353,7 @@ void Session::uploadFile(QString fileName, QString hash) {
     uploadRequest.setRawHeader("hash", hash.toUtf8());
     uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
     endPoint = "upload";
-    uploadRequest.setUrl(QUrl("http://127.0.0.1/sessions/upload/" + sessionUUID));
+    uploadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/upload/" + sessionUUID));
     netManager->post(uploadRequest, multiPart);
 }
 
@@ -368,7 +368,7 @@ void Session::downloadFile(QString fileName) {
      QNetworkRequest uploadRequest;
      uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
      endPoint = "download";
-     uploadRequest.setUrl(QUrl("http://127.0.0.1/sessions/download" + fileName));
+     uploadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/download" + fileName));
      netManager->get(uploadRequest);
 }
 
