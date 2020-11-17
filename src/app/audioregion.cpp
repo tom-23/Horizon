@@ -41,7 +41,7 @@ void AudioRegion::loadedFileCallBack() {
 
     regionGraphicsItem->setGhost(false);
     regionGraphicsItem->setGridLength(length);
-    regionGraphicsItem->setWaveform(fileLoading->peaks, audioClipBus->length());
+    regionGraphicsItem->setWaveform(audioClipBus);
 
     if (progressDialog == true) {
        dialogs::ProgressDialog::close();
@@ -139,4 +139,9 @@ void AudioRegion::setTrack(Track *_track) {
 
 std::string AudioRegion::getLoadedFileName() {
     return loadedFileName;
+}
+
+
+void AudioRegion::switchContext(AudioContext *context) {
+
 }

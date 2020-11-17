@@ -26,7 +26,7 @@ public:
 
     void setGhost(bool _isGhost);
 
-    void setWaveform(std::vector<const float *> _waveForm, uint64_t _length);
+    void setWaveform(std::shared_ptr<AudioBus> bus);
     void setHScaleFactor(int value);
 
 
@@ -65,9 +65,9 @@ protected:
     Region *region;
 
     bool ghost;
-    std::vector<const float *> waveForm;
+    std::shared_ptr<AudioBus> bus;
 
-    uint64_t samplesLength;
+    size_t samplesLength;
     // QGraphicsItem interface
 
     Timeline *timeline;
@@ -94,6 +94,8 @@ private:
     bool waveFormRendered;
 
     int hScaleFactor;
+
+    float lastGlr;
 
 };
 

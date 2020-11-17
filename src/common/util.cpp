@@ -12,6 +12,15 @@ namespace util {
             return path.append("/Contents/Resources");
         
     }
+
+    void macTouchpadVibrateSmall() {
+        vibrateSmall();
+    }
+
+    void macTouchpadVibrateHard() {
+        vibrateHard();
+    }
+
     #else
     std::string getInstallDir() {
         char buffer[MAX_PATH];

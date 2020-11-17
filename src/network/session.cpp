@@ -29,6 +29,10 @@ bool Session::getActive() {
     return isActive;
 }
 
+bool Session::getIsHost() {
+    return isHost;
+}
+
 void Session::setCookies(QNetworkCookieJar *_cookieJar) {
     qDebug() << "Set session cookie jar";
     netManager->setCookieJar(_cookieJar);
@@ -53,23 +57,25 @@ void Session::connect(QString _id, QString _password, QString _userUUID, bool _i
     QByteArray postDataSize = QByteArray::number(doc.toJson().size());
 
     netRequest.setRawHeader("Content-Length", postDataSize);
-    netRequest.setUrl(QUrl("http://127.0.0.1:3000/sessions/connectSession"));
+    endPoint = "connectSession";
+    netRequest.setUrl(QUrl("http://127.0.0.1/sessions/connectSession"));
     netManager->post(netRequest, doc.toJson());
 }
 
 void Session::netManagerFinished(QNetworkReply *reply) {
-    dialogs::ProgressDialog::close();
+
     if (reply->error()) {
+        dialogs::ProgressDialog::close();
         qDebug() << reply->errorString();
         return;
     }
 
     QString response = reply->readAll();
-    QString endPoint = netRequest.url().toString().split("/").at(netRequest.url().toString().split("/").size() - 1);
+    //QString endPoint = netRequest.url().toString().split("/").at(netRequest.url().toString().split("/").size() - 1);
 
-    qDebug() << response.toUtf8();
     if (endPoint == "connectSession") {
 
+        dialogs::ProgressDialog::close();
         QJsonDocument responseJSON = QJsonDocument::fromJson(response.toUtf8());
         QJsonObject *responseObject = new QJsonObject(responseJSON.object());
 
@@ -79,7 +85,7 @@ void Session::netManagerFinished(QNetworkReply *reply) {
         if (responseObject->value("result").toString() == "ok") {
             debug::out(3, "Got connection token, setting up websockets...");
             sessionUUID = responseObject->value("uuid").toString();
-            webSockClient = new Client(QUrl("ws://127.0.0.1:3001/ws-session/" + responseObject->value("uuid").toString())
+            webSockClient = new Client(QUrl("ws://127.0.0.1:81/ws-session/" + responseObject->value("uuid").toString())
                                        , false
                                        , responseObject->value("token").toString()
                                        , this
@@ -93,6 +99,48 @@ void Session::netManagerFinished(QNetworkReply *reply) {
                                          , dialogs::MessageDialog::icons::caution
                                          , dialogs::MessageDialog::buttons::okOnly);
         }
+    } else if (endPoint == "upload") {
+        debug::out(3, "File Uploaded!");
+        filesUploaded = filesUploaded + 1;
+        dialogs::ProgressDialog::updateValue(filesUploaded);
+        if (filesUploaded == uploadQueue.size()) {
+            uploadQueue.clear();
+            dialogs::ProgressDialog::close();
+
+            debug::out(3, "All files uploaded successfully");
+        } else {
+            QList<QString> item = uploadQueue.at(filesUploaded);
+            uploadFile(item.at(0), item.at(1));
+        }
+    } else if (endPoint == "download") {
+        debug::out(3, "File Downloaded!");
+
+       // QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon";
+
+        QDir dir(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
+        QString filename = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon" + downloadQueue.at(filesDownloaded);
+        dir.mkpath("/com.horizon.horizon" + downloadQueue.at(filesDownloaded));
+
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly)) {
+            debug::out(1, "Could not download file from server.");
+        }
+
+        file.write(reply->readAll());
+        file.close();
+
+        filesDownloaded = filesDownloaded + 1;
+        dialogs::ProgressDialog::updateValue(filesUploaded);
+        if (filesDownloaded == downloadQueue.size()) {
+            downloadQueue.clear();
+            dialogs::ProgressDialog::close();
+
+            debug::out(3, "All files downloaded successfully");
+            downloadCallback();
+        } else {
+            downloadFile(downloadQueue.at(filesDownloaded));
+        }
+
     }
 }
 
@@ -112,12 +160,24 @@ void Session::onSessionConnected() {
 
 void Session::transferCurrentProject() {
     ProjectSerialization *projSer = new ProjectSerialization();
+    projSer->sessionID = sessionUUID;
+    projSer->copyToTemp = true;
+
     QJsonDocument doc = QJsonDocument::fromJson(QString::fromStdString(projSer->serialize(*audioMan, true)).toUtf8());
+
+    for (int i = 0; i < projSer->tempFileList.size(); i++) {
+        qDebug() << i;
+        uploadQueue.append(projSer->tempFileList.at(i));
+    }
+
+    startUploads();
+
     webSockClient->sendJSONObject("project", doc.object());
-    qDebug() << QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+
 }
 
 void Session::askForLatestProjectFile() {
+
     webSockClient->sendCommand("latestProject");
 }
 
@@ -129,11 +189,35 @@ void Session::onJSON(QJsonObject object) {
     QString type = object.value("type").toString();
 
     if (type == "project") {
+        downloadQueue = {};
         QJsonDocument doc;
         QJsonObject project = object.value("payload").toObject();
+       // QList<QString> fileArray = {};
+        QJsonArray tracks = project.value("tracks").toArray();
+        for (int i = 0; i < tracks.size(); i++) {
+            QJsonArray regions = tracks.at(i).toObject().value("audioRegions").toArray();
+            for (int r = 0; r < regions.size(); r++ ) {
+                bool exists = false;
+                QString fileName = regions.at(r).toObject().value("filePath").toString();
+                for (int fn = 0; fn < downloadQueue.size(); fn++) {
+                    if (downloadQueue.at(fn) == fileName) {
+                        exists = true;
+                    }
+                }
+                if (!exists) {
+                    downloadQueue.append(fileName);
+                    qDebug() << fileName;
+                }
+            }
+        }
         doc.setObject(project);
+
+        downloadCallback = [this, doc] {
+            mainWindow->loadProjectJSON(doc.toJson());
+        };
+        startDownloads();
         qDebug() << "Calling load project JSON";
-        mainWindow->loadProjectJSON(doc.toJson());
+
     } else if (type == "cmnd") {
         QString payload = object.value("payload").toString();
         QJsonObject args = object.value("args").toObject();
@@ -146,10 +230,20 @@ void Session::onJSON(QJsonObject object) {
 
         } else if (payload == "moveRegion") {
             qDebug() << "Moving region";
-            mainWindow->moveRegion(args.value("regionUUID").toString(), args.value("gridLocation").toDouble());
+            audioMan->moveRegion(args.value("regionUUID").toString(), args.value("gridLocation").toDouble());
+
         } else if (payload == "getProject") {
             qDebug() << "Got request for project";
             transferCurrentProject();
+        } else if (payload == "setTrackMute") {
+            qDebug() << "Got repuest for track mute";
+            audioMan->setTrackMute(args.value("trackUUID").toString(), args.value("mute").toBool());
+        } else if (payload == "setTrackPan") {
+            qDebug() << "Got repuest for track pan";
+            audioMan->setTrackPan(args.value("trackUUID").toString(), args.value("pan").toDouble());
+        } else if (payload == "setTrackGain") {
+            qDebug() << "Got request for track gain";
+            audioMan->setTrackGain(args.value("trackUUID").toString(), args.value("gain").toDouble());
         }
     }
 }
@@ -193,8 +287,36 @@ void Session::setTrackMute(QString uuid, bool mute) {
     }
 }
 
+void Session::setTrackPan(QString uuid, float pan) {
+    if (isActive) {
+        qDebug() << "Sending track pan command";
+        QJsonObject root;
+        root.insert("trackUUID", uuid);
+        root.insert("pan", pan);
+        webSockClient->sendCommandObject("setTrackPan", root);
+    }
+}
+
+void Session::setTrackGain(QString uuid, float gain) {
+    if (isActive) {
+        qDebug() << "Sending track gain command";
+        QJsonObject root;
+        root.insert("trackUUID", uuid);
+        root.insert("gain", gain);
+        webSockClient->sendCommandObject("setTrackGain", root);
+    }
+}
+
+void Session::disconnectSession() {
+    if (getActive() == true) {
+        debug::out(3, "Disconnecting Session...");
+        webSockClient->sendCommand("disconnect");
+    }
+}
+
 void Session::closeSession() {
     if (getActive() == true) {
+        debug::out(3, "Closing Session...");
         QJsonDocument doc;
         QJsonObject root;
         root.insert("userUUID", userUUID);
@@ -204,9 +326,54 @@ void Session::closeSession() {
         QByteArray postDataSize = QByteArray::number(doc.toJson().size());
 
         netRequest.setRawHeader("Content-Length", postDataSize);
-        netRequest.setUrl(QUrl("http://192.168.1.231:3000/sessions/deleteSession"));
+        endPoint = "deleteSession";
+        netRequest.setUrl(QUrl("http://127.0.0.1/sessions/deleteSession"));
         netManager->post(netRequest, doc.toJson());
         delete webSockClient;
         isActive = false;
     }
+}
+
+void Session::uploadFile(QString fileName, QString hash) {
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    QHttpPart filePart;
+    //filePart.setRawHeader("token", webSockClient->getToken().toUtf8());
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"audioFile\"; filename=\"" + QFileInfo(fileName).fileName() + "\""));
+    QFile *file = new QFile(fileName);
+    if (file->open(QIODevice::ReadOnly)) {
+        filePart.setBodyDevice(file);
+        file->setParent(multiPart);
+    }
+
+    multiPart->append(filePart);
+
+
+
+   QNetworkRequest uploadRequest;
+    uploadRequest.setRawHeader("hash", hash.toUtf8());
+    uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
+    endPoint = "upload";
+    uploadRequest.setUrl(QUrl("http://127.0.0.1/sessions/upload/" + sessionUUID));
+    netManager->post(uploadRequest, multiPart);
+}
+
+void Session::startUploads() {
+    filesUploaded = 0;
+    dialogs::ProgressDialog::show(0, uploadQueue.size(), "Uploading audio files...");
+    uploadFile(uploadQueue.at(0).at(0), uploadQueue.at(0).at(1));
+}
+
+void Session::downloadFile(QString fileName) {
+    qDebug() << "DOWNLOADING FILE";
+     QNetworkRequest uploadRequest;
+     uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
+     endPoint = "download";
+     uploadRequest.setUrl(QUrl("http://127.0.0.1/sessions/download" + fileName));
+     netManager->get(uploadRequest);
+}
+
+void Session::startDownloads() {
+    filesDownloaded = 0;
+    dialogs::ProgressDialog::show(0, downloadQueue.size(), "Downloading audio files...");
+    downloadFile(downloadQueue.at(0));
 }

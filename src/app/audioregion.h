@@ -34,6 +34,8 @@ public:
     void disconnectTrack() override;
     void setTrack(Track *_track) override;
 
+    void switchContext(AudioContext *context);
+
     std::string getLoadedFileName();
     std::string preLoadedFile;
 

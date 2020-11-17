@@ -15,6 +15,7 @@
 #include "librarywidget.h"
 #include "rtchostwindow.h"
 #include "rtcclientwindow.h"
+#include "renderwindow.h"
 
 #include "app/audiomanager.h"
 #include "common/thememanager.h"
@@ -39,6 +40,7 @@ class ProjectSerialization;
 //class AudioManager;
 class ArrangeWidget;
 class MixerWidget;
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -76,9 +78,6 @@ public:
     bool ensureSaved();
 
     void newTrack(QColor color, QString uuid);
-    void moveRegion(QString uuid, double gridLocation);
-    void selectTrack(QString uuid);
-
 
 private slots:
 
@@ -112,6 +111,14 @@ private slots:
     void on_actionConnect_to_Session_2_triggered();
 
     void on_actionManage_Live_Session_triggered();
+
+    void on_liveButton_clicked();
+
+    void on_actionRender_Audio_triggered();
+
+    void on_pushButton_3_clicked();
+
+    void on_tempo_lcd_valueChanged(double arg1);
 
 protected:
 

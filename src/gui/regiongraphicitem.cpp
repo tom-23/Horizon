@@ -24,11 +24,13 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     region = _region;
     timeline = _timeline;
     ghost = true;
+    this->prepareGeometryChange();
     gridLocation = region->getGridLocation();
-    waveForm = {};
     setY((region->getTrack()->getIndex() * 60) + 1);
 
     waveFormRendered = false;
+
+
 }
 
 void RegionGraphicItem::setGridLength(float _value) {
@@ -47,10 +49,10 @@ QRectF RegionGraphicItem::boundingRect() const
     return QRectF(0, 1, float(gridLength * hScaleFactor), float(height));
 }
 
-void RegionGraphicItem::setWaveform(std::vector<const float *> _waveForm, uint64_t _length) {
+void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
 
-    waveForm = _waveForm;
-    samplesLength = _length;
+    bus = _bus;
+    samplesLength = bus->length();
 
     waveFormRendered = false;
 
@@ -62,6 +64,9 @@ void RegionGraphicItem::setWaveform(std::vector<const float *> _waveForm, uint64
     QPainter wavepainter(&pixmap);
     wavepainter.setPen(QPen(waveFormColor, 1));
 
+
+
+
     for (uint64_t i = 0; i < imgWidth; i++) {
 
         const uint64_t firstSampleIndexForPixel = getFirstSampleIndexForPixel(i, imgWidth, samplesLength);
@@ -71,9 +76,13 @@ void RegionGraphicItem::setWaveform(std::vector<const float *> _waveForm, uint64
         const float smallestSampleValueForPixel = getMinimumSampleValueInRange(firstSampleIndexForPixel, lastSampleIndexForPixel, 0);
 
         wavepainter.drawLine(QLineF(i, getYValueForSampleValue(largestSampleValueForPixel), i, getYValueForSampleValue(smallestSampleValueForPixel)));
-
+        qDebug() << "Y VAL MAX" << largestSampleValueForPixel;
+        //qDebug() << "Y VAL MIN" << getYValueForSampleValue(smallestSampleValueForPixel);
     }
 
+    qDebug() << "Image Width" << imgWidth;
+    qDebug() << "LENGTH" << samplesLength;
+    //qDebug() << "ARRAY SIZE" << waveForm.at(0);
     wavepainter.end();
 
     waveFormPixmap = pixmap;
@@ -95,10 +104,13 @@ float RegionGraphicItem::getMaximumSampleValueInRange(uint64_t firstSample, uint
     if (lastSample >= samplesLength) {
         lastSample = samplesLength - 1;
     }
-
+    qDebug() << "Sample value" << bus->channel(channel)->data()[firstSample];
+    qDebug() << "Sample Index" << firstSample;
     for (uint64_t i = firstSample; i < lastSample; i++) {
-        if (waveForm.at(channel)[i] > maxSample) {
-            maxSample = waveForm.at(channel)[i];
+
+        if (bus->channel(channel)->data()[i] > maxSample) {
+
+            maxSample = bus->channel(channel)->data()[i];
         }
     }
     return maxSample;
@@ -116,8 +128,8 @@ float RegionGraphicItem::getMinimumSampleValueInRange(uint64_t firstSample, uint
 
 
     for (uint64_t i = firstSample; i < lastSample; i++) {
-        if (waveForm.at(channel)[i] < minSample) {
-            minSample = waveForm.at(channel)[i];
+        if (bus->channel(channel)->data()[i] < minSample) {
+            minSample = bus->channel(channel)->data()[i];
         }
     }
     return minSample;
@@ -217,7 +229,6 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if (abs(yDiff) > heightDiff)
         {
 
-
             newPos.setY(oldPos.y() + (int)(yDiff / heightDiff) * heightDiff); //*((int)(yDiff/30))>0?1:0);
             yValue = newPos.y();
             //                tempOldPos.setY(newPos.y() - oldPos.y());
@@ -254,6 +265,13 @@ void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             float gridLoc = ((oldPos.x() + dx) / hScaleFactor);
             float glr = float(round((gridLoc + 1) * division)) / division;
             setX((glr - 1) * hScaleFactor);
+            if (glr != lastGlr) {
+                lastGlr = glr;
+                #ifdef __APPLE__
+                util::macTouchpadVibrateSmall();
+                #endif
+            }
+
         }
 
         gridLocation = (scenePos().x() / hScaleFactor) + 1;
@@ -321,6 +339,7 @@ void RegionGraphicItem::setGhost(bool _isGhost) {
 }
 
 void RegionGraphicItem::setHScaleFactor(int value) {
-    prepareGeometryChange();
     hScaleFactor = value;
+    prepareGeometryChange();
+
 }

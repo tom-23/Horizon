@@ -7,6 +7,7 @@
 
 #ifndef _WIN32
     #include "CoreFoundation/CoreFoundation.h"
+    #include "haptictouchpad.h"
 #else
     #include <Windows.h>
 #endif
@@ -15,6 +16,8 @@ namespace util {
 
     #ifndef _WIN32
         std::string getResourceBundle();
+        void macTouchpadVibrateSmall();
+        void macTouchpadVibrateHard();
     #else
         std::string getInstallDir();
     #endif

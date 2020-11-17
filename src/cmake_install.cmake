@@ -1,4 +1,4 @@
-# Install script for directory: /Users/tombutcher/Projects/Horizon-DAW/src
+# Install script for directory: /Users/tombutcher/Projects/Horizon/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -33,7 +33,7 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xRuntimex" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY FILES "/Users/tombutcher/Projects/Horizon-DAW/Horizon.app" USE_SOURCE_PERMISSIONS)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY FILES "/Users/tombutcher/Projects/Horizon/Horizon.app" USE_SOURCE_PERMISSIONS)
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/./Horizon.app/Contents/MacOS/Horizon" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/./Horizon.app/Contents/MacOS/Horizon")
     execute_process(COMMAND /usr/bin/install_name_tool
@@ -269,10 +269,19 @@ Qml2Imports = Resources/qml
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xRuntimex" OR NOT CMAKE_INSTALL_COMPONENT)
+  set(deployqt "/Users/tombutcher/Qt/5.14.2/clang_64/bin/macdeployqt")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xRuntimex" OR NOT CMAKE_INSTALL_COMPONENT)
+      execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/Horizon.app")
+    
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xRuntimex" OR NOT CMAKE_INSTALL_COMPONENT)
   
         include(BundleUtilities)
         set(BU_CHMOD_BUNDLE_ITEMS ON)
-        fixup_bundle("${CMAKE_INSTALL_PREFIX}/Horizon.app" ";$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqcocoa.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqgif.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqicns.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqico.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqjpeg.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqmacheif.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqmacjp2.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqminimal.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqoffscreen.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//iconengines/libqsvgicon.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqsvg.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqtga.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqtiff.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//generic/libqtuiotouchplugin.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqwbmp.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqwebp.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platformthemes/libqxdgdesktopportal.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//styles/libqmacstyle.dylib;" "/Users/tombutcher/Projects/Horizon-DAW;")
+        fixup_bundle("${CMAKE_INSTALL_PREFIX}/Horizon.app" ";$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqcocoa.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqgif.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqicns.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqico.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqjpeg.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqmacheif.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqmacjp2.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqminimal.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platforms/libqoffscreen.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//iconengines/libqsvgicon.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqsvg.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqtga.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqtiff.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//generic/libqtuiotouchplugin.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqwbmp.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//imageformats/libqwebp.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//platformthemes/libqxdgdesktopportal.dylib;$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}//styles/libqmacstyle.dylib;" "/Users/tombutcher/Projects/Horizon;")
         verify_app("${CMAKE_INSTALL_PREFIX}/Horizon.app")
         
 endif()

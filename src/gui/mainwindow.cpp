@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     loadedProjectPath = "Untitled";
 
     #ifndef _WIN32
-        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/Nautic.json";
+        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json";
     #else
         themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/default-dark.json";
     #endif
@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     uac = new UAC();
 
     debug::out(3, "Setting BPM");
-    audioMan->setBPM(150.0);
+    audioMan->setBPM(130.0);
     audioMan->setDivision(4);
     audioMan->setLookAhead(0.05);
 
@@ -58,10 +58,6 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     arrangeWidget->tl->setColorTheme(themeMan);
 
     mixerWidget->show();
-    InfoWidget* iw;
-    iw = new InfoWidget(this);
-    ui->content->layout()->addWidget(iw);
-    iw->show();
 
     LibraryWidget* lb;
     lb = new LibraryWidget(this);
@@ -72,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
    // ew = new EffectWidget(iw);
     //iw->addEffect(ew);
 
-    uiTimer = new QTimer(parent);
+    uiTimer = new QTimer(this);
     connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
 
 
@@ -83,8 +79,14 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
 
     splashScreen->close();
 
+    ui->tempo_lcd->setAttribute(Qt::WA_MacShowFocusRect, 0);
+
     //this->show();
     this->showMaximized();
+
+    uiTimer->start(60);
+
+
 }
 
 void MainWindow::uiUpdate() {
@@ -95,6 +97,9 @@ void MainWindow::uiUpdate() {
     ui->barNumberLabel->setText(QString::number(floor(audioMan->getCurrentGridTime())));
     ui->beatNumberLabel->setText(QString::number(((glr - floor(audioMan->getCurrentGridTime())) * arrangeWidget->tl->barLength) + 1));
 
+    for (int i = 0; i < int(audioMan->getTrackListCount()); i++) {
+        audioMan->getTrackByIndex(i)->uiUpdate();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -117,9 +122,8 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_stopButton_clicked()
 {
     audioMan->stop();
-    uiTimer->stop();
+    //uiTimer->stop();
     arrangeWidget->tl->setPlayheadLocation(0.0);
-    uiUpdate();
 }
 
 void MainWindow::updateIconThemes() {
@@ -136,10 +140,10 @@ void MainWindow::on_actionPreferences_triggered()
 
 void MainWindow::togglePlayback() {
     if (audioMan->isPlaying == false) {
-        uiTimer->start(30);
+        //uiTimer->start(30);
         audioMan->play();
     } else {
-        uiTimer->stop();
+        //uiTimer->stop();
         audioMan->pause();
     }
 }
@@ -187,29 +191,6 @@ void MainWindow::newTrack(QColor color, QString uuid) {
     arrangeWidget->addAudioTrack(nullptr, uuid.toStdString())->updateColor(color);
 }
 
-void MainWindow::moveRegion(QString uuid, double gridLocation) {
-    for (int ti= 0; ti < audioMan->getTrackListCount(); ti++) {
-        Track *track = audioMan->getTrackByIndex(ti);
-        for (int ri = 0; ri < track->getAudioRegionListCount(); ri++) {
-            AudioRegion *audioRegion = track->getAudioRegionByIndex(ri);
-            if (uuid == QString::fromStdString(audioRegion->getUUID())) {
-                audioRegion->setGridLocation(gridLocation);
-                audioRegion->getRegionGraphicItem()->setGridLocation(gridLocation);
-                audioRegion->getRegionGraphicItem()->update();
-            }
-        }
-    }
-}
-
-void MainWindow::selectTrack(QString uuid) {
-    for (int i = 0; i < audioMan->getTrackListCount(); i++) {
-        Track *track = audioMan->getTrackByIndex(i);
-        if (QString::fromStdString(track->getUUID()) == uuid) {
-            audioMan->setTrackSelected(track, true);
-        }
-    }
-}
-
 void MainWindow::on_actionNew_Project_triggered()
 {
     if (ensureSaved() == true) {
@@ -243,6 +224,7 @@ void MainWindow::openProject(QString fileName) {
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
         audioMan->clearAll();
+        arrangeWidget->tl->clearAll();
         loadProjectJSON(inputFile.readAll());
         QFileInfo fileInfo(fileName);
         this->setWindowTitle(fileInfo.fileName());
@@ -298,12 +280,14 @@ void MainWindow::newProject() {
         loadedProjectPath = "Untitled";
         this->setWindowTitle(loadedProjectPath);
         audioMan->clearAll();
+        arrangeWidget->tl->clearAll();
         untitledJSON = QString::fromStdString(serialization->serialize(*audioMan, false));
 }
 
 void MainWindow::loadProjectJSON(QString JSON) {
 
-    arrangeWidget->setHZoomFactor(50);
+    //arrangeWidget->setHZoomFactor(50);
+    ui->tempo_lcd->setValue(audioMan->getBPM());
     int regionsToBeLoaded = 0;
     debug::out(3, "Loading project JSON...");
     serialization->deSerialize(JSON.toStdString(), *audioMan);
@@ -314,6 +298,7 @@ void MainWindow::loadProjectJSON(QString JSON) {
             arrangeWidget->tl->addRegion(audioRegion);
             regionsToBeLoaded = regionsToBeLoaded + 1;
             audioRegion->loadFile(audioRegion->preLoadedFile, false);
+
         }
     }
 
@@ -373,6 +358,7 @@ QString MainWindow::loadFile(QString path) {
 
 void MainWindow::closeEvent(QCloseEvent *e) {
     if (ensureSaved() == true) {
+        session->closeSession();
         e->accept();
     } else {
         e->ignore();
@@ -392,6 +378,13 @@ void MainWindow::on_actionMixer_toggled(bool arg1)
 void MainWindow::on_actionConnect_to_Session_2_triggered()
 {
     if (ensureSaved() == true) {
+        if (session->getActive() == true) {
+            if (dialogs::MessageDialog::show("Session already active", "A session is currently active. Do you want to disconnect and continue?",
+                                             dialogs::MessageDialog::icons::caution,
+                                             dialogs::MessageDialog::buttons::yesNo) == 2) {
+
+            }
+        }
         newProject();
         rtcClient = new RTCClientWindow(this, session, uac);
         rtcClient->show();
@@ -402,4 +395,48 @@ void MainWindow::on_actionManage_Live_Session_triggered()
 {
     rtcHost = new RTCHostWindow(this, session, uac);
     rtcHost->show();
+}
+
+void MainWindow::on_liveButton_clicked()
+{
+    QMenu menu(this);
+
+    if (session->getActive() == true) {
+        menu.addAction("ID: " + uac->sessionID)->setEnabled(false);
+        menu.addAction("Password: " + uac->sessionPassword)->setEnabled(false);
+        menu.addSeparator();
+        QAction *chooseColor = new QAction("Disconnect", this);
+        menu.addAction(chooseColor);
+        connect(chooseColor, &QAction::triggered, session, &Session::disconnectSession);
+
+    }
+
+    menu.setWindowFlags(menu.windowFlags() | Qt::CustomizeWindowHint);
+    menu.exec(cursor().pos());
+    //menu.addAction("New Bus...");
+
+    //menu.addAction("Cut")->setShortcut(QKeySequence::Cut);
+    //menu.addAction("Copy")->setShortcut(QKeySequence::Copy);
+    //menu.addAction("Paste")->setShortcut(QKeySequence::Copy);
+    //menu.addSeparator();
+    //menu.addAction("Rename...");
+}
+
+void MainWindow::on_actionRender_Audio_triggered()
+{
+    RenderWindow *renderWindow = new RenderWindow(this, &*audioMan);
+    renderWindow->show();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    //audioMan->renderAudio(this, 48000, 2);
+    serialization->sessionID = "testSession";
+    serialization->copyToTemp = true;
+    serialization->serialize(*audioMan, false);
+}
+
+void MainWindow::on_tempo_lcd_valueChanged(double arg1)
+{
+    audioMan->setBPM(arg1);
 }

@@ -17,6 +17,10 @@ Client::Client(const QUrl &_url, bool _debug, QString _token, QObject *_parent, 
     debug::out(3, "Opening websockets connection...");
     connect(&webSocket, &QWebSocket::connected, this, &Client::onConnected);
     connect(&webSocket, &QWebSocket::disconnected, this, &Client::closed);
+    connect(&webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+    [=](QAbstractSocket::SocketError error){
+        qDebug() << error;
+    });
 
     QNetworkRequest connectionRequest((QUrl(url)));
     connectionRequest.setRawHeader("token", token.toUtf8());
@@ -92,3 +96,6 @@ void Client::onJSONMessageReceived(QString message)
 
 }
 
+QString Client::getToken() {
+    return token;
+}

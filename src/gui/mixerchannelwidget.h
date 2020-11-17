@@ -43,6 +43,11 @@ private:
     int uiLRMS = 0;
     int uiRRMS = 0;
 
+    int updateTimeout;
+
+    float lastPan;
+    float lastGain;
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;

@@ -124,6 +124,12 @@ QColor Timeline::getPrimaryColor() {
     return primaryColor;
 }
 
+
+void Timeline::clearAll() {
+
+    regionGraphicList.clear();
+}
+
 void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
     hZoomFactor = _hZoomFactor;
 
@@ -236,6 +242,8 @@ void Timeline::addRegion(Region *_region) {
     updateViewports();
 
     this->setZRegionValues(barCount * barLength);
+
+    rgi->setHScaleFactor(hZoomFactor);
 
 }
 

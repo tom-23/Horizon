@@ -20,17 +20,20 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
     scene->addItem(mtr);
     ui->channelMeter->setScene(scene);
 
-    uiTimer = new QTimer();
-    uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MixerChannelWidget::uiUpdate));
-    uiTimer->start(60);
+    //uiTimer = new QTimer();
+    //uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MixerChannelWidget::uiUpdate));
+    //uiTimer->start(60);
 
-
+    updateTimeout = 0;
 
     ui->channelColor->setVisible(true);
     ui->gainSlider->setVisible(true);
     ui->channelMeter->setVisible(true);
 
     this->setStyleSheet("");
+
+    mtr->setPwrValue(0, 0);
+    mtr->setRMSValue(0, 0);
 
 
 }
@@ -99,61 +102,95 @@ void MixerChannelWidget::keyReleaseEvent(QKeyEvent *event) {
 void MixerChannelWidget::on_muteButton_toggled(bool checked)
 {
     track->setMute(checked);
-
+    track->getAudioManager()->session->setTrackMute(QString::fromStdString(track->getUUID()), checked);
 }
 
 void MixerChannelWidget::uiUpdate() {
 
-    std::vector<int> Lvalue = track->getLMeterData();
-    std::vector<int> Rvalue = track->getRMeterData();
+    if (track->getAudioRegionListCount() != 0) {
+        std::vector<int> Lvalue = track->getLMeterData();
+        std::vector<int> Rvalue = track->getRMeterData();
 
-    int LRMSValue = Lvalue[0] + 100;
-    int RRMSValue = Rvalue[0] + 100;
+        int LRMSValue = Lvalue[0] + 100;
+        int RRMSValue = Rvalue[0] + 100;
 
-    if (lastLRMS == LRMSValue) {
-        if (uiLRMS > 0) {
-            uiLRMS = uiLRMS -1;
-        }
-    } else {
-        if (uiLRMS < LRMSValue) {
-            uiLRMS = LRMSValue;
-        } else {
+        if (lastLRMS == LRMSValue) {
             if (uiLRMS > 0) {
                 uiLRMS = uiLRMS -1;
             }
-        }
-
-    }
-
-    lastLRMS = LRMSValue;
-
-    if (lastRRMS == RRMSValue) {
-        if (uiRRMS > 0) {
-            uiRRMS = uiRRMS -1;
-        }
-    } else {
-        if (uiRRMS < RRMSValue) {
-            uiRRMS = RRMSValue;
         } else {
+            if (uiLRMS < LRMSValue) {
+                uiLRMS = LRMSValue;
+            } else {
+                if (uiLRMS > 0) {
+                    uiLRMS = uiLRMS -1;
+                }
+            }
+
+        }
+
+        lastLRMS = LRMSValue;
+
+        if (lastRRMS == RRMSValue) {
             if (uiRRMS > 0) {
                 uiRRMS = uiRRMS -1;
             }
+        } else {
+            if (uiRRMS < RRMSValue) {
+                uiRRMS = RRMSValue;
+            } else {
+                if (uiRRMS > 0) {
+                    uiRRMS = uiRRMS -1;
+                }
+            }
+
         }
 
+        lastRRMS = RRMSValue;
+
+        mtr->setRMSValue(uiLRMS, uiRRMS);
+        //mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
+
+
+        mtr->update();
+    } else {
+
     }
-
-    lastRRMS = RRMSValue;
-
-    mtr->setRMSValue(uiLRMS, uiRRMS);
-    //mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
-
-
-    mtr->update();
 
     if (track->getMute() == true && ui->muteButton->isChecked() == false) {
         ui->muteButton->setChecked(true);
     } else if (track->getMute() == false && ui->muteButton->isChecked() == true) {
         ui->muteButton->setChecked(false);
+    }
+
+
+
+    if (updateTimeout == 19) {
+        updateTimeout = 0;
+
+        if (track->getPan() != float(ui->panSlider->value()) / 100) {
+            ui->panSlider->setValue(int(track->getPan() * 100));
+            lastPan = track->getPan();
+        } else {
+            if (track->getPan() != lastPan) {
+                track->getAudioManager()->session->setTrackPan(QString::fromStdString(track->getUUID()), track->getPan());
+                lastPan = track->getPan();
+            }
+        }
+
+        if (track->getGain() != float(ui->gainSlider->value()) / 100) {
+            ui->gainSlider->setValue(int(track->getGain() * 100));
+            lastGain = track->getGain();
+
+        } else {
+            if (track->getGain() != lastGain) {
+                track->getAudioManager()->session->setTrackGain(QString::fromStdString(track->getUUID()), track->getGain());
+                lastGain = track->getGain();
+            }
+        }
+
+    } else {
+        updateTimeout = updateTimeout + 1;
     }
 
 }

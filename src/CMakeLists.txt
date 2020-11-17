@@ -1,4 +1,4 @@
-file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
+file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp common/*.m gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
 
 file(GLOB horizon_FORMS gui/*.ui gui/audio_effects/*.ui
     )

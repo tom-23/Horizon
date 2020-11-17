@@ -32,6 +32,8 @@ class Metronome;
 #include "common/debug.h"
 #include "common/dialogs.h"
 #include "common/util.h"
+#include "filerendering.h"
+#include "common/timerex.h"
 
 #include "network/session.h"
 
@@ -53,6 +55,7 @@ class Metronome;
 //class Track;
 
 class Session;
+class AudioRegion;
 
 using namespace lab;
 //using namespace std::chrono_literals;
@@ -61,6 +64,8 @@ class AudioManager
 {
 public:
     AudioManager(QWidget *parent, Timeline &_timeline);
+
+    void initContext();
 
     void play();
     void pause();
@@ -72,6 +77,7 @@ public:
 
     void setDivision(int _division);
     void setBPM(double _beatsPerMinuet);
+    double getBPM();
     void setLookAhead(double _value);
 
     float getCurrentGridTime();
@@ -83,6 +89,7 @@ public:
     float getCurrentRelativeTime();
 
     Track* addTrack(std::string trackUUID);
+    void removeTrack(Track *track);
     Track* getTrackByIndex(int index);
 
     Track* getSelectedTrack(int index);
@@ -114,6 +121,21 @@ public:
 
     Session *session;
 
+    void moveRegion(QString uuid, double gridLocation);
+    void setTrackMute(QString uuid, bool mute);
+    void setTrackPan(QString uuid, float pan);
+    void setTrackGain(QString uuid, float gain);
+
+    Track* getTrackByUUID(QString uuid);
+    AudioRegion* getAudioRegionByUUID(QString uuid);
+
+    void renderAudio(QObject *parent, std::string fileName, int sampleRate, int channels);
+
+    bool rendering;
+
+    void eventLoop();
+
+
 private:
     QObject *parent;
 
@@ -134,9 +156,9 @@ private:
     double barLength;
 
 
-    Timer *eventTimer;
+    TimerEX *eventTimer;
     bool quitLoop;
-    void eventLoop();
+
 
     int division;
     int currentPos;
@@ -147,6 +169,8 @@ private:
 
     void updateMetSchedule();
     void cancelTrackPlayback();
+
+
 };
 
 #endif // AUDIOMANAGER_H

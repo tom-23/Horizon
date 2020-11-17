@@ -22,7 +22,7 @@ AboutDialogWidget::~AboutDialogWidget()
 
 void AboutDialogWidget::on_pushButton_clicked()
 {
-    QDesktopServices::openUrl(QUrl("http://tom-butcher.ml:2233/git/tom/Horizon"));
+    QDesktopServices::openUrl(QUrl("https://github.com/tom-23/Horizon"));
 }
 
 void AboutDialogWidget::on_pushButton_2_clicked()

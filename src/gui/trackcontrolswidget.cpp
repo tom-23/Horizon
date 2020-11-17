@@ -24,12 +24,15 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     scene->addItem(mtr);
     ui->trackMeterView->setScene(scene);
 
-    uiTimer = new QTimer();
-    uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
-    uiTimer->start(60);
+   // uiTimer = new QTimer();
+   // uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
+   // uiTimer->start(60);
 
     ui->trackMeterView->update();
     ui->trackMeterView->repaint();
+
+    mtr->setPwrValue(0, 0);
+    mtr->setRMSValue(0, 0);
 }
 
 TrackControlsWidget::~TrackControlsWidget()
@@ -40,7 +43,7 @@ TrackControlsWidget::~TrackControlsWidget()
 
 void TrackControlsWidget::on_TrackControlsWidget_customContextMenuRequested(const QPoint &pos)
 {
-    QMenu menu(this);
+   QMenu menu(this);
    menu.setAutoFillBackground(true);
 
    menu.addAction("New Track...");
@@ -59,6 +62,7 @@ void TrackControlsWidget::on_TrackControlsWidget_customContextMenuRequested(cons
 
    QAction *remove= new QAction("Delete", this);
    menu.addAction(remove);
+   connect(remove, &QAction::triggered, this, &TrackControlsWidget::removeSelf);
    //connect(chooseColor, &QAction::triggered, this, &TrackControlsWidget::changeColor);
 
    menu.setWindowFlags(menu.windowFlags() | Qt::CustomizeWindowHint);
@@ -116,6 +120,7 @@ void TrackControlsWidget::keyReleaseEvent(QKeyEvent *event) {
 void TrackControlsWidget::on_muteButton_toggled(bool checked)
 {
     track->setMute(checked);
+    track->getAudioManager()->session->setTrackMute(QString::fromStdString(track->getUUID()), checked);
 }
 
 
@@ -126,6 +131,7 @@ void TrackControlsWidget::changeColor() {
 
 void TrackControlsWidget::uiUpdate() {
 
+    if (track->getAudioRegionListCount() != 0) {
     std::vector<int> Lvalue = track->getLMeterData();
     std::vector<int> Rvalue = track->getRMeterData();
 
@@ -172,6 +178,8 @@ void TrackControlsWidget::uiUpdate() {
     mtr->update();
     ui->peakdBLabel->setText(QString::number(track->peakdB) + " dB");
 
+    }
+
     if (track->getMute() == true && ui->muteButton->isChecked() == false) {
         ui->muteButton->setChecked(true);
     } else if (track->getMute() == false && ui->muteButton->isChecked() == true) {
@@ -193,4 +201,8 @@ void TrackControlsWidget::updateColor() {
     QColor color = track->getColor();
     QString style = QString("#trackColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
     ui->trackColor->setStyleSheet(style);
+}
+
+void TrackControlsWidget::removeSelf() {
+    track->getAudioManager()->removeTrack(track);
 }

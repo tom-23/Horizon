@@ -20,6 +20,7 @@ LoadingDialogWidget::~LoadingDialogWidget()
 
 void LoadingDialogWidget::updateProgress(int value) {
     ui->progressBar->setValue(value);
+    ui->progressBar->update();
 }
 
 int LoadingDialogWidget::getProgress() {

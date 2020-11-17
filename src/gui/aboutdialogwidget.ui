@@ -90,7 +90,9 @@
          <string>Horizon Open Source DAW
 http://tom-butcher.ml:2233/git/tom/Horizon
 
-Verison 1.0.0 - DEVELOPMENT</string>
+Tom Butcher 2020
+
+</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -118,14 +120,14 @@ Verison 1.0.0 - DEVELOPMENT</string>
         <item>
          <widget class="QPushButton" name="pushButton_2">
           <property name="text">
-           <string>Exit</string>
+           <string>Close Window</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton">
           <property name="text">
-           <string>Git</string>
+           <string>GitHub</string>
           </property>
          </widget>
         </item>

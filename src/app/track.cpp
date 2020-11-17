@@ -53,6 +53,8 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan, std::string _uuid) {
     //gain = 1.0f;
     peakdB = -100;
     setMute(false);
+    setGain(0.0);
+    setPan(0.0);
 
 }
 
@@ -190,7 +192,10 @@ void Track::setGain(float _value) {
     gain = pow(10, (_value / 20));
     gainNonLog = _value;
     qDebug() << "Setting Gain" << gain;
-    trackOutputNode->gain()->setValue(gain);
+    if (!mute) {
+        trackOutputNode->gain()->setValue(gain);
+    }
+
 }
 
 float Track::getGain() {
@@ -312,11 +317,6 @@ std::vector<int> Track::getRMeterData() {
         peakdB = std::ceil(avgPowerDecibels * 100.0) / 100.0;
 
     }
-
-    //qDebug() << avgPowerDecibels;
-
-
-
     return std::vector<int> {static_cast<int>(round(avgPowerDecibels)), static_cast<int>(round(peakInstantaneousPowerDecibels))};
 
 }
@@ -332,4 +332,9 @@ AudioRegion* Track::getAudioRegionByIndex(int index) {
 
 std::string Track::getUUID() {
     return uuid;
+}
+
+void Track::uiUpdate() {
+    trackControlWidget->uiUpdate();
+    mixerChannelWidget->uiUpdate();
 }

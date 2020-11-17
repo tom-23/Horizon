@@ -33,10 +33,11 @@
 	background-color: @lcd-background;
 	border: 1px Solid @lcd-border;
 	font-size: 11px;
-	padding: -5px;
-	margin-bottom: 1px;
-	padding-left: 10px;
-	padding-right: 10px;
+	    padding-top: 1px;
+        padding-bottom: 1px;
+	padding-left: 12px;
+	padding-right: 12px;
+	font-size: 11px;
 }
 
 #timesig_lcd {
@@ -396,6 +397,25 @@ QComboBox {
 	min-width: 250px;	
 }
 
+QComboBox::down-arrow {
+	border: none;
+	background: transparent;
+    image: url(:/svg/svg/combobox_arrow.svg);
+}
+
+QComboBox QAbstractItemView {
+    border: 1px Solid @menu-border;
+	background-color: @menu-background;
+	menu-scrollable: 1;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+QComboBox:item::hover {
+    background-color: @menu-item-hover;
+	color: @font-color-selected;
+}
+
 QLineEdit {
 	background-color: @combobox-background;
 	border: 1px Solid @combobox-border;
@@ -414,6 +434,8 @@ QCheckBox {
 	border: 1px Solid @checkbox-border;
 	background-color: @checkbox-background;
 }
+
+
 
 QCheckBox::indicator {
     width: 13px;

@@ -17,12 +17,15 @@ public:
 
     void sendJSONObject(QString type, QJsonObject object);
 
+    QString getToken();
+
 private Q_SLOTS:
     void onConnected();
 
     void onJSONMessageReceived(QString message);
 Q_SIGNALS:
     void closed();
+
 private:
         QWebSocket webSocket;
         QUrl url;

@@ -26,6 +26,8 @@ public:
 
     void updateColor();
 
+    void removeSelf();
+
 private slots:
 
 

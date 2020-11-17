@@ -11,13 +11,11 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
     scheduled = false;
     debug::out(3, "Starting audio engine...");
 
-    const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
-    context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
-
-
     outputNode = std::make_shared<GainNode>();
     outputNode->gain()->setValue(1.0f);
-    context->connect(context->device(), outputNode);
+    initContext();
+
+
 
     trackList = new std::vector<class Track *>();
     selectedTrackList = new std::vector<class Track *>();
@@ -28,13 +26,19 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
 
 
     debug::out(3, "Starting event loop...");
-    eventTimer = new Timer(std::bind(&AudioManager::eventLoop, this)), std::chrono::milliseconds(10 );
-    eventTimer->setSingleShot(false);
+    eventTimer = new TimerEX(parent, std::bind(&AudioManager::eventLoop, this));
 
     session = new Session(parent, *this);
+    rendering = false;
 
-
+    //eventTimer->start();
     debug::out(3, "Audio engine started without any issues!");
+}
+
+void AudioManager::initContext() {
+    const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
+    context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
+    context->connect(context->device(), outputNode);
 }
 
 std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileName) {
@@ -44,7 +48,7 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
             debug::out(1, "COULD NOT OPEN FILE: " + fileName);
             return nullptr;
         } else {
-            debug::out(3, "Laoded audio file" + fileName);
+            debug::out(3, "Loaded audio file" + fileName);
         }
         return bus;
 }
@@ -55,7 +59,9 @@ void AudioManager::play() {
         updateMetSchedule();
         scheduleTracks();
         isPlaying = true;
-        eventTimer->start(true);
+        if (!rendering) {
+            eventTimer->start();
+        }
     }
 }
 
@@ -63,7 +69,9 @@ void AudioManager::pause() {
     if (isPlaying == true) {
         isPlaying = false;
         cancelTrackPlayback();
-        eventTimer->stop();
+        if (!rendering) {
+            eventTimer->stop();
+        }
         stopTime = getCurrentRelativeTime();
     }
 }
@@ -73,7 +81,9 @@ void AudioManager::stop() {
     if (isPlaying == true) {
         isPlaying = false;
         cancelTrackPlayback();
-        eventTimer->stop();
+        if (!rendering) {
+            eventTimer->stop();
+        }
     }
     stopTime = 0.0;
     currentGridTime = 1.0;
@@ -128,6 +138,9 @@ void AudioManager::eventLoop() {
     float relativeTime = (context->currentTime() - startTime) + stopTime;
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
 
+    if (rendering == true) {
+        dialogs::ProgressDialog::updateValue(int(context->currentTime()));
+    }
     //updateSchedule();
 }
 
@@ -140,6 +153,10 @@ void AudioManager::setBPM(double _beatsPerMinuet) {
     bpm = _beatsPerMinuet;
     beatLength = 60.00 / bpm;
     barLength = bpm * division;
+}
+
+double AudioManager::getBPM() {
+    return bpm;
 }
 
 float AudioManager::getCurrentGridTime() {
@@ -176,6 +193,17 @@ Track* AudioManager::addTrack(std::string trackUUID) {
 
     debug::out(3, "Dispatching to UI...");
     return newTrack;
+}
+
+void AudioManager::removeTrack(Track *track) {
+    debug::out(3, "Deleting track");
+
+    auto iterator = std::find(trackList->begin(), trackList->end(), track);
+    if (iterator != trackList->end()) {
+        int index = std::distance(trackList->begin(), iterator);
+        trackList->erase(trackList->begin() + index);
+    }
+    delete track;
 }
 
 Track* AudioManager::getTrackByIndex(int index) {
@@ -280,7 +308,6 @@ std::vector<const float *> AudioManager::getPeaks(std::shared_ptr<AudioBus> bus)
     std::cout << "Max size" << channelSamples.max_size();
 
     for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
-
          channelSamples.push_back(bus->channel(channelIdx)->data());
     }
 
@@ -316,4 +343,78 @@ void AudioManager::clearAll() {
     trackList->clear();
     selectedTrackList->clear();
     //selectedRegionList->clear();
+}
+
+Track* AudioManager::getTrackByUUID(QString uuid) {
+    for (int ti= 0; ti < this->getTrackListCount(); ti++) {
+        Track *track = this->getTrackByIndex(ti);
+        if (track->getUUID() == uuid.toStdString()) {
+            return track;
+        }
+    }
+    return nullptr;
+}
+
+AudioRegion* AudioManager::getAudioRegionByUUID(QString uuid) {
+    for (int ti= 0; ti < this->getTrackListCount(); ti++) {
+        Track *track = this->getTrackByIndex(ti);
+        for (int ri = 0; ri < track->getAudioRegionListCount(); ri++) {
+            AudioRegion *audioRegion = track->getAudioRegionByIndex(ri);
+            if (audioRegion->getUUID() == uuid.toStdString()) {
+                return audioRegion;
+            }
+        }
+    }
+    return nullptr;
+}
+
+void AudioManager::moveRegion(QString uuid, double gridLocation) {
+    AudioRegion *audioRegion = getAudioRegionByUUID(uuid);
+    if (this->isPlaying == true) {
+        audioRegion->schedule();
+    }
+    audioRegion->setGridLocation(gridLocation);
+    audioRegion->getRegionGraphicItem()->setGridLocation(gridLocation);
+    audioRegion->getRegionGraphicItem()->update();
+}
+
+void AudioManager::setTrackMute(QString uuid, bool mute) {
+    Track *track = getTrackByUUID(uuid);
+    track->setMute(mute);
+}
+
+void AudioManager::setTrackPan(QString uuid, float pan) {
+    Track *track = getTrackByUUID(uuid);
+    track->setPan(pan);
+}
+
+void AudioManager::setTrackGain(QString uuid, float gain) {
+    Track *track = getTrackByUUID(uuid);
+    track->setGain(gain);
+}
+
+void AudioManager::renderAudio(QObject *parent, std::string fileName, int sampleRate, int channels) {
+
+    qDebug() << "Rendering...";
+    AudioStreamConfig offlineConfig;
+    offlineConfig.device_index = 0;
+    offlineConfig.desired_samplerate = sampleRate;
+    offlineConfig.desired_channels = channels;
+
+    qDebug() << "Config set";
+    rendering = true;
+    stop();
+    eventTimer->start();
+    qDebug() << "Started event timer";
+
+    FileRendering *fileRendering = new FileRendering(parent, [this] {
+        rendering = false;
+        stop();
+        initContext();
+        dialogs::ProgressDialog::close();
+        dialogs::MessageDialog::show("Done!", "The project has been rendered successfully.", dialogs::MessageDialog::info, dialogs::MessageDialog::okOnly);
+    });
+    dialogs::ProgressDialog::show(0, 60, "Rendering Audio...");
+    fileRendering->operate(this, offlineConfig, fileName);
+    //context.swap(offlineContext);
 }

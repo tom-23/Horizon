@@ -16,6 +16,7 @@ void FileLoadingThread::doWork(AudioManager *audioManager, QString loadedFileNam
         audioClipNode->setBus(r, audioClipBus);
     }
 
+
     debug::out(3, "Loaded audio, running callback function...");
 
     emit resultReady(audioClipBus, audioClipNode, audioManager->getPeaks(audioClipBus));

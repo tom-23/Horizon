@@ -24,7 +24,10 @@ public:
     QString getSessionUUID();
 
     bool getActive();
+    bool getIsHost();
+
     void connect(QString _id, QString _password, QString _userUUID, bool isHost);
+    void disconnectSession();
     void closeSession();
 
     void setCookies(QNetworkCookieJar *_cookieJar);
@@ -37,6 +40,14 @@ public:
     void setRegionTrack(QString regionUUID, QString trackUUID);
 
     void setTrackMute(QString uuid, bool mute);
+    void setTrackPan(QString uuid, float pan);
+    void setTrackGain(QString uuid, float gain);
+
+    void uploadFile(QString fileName, QString hash);
+    void downloadFile(QString url);
+
+    void startUploads();
+    void startDownloads();
 private:
     QString id;
     QString password;
@@ -44,6 +55,8 @@ private:
 
     QString userUUID;
     QString sessionUUID;
+
+    QString endPoint;
 
     bool isActive;
     bool isHost;
@@ -61,6 +74,13 @@ private:
     QTimer *heartbeatTimer;
     MainWindow *mainWindow;
 
+    QList<QList<QString>> uploadQueue;
+    QList<QString> downloadQueue;
+
+    int filesUploaded;
+    int filesDownloaded;
+
+    std::function<void()> downloadCallback;
 
 private slots:
     void netManagerFinished(QNetworkReply *reply);

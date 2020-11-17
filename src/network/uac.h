@@ -30,7 +30,7 @@ private:
 
     QString sid;
     bool sidSet;
-    QString baseURI = "http://127.0.0.1:3000";
+    QString baseURI = "http://127.0.0.1";
 
     QWidget *dialogParent;
 

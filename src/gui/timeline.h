@@ -82,6 +82,8 @@ public:
 
     int getRegionCount();
 
+    void clearAll();
+
 
     int noteLength;
     int barLength;
