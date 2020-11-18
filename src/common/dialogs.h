@@ -23,7 +23,7 @@ namespace dialogs {
     void setParent(QWidget *parent);
 
     void setThemeManager(ThemeManager *themeManager);
-
+    ThemeManager* getThemeManager();
 
     class ProgressDialog {
     public:

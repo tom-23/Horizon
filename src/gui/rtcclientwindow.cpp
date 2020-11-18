@@ -11,6 +11,8 @@ RTCClientWindow::RTCClientWindow(QWidget *parent, Session *_session, UAC *_uac) 
     uac->getUserUUID(this, std::bind(&RTCClientWindow::userUUIDCallback, this));
     ui->sessionID->setAttribute(Qt::WA_MacShowFocusRect, 0);
     ui->sessionPassword->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    QString iconSVG = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/connect.svg");
+    ui->iconBox->setStyleSheet("image: url('" + iconSVG + "');");
 }
 
 void RTCClientWindow::userUUIDCallback() {

@@ -11,6 +11,10 @@ void setThemeManager(ThemeManager *themeManager) {
     dialogThemeManager = themeManager;
 }
 
+ThemeManager *getThemeManager() {
+    return dialogThemeManager;
+}
+
 
     void ProgressDialog::show(int min, int max, std::string message) {
         loadingDialogWidget = new LoadingDialogWidget(dialogParent, min, max, QString::fromUtf8(message.c_str()));
