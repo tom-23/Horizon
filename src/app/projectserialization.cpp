@@ -59,10 +59,10 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
                     }
                 }
                 if (!exists) {
-                    QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon";
+                    QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
 
-                    QDir dir(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-                    dir.mkpath("com.horizon.horizon/" + sessionID + "/" + checkSUM);
+                    QDir dir(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+                    dir.mkpath("Horizon/" + sessionID + "/" + checkSUM);
 
 
                     if (QFile::copy(QString::fromStdString(audioRegion->getLoadedFileName()), tempDir + tempFilePath)) {
@@ -119,7 +119,7 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
                     audioRegion->setGridLocation(std::stod(audioRegionJSON.value("gridLocation").toString().toStdString()));
                     qDebug() << QString::fromStdString(audioRegionJSON.value("filePath").toString().toStdString());
                     if (audioRegionJSON.value("tempLocation").toBool()) {
-                        QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon";
+                        QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
                         audioRegion->preLoadedFile = (tempDir + audioRegionJSON.value("filePath").toString()).toStdString();
                     } else {
                         audioRegion->preLoadedFile = audioRegionJSON.value("filePath").toString().toStdString();

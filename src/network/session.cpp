@@ -117,9 +117,9 @@ void Session::netManagerFinished(QNetworkReply *reply) {
 
        // QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon";
 
-        QDir dir(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-        QString filename = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon" + downloadQueue.at(filesDownloaded);
-        dir.mkpath("/com.horizon.horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2]);
+        QDir dir(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+        QString filename = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon" + downloadQueue.at(filesDownloaded);
+        dir.mkpath("/Horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2]);
         //qDebug() << "/com.horizon.horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2];
         qDebug() << "FILE NAME" << filename;
         QFile file(filename);
@@ -341,7 +341,7 @@ void Session::uploadFile(QString fileName, QString hash) {
     QHttpPart filePart;
 
 
-    fileName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon" + fileName;
+    fileName = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon" + fileName;
     qDebug() << "FILE NAME" << fileName;
     //filePart.setRawHeader("token", webSockClient->getToken().toUtf8());
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"audioFile\"; filename=\"" + QFileInfo(fileName).fileName() + "\""));
