@@ -61,8 +61,9 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
                 if (!exists) {
                     QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
 
-                    QDir dir(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
-                    dir.mkpath("Horizon/" + sessionID + "/" + checkSUM);
+                    QString dirPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon/" + sessionID + "/" + checkSUM;
+                    QDir dir(dirPath);
+                    dir.mkpath(dirPath);
 
 
                     if (QFile::copy(QString::fromStdString(audioRegion->getLoadedFileName()), tempDir + tempFilePath)) {

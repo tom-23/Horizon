@@ -114,9 +114,18 @@ void Session::netManagerFinished(QNetworkReply *reply) {
 
        // QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/com.horizon.horizon";
 
-        QDir dir(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+        QString dirPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2];
+        QDir dir(dirPath);
+        dir.mkpath(dirPath);
         QString filename = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon" + downloadQueue.at(filesDownloaded);
-        dir.mkpath("/Horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2]);
+
+
+        if(!dir.exists() && !dir.mkpath(dirPath)) {
+            qDebug() << "Error: can't create folder '"<< dirPath <<"'.";
+        } else {
+            qDebug() << "Folder '"<< dirPath <<"' exists or created successfully";
+        }
+
         //qDebug() << "/com.horizon.horizon/" + downloadQueue.at(filesDownloaded).split("/")[1] + "/" + downloadQueue.at(filesDownloaded).split("/")[2];
         qDebug() << "FILE NAME" << filename;
         QFile file(filename);
