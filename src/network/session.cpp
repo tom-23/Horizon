@@ -17,8 +17,6 @@ Session::Session(QWidget *parent, AudioManager &_audioMan)
     heartbeatTimer = new QTimer(parent);
     QObject::connect(heartbeatTimer, &QTimer::timeout, this, QOverload<>::of(&Session::heartbeat));
 
-
-
 }
 
 QString Session::getSessionUUID() {
@@ -102,11 +100,10 @@ void Session::netManagerFinished(QNetworkReply *reply) {
     } else if (endPoint == "upload") {
         debug::out(3, "File Uploaded!");
         filesUploaded = filesUploaded + 1;
-        dialogs::ProgressDialog::updateValue(filesUploaded);
+        udStatusWindow->popTop();
         if (filesUploaded == uploadQueue.size()) {
             uploadQueue.clear();
-            dialogs::ProgressDialog::close();
-
+            udStatusWindow->close();
             debug::out(3, "All files uploaded successfully");
         } else {
             QList<QString> item = uploadQueue.at(filesUploaded);
@@ -132,11 +129,10 @@ void Session::netManagerFinished(QNetworkReply *reply) {
         file.close();
 
         filesDownloaded = filesDownloaded + 1;
-        dialogs::ProgressDialog::updateValue(filesDownloaded);
+        udStatusWindow->popTop();
         if (filesDownloaded == downloadQueue.size()) {
             downloadQueue.clear();
-            dialogs::ProgressDialog::close();
-
+            udStatusWindow->close();
             debug::out(3, "All files downloaded successfully");
             downloadCallback();
         } else {
@@ -360,12 +356,21 @@ void Session::uploadFile(QString fileName, QString hash) {
     uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
     endPoint = "upload";
     uploadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/upload/" + sessionUUID));
-    netManager->post(uploadRequest, multiPart);
+    statusReply = netManager->post(uploadRequest, multiPart);
+    mainWindow->connect(statusReply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(updateSyncProgress(qint64, qint64)));
+
 }
 
 void Session::startUploads() {
+    QList<QString> fileNames;
+    for (int i = 0; i < uploadQueue.size(); ++i) {
+        fileNames.append(uploadQueue.at(i).at(0).split("/")[3]);
+    }
+
+    udStatusWindow = new UDStatusWindow(mainWindow, fileNames);
+    udStatusWindow->show();
+
     filesUploaded = 0;
-    dialogs::ProgressDialog::show(0, uploadQueue.size(), "Uploading audio files...");
     uploadFile(uploadQueue.at(0).at(0), uploadQueue.at(0).at(1));
 }
 
@@ -376,11 +381,25 @@ void Session::downloadFile(QString fileName) {
      downloadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
      endPoint = "download";
      downloadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/download/" + fileName.split("/")[1] + "/" + fileName.split("/")[2]));
-     netManager->get(downloadRequest);
+     statusReply = netManager->get(downloadRequest);
+     mainWindow->connect(statusReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(updateSyncProgress(qint64, qint64)));
+
 }
 
 void Session::startDownloads() {
     filesDownloaded = 0;
-    dialogs::ProgressDialog::show(0, downloadQueue.size(), "Downloading audio files...");
+    QList<QString> fileNames;
+    for (int i = 0; i < downloadQueue.size(); i++) {
+        fileNames.append(downloadQueue.at(i).split("/")[3]);
+    }
+    udStatusWindow = new UDStatusWindow(mainWindow, fileNames);
+    udStatusWindow->show();
     downloadFile(downloadQueue.at(0));
+}
+
+void Session::updateSyncProgress(qint64 current, qint64 total) {
+    if (udStatusWindow != nullptr) {
+        udStatusWindow->updateMax(total);
+        udStatusWindow->updateProgress(current);
+    }
 }

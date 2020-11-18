@@ -12,6 +12,7 @@
 //#include "app/projectserialization.h"
 
 #include "gui/mainwindow.h"
+#include "gui/udstatuswindow.h"
 class MainWindow;
 class ProjectSerialization;
 
@@ -82,10 +83,15 @@ private:
 
     std::function<void()> downloadCallback;
 
+    UDStatusWindow *udStatusWindow;
+
+    QNetworkReply *statusReply;
+
 private slots:
     void netManagerFinished(QNetworkReply *reply);
 
     void heartbeat();
+    void updateSyncProgress(qint64 current, qint64 total);
 };
 
 #endif // SESSION_H

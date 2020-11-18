@@ -19,6 +19,7 @@
         <file>svg/caution.svg</file>
         <file>svg/no.svg</file>
         <file>svg/combobox_arrow.svg</file>
+        <file>svg/sync.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/Rublik/Rubik-Black.ttf</file>

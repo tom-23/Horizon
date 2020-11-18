@@ -595,3 +595,11 @@ QTabWidget::pane {
 	background-color: @foreground;
 	margin-bottom: -1px; 
   }
+
+QListWidget {
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+QListWidget::item {
+	padding: 5px;
+}
