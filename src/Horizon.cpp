@@ -37,7 +37,15 @@ public:
 
         splashScreen->setText("Loading Preferences...");
 
-        Preferences *prefs = new Preferences(QString::fromStdString(util::getResourceBundle()) + "/prefs.json");
+        QString prefsLoc;
+
+        #ifndef _WIN32
+        prefsLoc = QString::fromStdString(util::getResourceBundle()) + "/prefs.json";
+        #else
+        prefsLoc = QString::fromStdString(util::getInstallDir()) + "/prefs.json";
+        #endif
+
+        Preferences *prefs = new Preferences(prefsLoc);
         prefs->load();
 
         debug::out(3, "Loading MainWindow...");
