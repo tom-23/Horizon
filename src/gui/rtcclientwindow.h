@@ -27,6 +27,8 @@ private slots:
 
     void on_logoutButton_clicked();
 
+    void on_cancelButton_clicked();
+
 private:
     Ui::RTCClientWindow *ui;
 

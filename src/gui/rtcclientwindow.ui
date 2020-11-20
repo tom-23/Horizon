@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>159</height>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Horizon</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -162,7 +162,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>With great power comes great responsability. By clicking connect, you are confirming permission given to you by the host to modify / edit the current session.</string>
+             <string>By clicking connect, you are confirming permission given to you by the host to modify/edit the current session.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -212,6 +212,9 @@
       <widget class="QPushButton" name="connectButton">
        <property name="text">
         <string>Connect to Session</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

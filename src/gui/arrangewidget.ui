@@ -48,7 +48,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>5</number>
+       <number>1</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -151,7 +151,7 @@
           <property name="maximumSize">
            <size>
             <width>120</width>
-            <height>10</height>
+            <height>15</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -317,7 +317,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>300</width>
-                 <height>275</height>
+                 <height>279</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -459,7 +459,7 @@
            <item>
             <widget class="QScrollBar" name="hScroll">
              <property name="pageStep">
-              <number>100</number>
+              <number>300</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>

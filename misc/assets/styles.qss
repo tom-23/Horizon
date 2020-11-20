@@ -369,7 +369,7 @@ border-right: 1px Solid @borders;
 
 #inputSection {
 	border-bottom: 1px Solid @borders;	
-}
+}	
 
 #foldersList::item {
 	padding: 1px;
@@ -428,7 +428,7 @@ QLineEdit {
 	background-color: @combobox-background;
 	border: 1px Solid @combobox-border;
 	font-size: 11px;
-	margin-bottom: 1px;
+	
 	padding-left: 1px;
 	padding-right: 1px;
 	font-size: 11px;

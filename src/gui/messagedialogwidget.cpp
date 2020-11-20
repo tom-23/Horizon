@@ -10,6 +10,7 @@ MessageDialogWidget::MessageDialogWidget(QWidget *parent, QString title, QString
     ui->messageLabel->setText(message);
 
     ui->iconBox->setStyleSheet("image: url('" + svgPath + "');");
+    this->setModal(true);
 
     this->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 

@@ -9,6 +9,8 @@ UDStatusWindow::UDStatusWindow(QWidget *parent, QList<QString> listOfItems) :
     ui->listWidget->addItems(listOfItems);
     QString iconSVG = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/sync.svg");
     ui->iconBox->setStyleSheet("image: url('" + iconSVG + "');");
+    this->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+    this->setModal(true);
 
 }
 

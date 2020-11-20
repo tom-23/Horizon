@@ -42,7 +42,7 @@
        <number>5</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>5</number>
@@ -53,10 +53,16 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>10</number>
+         <number>15</number>
+        </property>
+        <property name="leftMargin">
+         <number>5</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
         </property>
         <property name="bottomMargin">
          <number>5</number>
@@ -92,7 +98,7 @@
           <item>
            <widget class="QLabel" name="messageLabel">
             <property name="text">
-             <string>Horizon is downloading / uploading audio files. Please ensure that you have a stable internet connection. This process may vary by internet speeds.</string>
+             <string>Horizon is downloading/uploading audio files. Please ensure that you have a stable internet connection. This process may vary by internet speeds.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

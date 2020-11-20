@@ -13,6 +13,8 @@ RTCClientWindow::RTCClientWindow(QWidget *parent, Session *_session, UAC *_uac) 
     ui->sessionPassword->setAttribute(Qt::WA_MacShowFocusRect, 0);
     QString iconSVG = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/connect.svg");
     ui->iconBox->setStyleSheet("image: url('" + iconSVG + "');");
+    this->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+    this->setModal(true);
 }
 
 void RTCClientWindow::userUUIDCallback() {
@@ -48,4 +50,9 @@ void RTCClientWindow::on_logoutButton_clicked()
         uac->logoutUser();
         this->close();
     }
+}
+
+void RTCClientWindow::on_cancelButton_clicked()
+{
+    this->close();
 }

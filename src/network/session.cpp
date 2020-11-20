@@ -177,7 +177,11 @@ void Session::transferCurrentProject() {
         uploadQueue.append(projSer->tempFileList.at(i));
     }
 
-    startUploads();
+    if (uploadQueue.size() != 0) {
+        startUploads();
+    }
+
+
 
     webSockClient->sendJSONObject("project", doc.object());
 
@@ -222,7 +226,12 @@ void Session::onJSON(QJsonObject object) {
         downloadCallback = [this, doc] {
             mainWindow->loadProjectJSON(doc.toJson());
         };
-        startDownloads();
+        if (downloadQueue.size() != 0) {
+            startDownloads();
+        } else {
+            downloadCallback();
+        }
+
         qDebug() << "Calling load project JSON";
 
     } else if (type == "cmnd") {
@@ -371,6 +380,7 @@ void Session::uploadFile(QString fileName, QString hash) {
 }
 
 void Session::startUploads() {
+
     QList<QString> fileNames;
     for (int i = 0; i < uploadQueue.size(); ++i) {
         fileNames.append(uploadQueue.at(i).at(0).split("/")[3]);
