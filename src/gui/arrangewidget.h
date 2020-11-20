@@ -45,6 +45,8 @@ private slots:
 
     void on_soloDisableButton_clicked();
 
+
+
 private:
     Ui::ArrangeWidget *ui;
     AudioManager *audioMan;

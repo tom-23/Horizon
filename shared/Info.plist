@@ -51,5 +51,10 @@
 	<string>NSApplication</string>
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
+	<key>LSEnvironment</key>
+	<dict>
+    	<key>MinimumSystemVersion</key>
+     	<string>10.3.9</string>
+ 	</dict>
 </dict>
 </plist>

@@ -1,8 +1,8 @@
 {
     "background" : "#101010",
     "foreground" : "#191919",
-    "font-color-primary" : "#D2D2D2",
-    "font-color-secondary" : "#D2D2D2",
+    "font-color-primary" : "#D0FA00",
+    "font-color-secondary" : "#D0FA00",
     "font-color-selected" : "#000000",
     "borders" : "#2D2D2D",
     "pushbutton-background" : "#191919",

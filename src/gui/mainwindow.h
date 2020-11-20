@@ -24,6 +24,7 @@
 
 
 #include "splashscreen.h"
+#include "common/preferences.h"
 
 #include <QTimer>
 #include <QWidget>
@@ -31,6 +32,8 @@
 #include <QLayout>
 #include <QApplication>
 #include <QFileOpenEvent>
+
+
 
 //class AudioManager;
 
@@ -40,6 +43,7 @@ class ProjectSerialization;
 //class AudioManager;
 class ArrangeWidget;
 class MixerWidget;
+class LibraryWidget;
 
 
 QT_BEGIN_NAMESPACE
@@ -51,18 +55,20 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, SplashScreen *splashScreen = nullptr);
+    MainWindow(QWidget *parent = nullptr, SplashScreen *splashScreen = nullptr, Preferences *prefs = nullptr);
     ~MainWindow();
 
     std::unique_ptr<AudioManager> audioMan;
     ThemeManager *themeMan;
     Timeline *timeline;
+    Preferences *prefs;
 
 
     QTimer *uiTimer;
 
     ArrangeWidget *arrangeWidget;
     MixerWidget *mixerWidget;
+    LibraryWidget *libraryWidget;
 
 
     void updateIconThemes();
@@ -119,6 +125,8 @@ private slots:
     void on_pushButton_3_clicked();
 
     void on_tempo_lcd_valueChanged(double arg1);
+
+    void on_actionLibrary_toggled(bool arg1);
 
 protected:
 

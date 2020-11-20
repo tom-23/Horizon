@@ -109,14 +109,26 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
         QJsonObject trackJSON = root.value("tracks").toArray().at(i).toObject();
         if (trackJSON.value("type") == "track") {
             debug::out(3, "Adding track");
-            Track *track = audioMan.addTrack(trackJSON.value("uuid").toString().toStdString());
+            QString trackUuid;
+            if (trackJSON.value("uuid").toString() == "") {
+                trackUuid = QUuid::createUuid().toString();
+            } else {
+                trackUuid = trackJSON.value("uuid").toString();
+            }
+            Track *track = audioMan.addTrack(trackUuid.toStdString());
 
             for (int ar = 0; ar < trackJSON.value("audioRegions").toArray().size(); ar++) {
                 QJsonObject audioRegionJSON = trackJSON.value("audioRegions").toArray().at(ar).toObject();
 
                 if (audioRegionJSON.value("type").toString() == "audioRegion") {
                     debug::out(3, "Adding audio region");
-                    AudioRegion *audioRegion = track->addAudioRegion(audioRegionJSON.value("uuid").toString().toStdString());
+                    QString regionUuid;
+                    if (audioRegionJSON.value("uuid").toString() == "") {
+                        regionUuid = QUuid::createUuid().toString();
+                    } else {
+                        regionUuid = audioRegionJSON.value("uuid").toString();
+                    }
+                    AudioRegion *audioRegion = track->addAudioRegion(regionUuid.toStdString());
                     audioRegion->setGridLocation(std::stod(audioRegionJSON.value("gridLocation").toString().toStdString()));
                     qDebug() << QString::fromStdString(audioRegionJSON.value("filePath").toString().toStdString());
                     if (audioRegionJSON.value("tempLocation").toBool()) {

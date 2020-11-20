@@ -70,6 +70,8 @@ protected:
 
     void changeColor();
 
+
+
 };
 
 #endif // TRACKCONTROLSWIDGET_H

@@ -109,6 +109,7 @@ QString ThemeManager::colorizeSVG(QString filename) {
 
     if (outSVG.open(QIODevice::ReadWrite) )
     {
+        outSVG.resize(0);
         outSVG.write(finalSVG.toUtf8());
     }
 

@@ -37,6 +37,7 @@ protected:
 
     virtual bool viewportEvent(QEvent *event) override;
 
+    virtual void dragEnterEvent(QDragEnterEvent *event) override;
 private:
     qreal totalScaleFactor;
     Timeline *timeline;

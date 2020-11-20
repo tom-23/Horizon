@@ -29,6 +29,7 @@ Timeline::Timeline(QWidget *_parent,
     trackRegionsScene = new GraphicsScene(parent);
 
     trackRegions = new GraphicsView(trackRegionsScene, parent, this);
+    trackRegions->setAcceptDrops(true);
 
     //trackRegions->updateGeometry();
     trackRegions->setParent(parent);
@@ -281,3 +282,5 @@ void Timeline::setPlayheadLocation(float _location) {
 QGraphicsScene* Timeline::getScene() {
     return trackRegionsScene;
 }
+
+

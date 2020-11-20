@@ -289,6 +289,11 @@ border-right: 1px Solid @borders;
 	color: @font-color-selected;
 }
 
+#indexingContainer {
+	border: 1px Solid @borders;	
+	border-radius: 5px;
+}
+
 #clientList {
 	border: 1px Solid @borders;	
 	background-color: @background;
@@ -366,6 +371,9 @@ border-right: 1px Solid @borders;
 	border-bottom: 1px Solid @borders;	
 }
 
+#foldersList::item {
+	padding: 1px;
+}
 
 
 QLabel {
@@ -602,4 +610,9 @@ QListWidget {
 }
 QListWidget::item {
 	padding: 5px;
+}
+
+QListWidget::item:selected {
+	background-color: @list-item-selected;
+	color: @font-color-selected;
 }

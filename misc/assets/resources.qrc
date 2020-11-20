@@ -21,6 +21,11 @@
         <file>svg/combobox_arrow.svg</file>
         <file>svg/sync.svg</file>
         <file>svg/connect.svg</file>
+        <file>svg/16x/mp3.svg</file>
+        <file>svg/16x/folder.svg</file>
+        <file>svg/16x/folder_open.svg</file>
+        <file>svg/16x/wav.svg</file>
+        <file>svg/16x/sample.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/Rublik/Rubik-Black.ttf</file>

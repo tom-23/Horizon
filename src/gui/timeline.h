@@ -104,6 +104,8 @@ public:
     QString selectBoxColor;
     QString textColor;
 
+
+    void showGhostRegion(QString fileName);
 private:
     GraphicsView *trackRegions;
     GraphicsScene *trackRegionsScene;

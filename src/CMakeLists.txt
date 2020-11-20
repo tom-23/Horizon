@@ -57,17 +57,17 @@ else()
   set(MACOSX_BUNDLE_BUNDLE_NAME "${HORIZON_EXECUTABLE_NAME}")
   set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.horizon-daw.horizon")
   set(MACOSX_BUNDLE_INFO_STRING "Horizon Digital Audio Workstation")
-  set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
+  set(MACOSX_BUNDLE_ICON_FILE "Horizon.icns")
   set(MACOSX_BUNDLE_LONG_VERSION_STRING "${horizon_version}")
   set(MACOSX_BUNDLE_SHORT_VERSION_STRING
       "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
   set(MACOSX_BUNDLE_BUNDLE_VERSION "${horizon_version}")
 
   set_source_files_properties(
-    "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/icon.icns"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/Horizon.icns"
     PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   set(horizon_COMPILE ${horizon_COMPILE}
-                      "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/icon.icns")
+                      "${CMAKE_CURRENT_SOURCE_DIR}/../misc/assets/app_icon/Horizon.icns")
 
   add_executable(${HORIZON_EXECUTABLE_NAME} MACOSX_BUNDLE ${horizon_COMPILE})
 endif()

@@ -204,5 +204,6 @@ void TrackControlsWidget::updateColor() {
 }
 
 void TrackControlsWidget::removeSelf() {
+
     track->getAudioManager()->removeTrack(track);
 }

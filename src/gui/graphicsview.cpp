@@ -28,3 +28,10 @@ bool GraphicsView::viewportEvent(QEvent *event) {
     return QGraphicsView::viewportEvent(event);
 }
 
+
+void GraphicsView::dragEnterEvent(QDragEnterEvent *event) {
+
+    qDebug() << "EVENT" << event->source();
+    event->accept();
+
+}

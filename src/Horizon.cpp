@@ -5,6 +5,7 @@
 #include "gui/mainwindow.h"
 #include "common/debug.h"
 #include "common/util.h"
+#include "common/preferences.h"
 
 class Horizon : public QApplication
 {
@@ -34,11 +35,15 @@ public:
 
         splashScreen->setVersion("1.0.0 alpha");
 
+        splashScreen->setText("Loading Preferences...");
+
+        Preferences *prefs = new Preferences(QString::fromStdString(util::getResourceBundle()) + "/prefs.json");
+        prefs->load();
 
         debug::out(3, "Loading MainWindow...");
         splashScreen->setText("Loading main window...");
 
-        mainWindow = new MainWindow(nullptr, splashScreen);
+        mainWindow = new MainWindow(nullptr, splashScreen, prefs);
         mainWindow->show();
         this->instance()->exec();
     }

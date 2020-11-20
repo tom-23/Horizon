@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
+MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences *_prefs)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -13,11 +13,12 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     ui->footer->hide();
 
     loadedProjectPath = "Untitled";
+    prefs = _prefs;
 
     #ifndef _WIN32
-        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/default-dark.json";
+        themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/" + prefs->themeName + ".json";
     #else
-        themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/default-dark.json";
+        themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/" + prefs->themeName + ".json";
     #endif
 
     themeMan = new ThemeManager(this, themeLoc);
@@ -39,6 +40,10 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     mixerWidget = new MixerWidget(this);
     arrangeWidget->setMixer(mixerWidget->mixer);
 
+    libraryWidget = new LibraryWidget(this, prefs, arrangeWidget);
+    ui->content->layout()->addWidget(libraryWidget);
+
+
     splashScreen->setText("Initialising UAC...");
     debug::out(3, "Initialising UAC...");
     uac = new UAC();
@@ -58,11 +63,15 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen)
     arrangeWidget->tl->setColorTheme(themeMan);
 
     mixerWidget->show();
+    if (!prefs->showMixer) {
+        ui->actionMixer->setChecked(false);
+    }
 
-    LibraryWidget* lb;
-    lb = new LibraryWidget(this);
-    ui->content->layout()->addWidget(lb);
-    lb->show();
+    libraryWidget->show();
+    if (!prefs->showLibrary) {
+        ui->actionLibrary->setChecked(false);
+    }
+
 
     //EffectWidget* ew;
    // ew = new EffectWidget(iw);
@@ -134,7 +143,7 @@ void MainWindow::updateIconThemes() {
 
 void MainWindow::on_actionPreferences_triggered()
 {
-    PreferencesWindow *pw = new PreferencesWindow(this);
+    PreferencesWindow *pw = new PreferencesWindow(this, prefs);
     pw->show();
 }
 
@@ -375,6 +384,11 @@ void MainWindow::on_actionMixer_toggled(bool arg1)
     mixerWidget->setVisible(arg1);
 }
 
+void MainWindow::on_actionLibrary_toggled(bool arg1)
+{
+    libraryWidget->setVisible(arg1);
+}
+
 void MainWindow::on_actionConnect_to_Session_2_triggered()
 {
     if (ensureSaved() == true) {
@@ -440,3 +454,5 @@ void MainWindow::on_tempo_lcd_valueChanged(double arg1)
 {
     audioMan->setBPM(arg1);
 }
+
+
