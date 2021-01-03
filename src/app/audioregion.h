@@ -39,6 +39,8 @@ public:
     std::string getLoadedFileName();
     std::string preLoadedFile;
 
+    void updateGridLength();
+
 private:
 
     std::shared_ptr<AudioBus> audioClipBus;
@@ -55,6 +57,7 @@ private:
     FileLoading *fileLoading;
 
     bool progressDialog;
+
     //double duration;
 
 };

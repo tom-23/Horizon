@@ -19,6 +19,9 @@ public:
 
     Mixer *mixer;
 
+private slots:
+    void on_zoomSlider_valueChanged(int value);
+
 private:
     Ui::MixerWidget *ui;
 };

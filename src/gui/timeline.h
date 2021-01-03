@@ -19,6 +19,7 @@
 #include <QApplication>
 
 
+
 #include "graphicsscene.h"
 
 class GraphicsView;
@@ -47,11 +48,11 @@ class Timeline
 {
 public:
     Timeline(QWidget *_parent,
-             QGraphicsView *trackRuler,
-             QScrollArea *trackControls,
-             QLayout *_mainLayout,
-             QScrollBar *hScrollBar,
-             QScrollBar *vScollBar);
+                 QGraphicsView *trackRuler,
+                 QScrollArea *trackControls,
+                 QLayout *_mainLayout,
+                 QScrollBar *hScrollBar,
+                 QScrollBar *vScollBar);
     ~Timeline();
 
     void setColorTheme(ThemeManager *_themeManager);
@@ -106,14 +107,15 @@ public:
 
 
     void showGhostRegion(QString fileName);
+
+
 private:
-    GraphicsView *trackRegions;
+    QGraphicsView *trackRegions;
     GraphicsScene *trackRegionsScene;
     QGraphicsView *trackRuler;
     QScrollArea *trackControls;
 
     QColor primaryColor;
-
     TimelineGraphicWidget *timelineGraphic;
     RulerGraphicWidget *rulerGraphic;
     Playhead *playheadGraphic;

@@ -8,7 +8,6 @@ AudioRegion::AudioRegion(Timeline *_timeline, Track *_track, std::string _uuid) 
 
 void AudioRegion::loadFile(std::string fileName, bool _progressDialog) {
 
-
     debug::out(3, "Begining file loading...");
 
     progressDialog = _progressDialog;
@@ -36,12 +35,14 @@ void AudioRegion::loadedFileCallBack() {
 
     track->getAudioManager()->context->connect(outputNode, audioClipNode);
 
-    length = track->getAudioManager()->secondsToGridTime(audioClipNode->duration()) - 1;
+    updateGridLength();
     debug::out(3, "Length calculated");
 
     regionGraphicsItem->setGhost(false);
     regionGraphicsItem->setGridLength(length);
     regionGraphicsItem->setWaveform(audioClipBus);
+
+
 
     if (progressDialog == true) {
        dialogs::ProgressDialog::close();
@@ -58,9 +59,7 @@ void AudioRegion::loadedFileCallBack() {
     if (length > timeline->barCount) {
         timeline->setBarAmount(ceil(length));
     }
-
     timeline->updateViewports();
-
     debug::out(3, "Successfully Loaded File!");
 }
 
@@ -144,4 +143,9 @@ std::string AudioRegion::getLoadedFileName() {
 
 void AudioRegion::switchContext(AudioContext *context) {
 
+}
+
+
+void AudioRegion::updateGridLength() {
+    length = track->getAudioManager()->secondsToGridTime(audioClipNode->duration()) - 1;
 }

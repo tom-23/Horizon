@@ -100,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
 
 void MainWindow::uiUpdate() {
     arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
-    arrangeWidget->tl->updateViewports();
+   // arrangeWidget->tl->updateViewports();
 
     float glr = float(floor(audioMan->getCurrentGridTime() * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
     ui->barNumberLabel->setText(QString::number(floor(audioMan->getCurrentGridTime())));
@@ -113,6 +113,7 @@ void MainWindow::uiUpdate() {
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 
 }
@@ -234,6 +235,7 @@ void MainWindow::openProject(QString fileName) {
     if (inputFile.open(QIODevice::ReadOnly)) {
         audioMan->clearAll();
         arrangeWidget->tl->clearAll();
+        mixerWidget->mixer->clearAll();
         loadProjectJSON(inputFile.readAll());
         QFileInfo fileInfo(fileName);
         this->setWindowTitle(fileInfo.fileName());
@@ -290,6 +292,7 @@ void MainWindow::newProject() {
         this->setWindowTitle(loadedProjectPath);
         audioMan->clearAll();
         arrangeWidget->tl->clearAll();
+        mixerWidget->mixer->clearAll();
         untitledJSON = QString::fromStdString(serialization->serialize(*audioMan, false));
 }
 
@@ -368,7 +371,9 @@ QString MainWindow::loadFile(QString path) {
 void MainWindow::closeEvent(QCloseEvent *e) {
     if (ensureSaved() == true) {
         session->closeSession();
+        uac->~UAC();
         e->accept();
+
     } else {
         e->ignore();
     }

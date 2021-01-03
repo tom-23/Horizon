@@ -10,6 +10,8 @@ LoadingDialogWidget::LoadingDialogWidget(QWidget *parent, int min, int max, QStr
     ui->progressBar->setRange(min, max);
     ui->progressBar->setValue(0);
     ui->label_2->setText(message);
+    this->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+    this->setModal(true);
 
 }
 

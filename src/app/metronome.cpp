@@ -33,6 +33,8 @@ void Metronome::schedulePrimary(double when) {
     //metPrimaryNode->start(audioMan->gridTimeToContextSeconds(when));
 }
 
+
+
 void Metronome::scheduleSecondary(std::vector<double> _scheduleQueue) {
     scheduleQueue = _scheduleQueue;
     scheduleQueueTimes.clear();

@@ -88,3 +88,6 @@ bin/LabSound.framework
 cmake_install.cmake
 cmake-build-debug
 .idea
+doxygen
+html
+latex

@@ -10,6 +10,7 @@ Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
     setGain(1.0f);
     track->getAudioManager()->context->connect(track->getTrackInputNode(), outputNode);
     gridLocation = 1;
+    selected = false;
 }
 
 Region::~Region() {
@@ -89,4 +90,16 @@ void Region::setRegionName(std::string _name) {
 
 std::string Region::getUUID() {
     return uuid;
+}
+
+bool Region::getSelected() {
+    return selected;
+}
+
+void Region::setSelected(bool _selected) {
+    selected = _selected;
+    if (selected) {
+        qDebug() << "REGION IS SELECTED";
+    }
+    regionGraphicsItem->setSelected(_selected);
 }

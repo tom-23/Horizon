@@ -39,4 +39,12 @@
         <file>fonts/Rublik/Rubik-MediumItalic.ttf</file>
         <file>fonts/Rublik/Rubik-Regular.ttf</file>
     </qresource>
+    <qresource prefix="/reverb">
+        <file>effects/reverb/background.svg</file>
+    </qresource>
+    <qresource prefix="/compressor">
+        <file>effects/compressor/background.svg</file>
+        <file>effects/compressor/knob.png</file>
+        <file>effects/compressor/knob.svg</file>
+    </qresource>
 </RCC>

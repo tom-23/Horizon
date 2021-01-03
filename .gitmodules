@@ -1,3 +1,6 @@
 [submodule "lib/LabSound"]
 	path = lib/LabSound
 	url = https://github.com/LabSound/LabSound.git
+[submodule "lib/vst3sdk"]
+	path = lib/vst3sdk
+	url = https://github.com/steinbergmedia/vst3sdk.git

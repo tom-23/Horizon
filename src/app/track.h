@@ -34,6 +34,9 @@
 class AudioManager;
 class Region;
 #include "audiomanager.h"
+#include "audioeffect.h"
+
+#include "effecttypes.h"
 
 class AudioRegion;
 
@@ -116,12 +119,23 @@ public:
 
     void uiUpdate();
 
+    Region* getSelectedRegion(int index);
+    void setRegionSelected(Region *region, bool selected);
+
+
+
+    AudioEffect* addAudioEffect(effectType type, std::string uuid = "");
+    void showEffectWindow(AudioEffect *effect);
+
 private:
     bool selected;
     int index;
 
 
     std::vector<class Region *> *regionList;
+    std::vector<class Region *> *selectedRegionList;
+
+    std::vector<class AudioEffect *> audioEffectChain;
 
     std::string uuid;
 

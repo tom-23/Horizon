@@ -1,5 +1,6 @@
-file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp network/*.cpp)
+file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp app/audio_effects/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp gui/ui_controls/*.cpp network/*.cpp)
 
+file(GLOB horizon_HEADERS app/*.h app/audio_effects/*.h common/*.h gui/*.h gui/audio_effects/*.h gui/ui_controls/*.h network/*.h)
 
 file(GLOB horizon_DARWIN_SOURCES common/darwin/*.m common/darwin/*.h common/darwin/*.cpp)
 
@@ -19,7 +20,7 @@ qt5_add_resources(horizon_RESOURCES_RCC ${horizon_RESOURCES})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
 set(horizon_COMPILE
-    ${horizon_COMPILE} ${horizon_SOURCES} ${horizon_FORMS_HEADERS}
+    ${horizon_COMPILE} ${horizon_SOURCES} ${horizon_HEADERS} ${horizon_FORMS_HEADERS}
     ${horizon_RESOURCES_RCC} ${horizon_QM})
 
 if(NOT APPLE)

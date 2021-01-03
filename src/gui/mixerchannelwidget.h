@@ -21,6 +21,8 @@ public:
     void uiUpdate();
 
     void updateColor();
+
+    void setHZoomFactor(int value);
 private slots:
     void on_gainSlider_valueChanged(int value);
 
@@ -28,6 +30,12 @@ private slots:
     void on_muteButton_toggled(bool checked);
 
     void on_panSlider_valueChanged(int value);
+
+    void on_effectsList_itemSelectionChanged();
+
+    void on_effectsList_clicked(const QModelIndex &index);
+
+    void on_effectsList_customContextMenuRequested(const QPoint &pos);
 
 private:
     Track *track;
@@ -47,6 +55,8 @@ private:
 
     float lastPan;
     float lastGain;
+
+    int hZoomFactor;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

@@ -17,7 +17,11 @@ public:
     Mixer(QScrollArea *_mixerWidget);
     void addChannel(Track *_track);
     void clearAll();
+
+    void setHZoomFactor(int value);
 private:
+    int hZoomFactor;
+    QList<MixerChannelWidget *> mixerChannelList;
     QScrollArea *mixerWidget;
 };
 

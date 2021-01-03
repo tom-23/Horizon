@@ -22,5 +22,6 @@ namespace util {
         std::string getInstallDir();
     #endif
 
+
 }
 #endif

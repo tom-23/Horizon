@@ -74,10 +74,7 @@ private:
 
     QGraphicsRectItem *viewportPadding;
 
- protected:
-    virtual void resizeEventSlot(QResizeEvent *event);
-
-    virtual void dragEnterEventSlot(QDragEnterEvent *event);
+    QGraphicsItemGroup *linesGroup;
 
 };
 

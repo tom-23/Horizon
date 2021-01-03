@@ -72,9 +72,16 @@ void ArrangeWidget::importAudio(QString path) {
 
 
         if (path.toStdString() != "") {
+
             AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion(QUuid::createUuid().toString().toStdString());
+            newAudioRegion->setGridLocation(audioMan->getCurrentGridTime());
             tl->addRegion(newAudioRegion);
+            qDebug() << "Current Grid Time" << audioMan->getCurrentGridTime();
+
             newAudioRegion->loadFile(path.toStdString(), true);
+
+
+
         }
     } else {
 

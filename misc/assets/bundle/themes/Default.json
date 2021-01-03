@@ -27,7 +27,7 @@
     "scrollbar-handle" : "#353535",
     "lines-primary" : "#333333",
     "lines-secondary" : "#414141",
-    "list-item-selected" : "#feff00",
+    "list-item-selected" : "#d4fffd",
     "list-item-hover" : "#d4fffd",
     "track-selected": "#ffffff"
 }

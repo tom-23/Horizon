@@ -38,6 +38,12 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
 
 }
 
+void MixerChannelWidget::setHZoomFactor(int value) {
+    hZoomFactor = value;
+    this->setMaximumWidth(value);
+    this->setMinimumWidth(value - 1);
+}
+
 MixerChannelWidget::~MixerChannelWidget()
 {
     delete ui;
@@ -61,6 +67,7 @@ void MixerChannelWidget::setSelected(bool selected) {
         ui->channelContainer->setStyleSheet("#channelContainer { background-color: rgba(255,255,255, 0.05); }");
     } else {
         ui->channelContainer->setStyleSheet("");
+        ui->effectsList->clearSelection();
     }
 }
 
@@ -73,6 +80,7 @@ void MixerChannelWidget::mousePressEvent(QMouseEvent *event) {
        // }
     } else {
         track->getAudioManager()->setTrackSelected(track, true);
+        ui->effectsList->clearSelection();
     }
 }
 
@@ -205,3 +213,22 @@ void MixerChannelWidget::updateColor() {
     QString style = QString("#channelColor { background-color: rgb(%1,%2,%3); }").arg(color.red()).arg(color.green()).arg(color.blue());
     ui->channelColor->setStyleSheet(style);
 }
+
+void MixerChannelWidget::on_effectsList_itemSelectionChanged()
+{
+    track->addAudioEffect(effectType::compressor);
+}
+
+void MixerChannelWidget::on_effectsList_clicked(const QModelIndex &index)
+{
+    if (track->getSelected() == false) {
+        track->getAudioManager()->setTrackSelected(track, true);
+    }
+}
+
+void MixerChannelWidget::on_effectsList_customContextMenuRequested(const QPoint &pos)
+{
+
+}
+
+

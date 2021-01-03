@@ -153,6 +153,15 @@ void AudioManager::setBPM(double _beatsPerMinuet) {
     bpm = _beatsPerMinuet;
     beatLength = 60.00 / bpm;
     barLength = bpm * division;
+
+    for (int t = 0; t < int(trackList->size()); ++t) {
+        Track *track = trackList->at(t);
+        for (int ar = 0; ar < track->getAudioRegionListCount(); ar++) {
+            AudioRegion *audioRegion = track->getAudioRegionByIndex(ar);
+            audioRegion->updateGridLength();
+            audioRegion->getRegionGraphicItem()->setGridLength(audioRegion->getGridLength());
+        }
+    }
 }
 
 double AudioManager::getBPM() {

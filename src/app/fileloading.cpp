@@ -26,8 +26,6 @@ void FileLoadingThread::doWork(AudioManager *audioManager, QString loadedFileNam
 
 FileLoading::FileLoading(QObject *parent, std::function<void()> _callback) : QObject(parent)
 {
-    qDebug() << "Init file loading";
-
     qRegisterMetaType<std::shared_ptr<AudioBus>>();
     qRegisterMetaType<std::shared_ptr<SampledAudioNode>>();
     qRegisterMetaType<std::vector<const float *>>();

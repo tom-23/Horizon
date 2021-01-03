@@ -1,4 +1,4 @@
-#include "mixerwidget.h"
+    #include "mixerwidget.h"
 #include "ui_mixerwidget.h"
 
 #include "mixerchannelwidget.h"
@@ -10,7 +10,7 @@ MixerWidget::MixerWidget(QWidget *parent) :
     ui->setupUi(this);
 
     mixer = new Mixer(ui->mixerContainer);
-
+    mixer->setHZoomFactor(ui->zoomSlider->value());
 
    // MixerChannelWidget *mcw = new MixerChannelWidget(this);
 
@@ -23,4 +23,9 @@ MixerWidget::MixerWidget(QWidget *parent) :
 MixerWidget::~MixerWidget()
 {
     delete ui;
+}
+
+void MixerWidget::on_zoomSlider_valueChanged(int value)
+{
+    mixer->setHZoomFactor(value);
 }

@@ -26,31 +26,38 @@ Timeline::Timeline(QWidget *_parent,
 
     regionSnapping = true;
 
-    trackRegionsScene = new GraphicsScene(parent);
 
+    trackRegionsScene = new GraphicsScene();
     trackRegions = new GraphicsView(trackRegionsScene, parent, this);
+    trackRegions->setScene(trackRegionsScene);
     trackRegions->setAcceptDrops(true);
 
     //trackRegions->updateGeometry();
     trackRegions->setParent(parent);
-    trackRegions->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    //trackRegions->setRenderHints();
     trackRegions->setObjectName("trackRegions");
     trackRegions->setAlignment((Qt::AlignLeft | Qt::AlignTop));
 
     trackRegions->show();
     trackRegions->setInteractive(true);
+    trackRegions->setMouseTracking(true);
     trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    trackRegions->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
 
     //trackRegions->setDragMode(QGraphicsView::);
     trackRegions->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    trackRegions->setCacheMode(QGraphicsView::CacheBackground);
+    trackRegions->setOptimizationFlags(QGraphicsView::DontClipPainter | QGraphicsView::IndirectPainting);
+    trackRegions->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+
 
     _mainLayout->addWidget(trackRegions);
 
     timelineGraphic = new TimelineGraphicWidget(trackRegions, nullptr, barCount, barLength);
     //timelineGraphic->view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     parent->update();
-    parent->repaint();
+    //parent->repaint();
 
 
 
@@ -163,33 +170,19 @@ void Timeline::updateHeights() {
 }
 
 void Timeline::updateViewports() {
-    timelineGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
+    trackRegionsScene->setSceneRect(0,0, (barCount * hZoomFactor), (trackCount * 60) + 88);
     rulerGraphic->scene->setSceneRect(0,0, (barCount * hZoomFactor) + 10, rulerGraphic->height());
+    trackRegions->viewport()->adjustSize();
     trackRegions->viewport()->update();
-    //rulerGraphic->scene->update();
-    //timelineGraphic->repaint();
-
-    trackRegions->update();
-    trackRegions->repaint();
-    trackRegionsScene->update();
-
-
-    //timelineGraphic->update();
-    //timelineGraphic->view->update();
-    //timelineGraphic->scene->update();
-    //timelineGraphic->view->repaint();
-    //timelineGraphic->updateGeometry();
-    //qDebug() << "REPAINT";
-    //parent->repaint();
-    //parent->update();
-
 }
 
 void Timeline::setBarAmount(int _barAmount) {
+    qDebug() << "OLD BAR COUNT" << barCount;
+    qDebug() << "NEW BAR COUNT" << _barAmount;
     barCount = _barAmount;
     timelineGraphic->setBarAmount(barCount);
     rulerGraphic->setBarAmount(barCount);
-    qDebug() << "Call";
+
     // When adding new lines to the scene, regions will be put behind the items so we need to bring them to the foreground.
     this->setZRegionValues(barCount * barLength);
 
@@ -282,5 +275,4 @@ void Timeline::setPlayheadLocation(float _location) {
 QGraphicsScene* Timeline::getScene() {
     return trackRegionsScene;
 }
-
 

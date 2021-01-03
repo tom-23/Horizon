@@ -9,6 +9,9 @@
 
 #include <QWidget>
 #include <QDebug>
+#include <QGraphicsEffect>
+#include <QBoxLayout>
+#include <QLabel>
 
 namespace dialogs {
 

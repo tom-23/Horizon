@@ -24,7 +24,7 @@ UAC::UAC()
 }
 
 UAC::~UAC() {
-
+    debug::out(3, "Destruting Web Engine...");
     webEng->close();
 }
 

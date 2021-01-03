@@ -60,6 +60,9 @@ public:
 
     virtual std::string getUUID();
 
+    virtual bool getSelected();
+    virtual void setSelected(bool _selected);
+
 protected:
 
 
@@ -78,6 +81,8 @@ protected:
     float gain;
 
     std::string uuid;
+
+    bool selected;
 
 };
 

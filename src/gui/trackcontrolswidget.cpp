@@ -24,7 +24,9 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     scene->addItem(mtr);
     ui->trackMeterView->setScene(scene);
 
-   // uiTimer = new QTimer();
+   // uiTime
+
+    uiTimer = new QTimer();
    // uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
    // uiTimer->start(60);
 
@@ -206,4 +208,9 @@ void TrackControlsWidget::updateColor() {
 void TrackControlsWidget::removeSelf() {
 
     track->getAudioManager()->removeTrack(track);
+}
+
+
+void TrackControlsWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+
 }

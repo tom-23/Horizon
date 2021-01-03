@@ -44,6 +44,8 @@ public:
     void setTrackPan(QString uuid, float pan);
     void setTrackGain(QString uuid, float gain);
 
+    void addRegion(QString uuid, double position, QString file, QString trackUUID);
+
     void uploadFile(QString fileName, QString hash);
     void downloadFile(QString url);
 

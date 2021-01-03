@@ -29,7 +29,7 @@ public:
     void setWaveform(std::shared_ptr<AudioBus> bus);
     void setHScaleFactor(int value);
 
-
+    void setSelected(bool _selected);
 
     // QGraphicsItem interface
 protected:
@@ -82,7 +82,11 @@ protected:
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
+
     virtual void keyPressEvent(QKeyEvent *event) override;
+
+    void updateLengths();
+
 
 private:
 
@@ -96,6 +100,12 @@ private:
     int hScaleFactor;
 
     float lastGlr;
+
+    void showContextMenu(QPoint pos);
+
+    QMenu *tooltip;
+
+    void showToolTip(QPoint pos);
 
 };
 

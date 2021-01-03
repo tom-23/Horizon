@@ -130,7 +130,6 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
                     }
                     AudioRegion *audioRegion = track->addAudioRegion(regionUuid.toStdString());
                     audioRegion->setGridLocation(std::stod(audioRegionJSON.value("gridLocation").toString().toStdString()));
-                    qDebug() << QString::fromStdString(audioRegionJSON.value("filePath").toString().toStdString());
                     if (audioRegionJSON.value("tempLocation").toBool()) {
                         QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
                         audioRegion->preLoadedFile = (tempDir + audioRegionJSON.value("filePath").toString()).toStdString();

@@ -56,7 +56,7 @@ void Session::connect(QString _id, QString _password, QString _userUUID, bool _i
 
     netRequest.setRawHeader("Content-Length", postDataSize);
     endPoint = "connectSession";
-    netRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/connectSession"));
+    netRequest.setUrl(QUrl("https://horizon-rtc.systems/sessions/connectSession"));
     netManager->post(netRequest, doc.toJson());
 }
 
@@ -323,6 +323,10 @@ void Session::setTrackGain(QString uuid, float gain) {
     }
 }
 
+void Session::addRegion(QString uuid, double position, QString file, QString trackUUID) {
+
+}
+
 void Session::disconnectSession() {
     if (getActive() == true) {
         debug::out(3, "Disconnecting Session...");
@@ -343,7 +347,7 @@ void Session::closeSession() {
 
         netRequest.setRawHeader("Content-Length", postDataSize);
         endPoint = "deleteSession";
-        netRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/deleteSession"));
+        netRequest.setUrl(QUrl("https://horizon-rtc.systems/sessions/deleteSession"));
         netManager->post(netRequest, doc.toJson());
         delete webSockClient;
         isActive = false;
@@ -373,7 +377,7 @@ void Session::uploadFile(QString fileName, QString hash) {
     uploadRequest.setRawHeader("hash", hash.toUtf8());
     uploadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
     endPoint = "upload";
-    uploadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/upload/" + sessionUUID));
+    uploadRequest.setUrl(QUrl("https://horizon-rtc.systems/sessions/upload/" + sessionUUID));
     statusReply = netManager->post(uploadRequest, multiPart);
     mainWindow->connect(statusReply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(updateSyncProgress(qint64, qint64)));
 
@@ -399,7 +403,7 @@ void Session::downloadFile(QString fileName) {
 
      downloadRequest.setRawHeader("token", webSockClient->getToken().toUtf8());
      endPoint = "download";
-     downloadRequest.setUrl(QUrl("http://horizon-rtc.systems/sessions/download/" + fileName.split("/")[1] + "/" + fileName.split("/")[2]));
+     downloadRequest.setUrl(QUrl("https://horizon-rtc.systems/sessions/download/" + fileName.split("/")[1] + "/" + fileName.split("/")[2]));
      statusReply = netManager->get(downloadRequest);
      mainWindow->connect(statusReply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(updateSyncProgress(qint64, qint64)));
 
@@ -422,3 +426,4 @@ void Session::updateSyncProgress(qint64 current, qint64 total) {
         udStatusWindow->updateProgress(current);
     }
 }
+

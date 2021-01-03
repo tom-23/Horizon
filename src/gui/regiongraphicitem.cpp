@@ -29,6 +29,7 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
     setY((region->getTrack()->getIndex() * 60) + 1);
 
     waveFormRendered = false;
+    selected = false;
 
 
 }
@@ -46,7 +47,7 @@ void RegionGraphicItem::setGridLength(float _value) {
 
 QRectF RegionGraphicItem::boundingRect() const
 {
-    return QRectF(0, 1, float(gridLength * hScaleFactor), float(height));
+    return QRectF(0, 0, float(gridLength * hScaleFactor), float(height));
 }
 
 void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
@@ -76,12 +77,9 @@ void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
         const float smallestSampleValueForPixel = getMinimumSampleValueInRange(firstSampleIndexForPixel, lastSampleIndexForPixel, 0);
 
         wavepainter.drawLine(QLineF(i, getYValueForSampleValue(largestSampleValueForPixel), i, getYValueForSampleValue(smallestSampleValueForPixel)));
-        qDebug() << "Y VAL MAX" << largestSampleValueForPixel;
+
         //qDebug() << "Y VAL MIN" << getYValueForSampleValue(smallestSampleValueForPixel);
     }
-
-    qDebug() << "Image Width" << imgWidth;
-    qDebug() << "LENGTH" << samplesLength;
     //qDebug() << "ARRAY SIZE" << waveForm.at(0);
     wavepainter.end();
 
@@ -104,8 +102,7 @@ float RegionGraphicItem::getMaximumSampleValueInRange(uint64_t firstSample, uint
     if (lastSample >= samplesLength) {
         lastSample = samplesLength - 1;
     }
-    qDebug() << "Sample value" << bus->channel(channel)->data()[firstSample];
-    qDebug() << "Sample Index" << firstSample;
+
     for (uint64_t i = firstSample; i < lastSample; i++) {
 
         if (bus->channel(channel)->data()[i] > maxSample) {
@@ -144,25 +141,25 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 {
     Q_UNUSED(widget);
 
-    selected = false;
+    QRectF rect = boundingRect();
 
     painter->setBrush(mainBrush);
     painter->setPen(mainPen);
-    painter->drawRoundedRect(boundingRect(), 5, 5);
+    painter->drawRoundedRect(rect, 5, 5);
 
     painter->setPen(waveformPen);
     painter->setBrush(waveformBrush);
 
     if (waveFormRendered == true) {
-        painter->drawPixmap(boundingRect().toRect(), waveFormPixmap);
+        painter->drawPixmap(rect.toRect(), waveFormPixmap);
     }
 
     painter->setPen(mainPen);
 
     if (selected) {
         painter->setBrush(QBrush(mainPen.color()));
-        painter->drawRoundedRect(QRect(boundingRect().x(), boundingRect().y(), boundingRect().width(), 20), 5, 5);
-        painter->drawRect(QRect(boundingRect().x(), boundingRect().y() + 5, boundingRect().width(), 15));
+        painter->drawRoundedRect(QRect(rect.x(), rect.y(), rect.width(), 20), 5, 5);
+        painter->drawRect(QRect(rect.x(), rect.y() + 5, rect.width(), 15));
     }
 
 
@@ -176,9 +173,7 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         painter->setPen(QPen(mainBrush.color(), 1));
     }
     painter->drawText(5, heightFont + 3, text);
-    if (pressed == false ) {
-        setX((gridLocation - 1) * hScaleFactor);
-    }
+
 }
 
 
@@ -200,21 +195,28 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void RegionGraphicItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    pressed = true;
-    QCursor cursor(Qt::BlankCursor);
-    QApplication::setOverrideCursor(cursor);
-    QApplication::changeOverrideCursor(cursor);
-    oldMousePos = event->scenePos();
-    oldPos = scenePos();
-    int heightDiff = height + 4;
-    oldTrackIndex = scenePos().y() / heightDiff;
+    region->getTrack()->setRegionSelected(region, true);
+    if (event->button() == Qt::RightButton) {
+
+        showContextMenu(event->pos().toPoint());
+    } else {
+        pressed = true;
+        QCursor cursor(Qt::BlankCursor);
+        QApplication::setOverrideCursor(cursor);
+        QApplication::changeOverrideCursor(cursor);
+        oldMousePos = event->scenePos();
+        oldPos = scenePos();
+        int heightDiff = height + 4;
+        oldTrackIndex = scenePos().y() / heightDiff;
+    }
+
+
 }
 void RegionGraphicItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-
-
     if (pressed)
     {
+
         // qDebug() << "Mouse Location:" << event->pos().x();
         // Code Below handles the Y movement of the region:
 
@@ -321,7 +323,7 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Double Click";
+    showContextMenu(event->pos().toPoint());
 }
 
 
@@ -339,7 +341,37 @@ void RegionGraphicItem::setGhost(bool _isGhost) {
 }
 
 void RegionGraphicItem::setHScaleFactor(int value) {
-    hScaleFactor = value;
     prepareGeometryChange();
+    hScaleFactor = value;
+    if (pressed == false ) {
+        setX((gridLocation - 1) * hScaleFactor);
+    }
+    update();
+}
+
+void RegionGraphicItem::setSelected(bool _selected) {
+    selected = _selected;
+}
+
+
+void RegionGraphicItem::showContextMenu(QPoint pos) {
+    QGraphicsView *v = scene->views().first();
+    QPointF sceneP = mapToScene(pos);
+    QPoint viewP = v->mapFromScene(sceneP);
+    QMenu menu(scene->views().first());
+    menu.addAction("Test");
+    menu.exec(v->viewport()->mapToGlobal(viewP));
+}
+
+
+void RegionGraphicItem::showToolTip(QPoint pos) {
+    QGraphicsView *v = scene->views().first();
+    QPointF sceneP = mapToScene(pos);
+    QPointF shiftedP = QPointF(sceneP.x() + 10, sceneP.y() - 10);
+    QPoint viewP = v->mapFromScene(shiftedP);
+
+
+
+    tooltip->exec(viewP);
 
 }

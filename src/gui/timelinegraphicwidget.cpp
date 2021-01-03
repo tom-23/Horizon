@@ -6,8 +6,8 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     view = _view;
 
     scene = view->scene();
-    view->setRenderHint(QPainter::Antialiasing);
-    setMouseTracking(true);
+    //view->setRenderHint(QPainter::Antialiasing);
+    //setMouseTracking(true);
     barLines = new QList<QList<QGraphicsLineItem *>*>;
 
     hScaleFactor = 100;
@@ -15,6 +15,10 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     barLength = _barLength;
 
     setAcceptDrops(true);
+    linesGroup = new QGraphicsItemGroup();
+
+    setBarAmount(barAmount);
+    setBarLength(barLength);
 
 
    // viewportPadding = new QGraphicsRectItem();
@@ -25,38 +29,8 @@ TimelineGraphicWidget::TimelineGraphicWidget(QGraphicsView *_view, QWidget *_par
     QFont font = scene->font();
     font.setPointSize(10);
 
-    // TimelineGraphicWidget Numbers and Lines
-    for (int i = 0; i < barAmount; i++)
-    {
-        QList<QGraphicsLineItem *> *bar = new QList<QGraphicsLineItem *>;
-        for (int beat = 0; beat < barLength; beat++) {
 
-            if (beat == 0) {
-                QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#0f0f0f"));
-
-                line->setPos(i * hScaleFactor, 0);
-
-                bar->insert(bar->end(), line);
-
-            } else {
-
-                int hLocation = (hScaleFactor / barLength) * beat;
-                QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#1a1a1a"));
-                line->setPos((i * hScaleFactor) + hLocation, 0);
-
-                bar->insert(bar->end(), line);
-
-            }
-
-        }
-
-        barLines->insert(barLines->end(), bar);
-
-
-    }
-
-
-    this->setMouseTracking(true);
+    //this->setMouseTracking(true);
     //connect(this, &TimelineGraphicWidget::mousePressEvent, this, &TimelineGraphicWidget::mousePressEventSlot);
     //connect(view, SIGNAL(dragEnterEvent(QDragEnterEvent)), this, SLOT(dragEnterEvent(QDragEnterEvent)));
 }
@@ -92,6 +66,7 @@ void TimelineGraphicWidget::setHeights(int _value) {
 }
 
 void TimelineGraphicWidget::setBarAmount(int _value) {
+
     if (barAmount < _value) {
 
         for (int i = barAmount; i < _value; i++)
@@ -100,14 +75,18 @@ void TimelineGraphicWidget::setBarAmount(int _value) {
             for (int beat = 0; beat < barLength; beat++) {
                 if (beat == 0) {
                     QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#0f0f0f"));
+
                     line->setPos(i * hScaleFactor, 0);
+                    linesGroup->addToGroup(line);
                     bar->insert(bar->end(), line);
+
+                    qDebug() << "Adding line" << i;
 
                 } else {
                     int hLocation = (hScaleFactor / barLength) * beat;
                     QGraphicsLineItem *line = scene->addLine(QLine(0, 0, 0, 400), QColor("#1a1a1a"));
                     line->setPos((i * hScaleFactor) + hLocation, 0);
-
+                    linesGroup->addToGroup(line);
                     bar->insert(bar->end(), line);
 
 
@@ -122,13 +101,15 @@ void TimelineGraphicWidget::setBarAmount(int _value) {
         for (int i = barAmount; i < barLines->size(); i++) {
             for (int beat = 0; beat < barLines->at(i)->size(); beat++) {
                 scene->removeItem(barLines->at(i)->at(beat));
-
+                linesGroup->removeFromGroup(barLines->at(i)->at(beat));
             }
             barLines->removeAt(i);
 
         }
     }
 
+    scene->addItem(linesGroup);
+    scene->update();
 
 }
 
@@ -156,7 +137,7 @@ void TimelineGraphicWidget::setBarLength(int _value) {
     for (int i = 0; i < barLines->size(); i++) {
         for (int beat = 0; beat < barLines->at(i)->size(); beat++) {
             scene->removeItem(barLines->at(i)->at(beat));
-
+            linesGroup->removeFromGroup(barLines->at(i)->at(beat));
         }
 
     }
@@ -181,6 +162,8 @@ void TimelineGraphicWidget::setBarLength(int _value) {
 
                 bar->insert(bar->end(), line);
 
+
+
             }
 
         }
@@ -188,15 +171,12 @@ void TimelineGraphicWidget::setBarLength(int _value) {
 
     }
 
+
+
 }
 
 int TimelineGraphicWidget::getBarAmount() {
     return barAmount;
-}
-
-void TimelineGraphicWidget::resizeEventSlot(QResizeEvent *event) {
-
-
 }
 
 TimelineGraphicWidget::~TimelineGraphicWidget()
@@ -204,12 +184,3 @@ TimelineGraphicWidget::~TimelineGraphicWidget()
 
 }
 
-void TimelineGraphicWidget::dragEnterEventSlot(QDragEnterEvent *event) {
-    event->acceptProposedAction();
-    qDebug() << "Drag enter!";
-
-
-
-
-
-}

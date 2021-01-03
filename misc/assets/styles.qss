@@ -354,6 +354,10 @@ border-right: 1px Solid @borders;
 	min-width: 0px;
 }
 
+#titleSection {
+	border-bottom: 1px Solid @borders;	
+}
+
 
 #muteSoloSection {
 	border-bottom: 1px Solid @borders;	
@@ -375,6 +379,26 @@ border-right: 1px Solid @borders;
 	padding: 1px;
 }
 
+#effectsList {
+	border: none;
+	background-color: transparent;
+}
+
+#effectsList::item {
+	padding: 1px;
+	color: @font-color-secondary;
+	border-radius: 5px;
+	margin-bottom: 1px;
+}
+
+#effectsList::item:selected {
+	color: @font-color-selected;
+}
+
+#effect_container {
+	border: 1px Solid @borders;
+	border-radius: 5px;
+}
 
 QLabel {
         padding: 0px;
