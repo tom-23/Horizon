@@ -381,5 +381,7 @@ AudioEffect* Track::addAudioEffect(effectType type, std::string uuid) {
         CompressorEffect *compressorEffect = new CompressorEffect(mixerChannelWidget);
         audioEffectChain.push_back(compressorEffect);
         compressorEffect->showEffectWindow();
+        return compressorEffect;
     }
+    return nullptr;
 }
