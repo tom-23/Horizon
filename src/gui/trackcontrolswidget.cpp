@@ -20,7 +20,7 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     ui->muteButton->setChecked(track->getMute());
 
     QGraphicsScene *scene = new QGraphicsScene(this);
-    mtr = new MeterWidget(ui->trackMeterView, 0, 110, true);
+    mtr = new MeterWidget(ui->trackMeterView, 0, 110, dialogs::getThemeManager()->getColor("borders"));
     scene->addItem(mtr);
     ui->trackMeterView->setScene(scene);
 
@@ -35,6 +35,9 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
 
     mtr->setPwrValue(0, 0);
     mtr->setRMSValue(0, 0);
+
+    ui->armButton->setLEDType(HorizonToolButton::LED_Types::secondary);
+    ui->soloButton->setLEDType(HorizonToolButton::LED_Types::tertiary);
 }
 
 TrackControlsWidget::~TrackControlsWidget()
@@ -133,6 +136,8 @@ void TrackControlsWidget::changeColor() {
 
 void TrackControlsWidget::uiUpdate() {
 
+    mtr->setSize(ui->trackMeterView->width(), ui->trackMeterView->height());
+
     if (track->getAudioRegionListCount() != 0) {
     std::vector<int> Lvalue = track->getLMeterData();
     std::vector<int> Rvalue = track->getRMeterData();
@@ -142,14 +147,14 @@ void TrackControlsWidget::uiUpdate() {
 
     if (lastLRMS == LRMSValue) {
         if (uiLRMS > 0) {
-            uiLRMS = uiLRMS -1;
+            uiLRMS = uiLRMS -2;
         }
     } else {
         if (uiLRMS < LRMSValue) {
             uiLRMS = LRMSValue;
         } else {
             if (uiLRMS > 0) {
-                uiLRMS = uiLRMS -1;
+                uiLRMS = uiLRMS -2;
             }
         }
 
@@ -159,14 +164,14 @@ void TrackControlsWidget::uiUpdate() {
 
     if (lastRRMS == RRMSValue) {
         if (uiRRMS > 0) {
-            uiRRMS = uiRRMS -1;
+            uiRRMS = uiRRMS -2;
         }
     } else {
         if (uiRRMS < RRMSValue) {
             uiRRMS = RRMSValue;
         } else {
             if (uiRRMS > 0) {
-                uiRRMS = uiRRMS -1;
+                uiRRMS = uiRRMS -2;
             }
         }
 

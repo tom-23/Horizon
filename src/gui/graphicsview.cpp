@@ -24,6 +24,7 @@ bool GraphicsView::viewportEvent(QEvent *event) {
             break;
         default:
             break;
+
     }
 
     return QGraphicsView::viewportEvent(event);

@@ -37,6 +37,8 @@ private slots:
 
     void on_effectsList_customContextMenuRequested(const QPoint &pos);
 
+
+
 private:
     Track *track;
     Ui::MixerChannelWidget *ui;
@@ -62,6 +64,12 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+
+    void meterResizeEvent(QResizeEvent* event);
+
+    void resizeEvent(QResizeEvent* event) override;
+
+
 };
 
 #endif // MIXERCHANNELWIDGET_H

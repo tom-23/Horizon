@@ -41,6 +41,8 @@ public:
 
     void updateGridLength();
 
+    bool isScheduled;
+
 private:
 
     std::shared_ptr<AudioBus> audioClipBus;
@@ -51,8 +53,6 @@ private:
 
     //void loadFileThread(std::function<void()> callback);
     void loadedFileCallBack();
-
-    std::queue<std::function<void()>> callbackQueue;
 
     FileLoading *fileLoading;
 

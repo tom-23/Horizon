@@ -6,27 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>350</height>
+    <width>600</width>
+    <height>250</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>300</width>
-    <height>350</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>300</width>
-    <height>350</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Horizon</string>
@@ -49,7 +31,7 @@
    </property>
    <item>
     <widget class="QWidget" name="container" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -75,7 +57,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>300</width>
           <height>220</height>
          </size>
         </property>
@@ -85,51 +67,59 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Horizon Open Source DAW
-http://tom-butcher.ml:2233/git/tom/Horizon
-
-Tom Butcher 2020
-
-</string>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
+        <property name="topMargin">
          <number>5</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>Close Window</string>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>GitHub</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>5</number>
           </property>
-         </widget>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>Close Window</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>GitHub</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>

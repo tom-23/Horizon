@@ -5,6 +5,8 @@ Metronome::Metronome(std::shared_ptr<GainNode> _outputNode, AudioManager *_audio
     outputNode = _outputNode;
     audioMan = _audioMan;
 
+    lab::AudioContext& ac = *audioMan->context.get();
+
     #ifndef _WIN32
     metPrimaryBus = audioMan->MakeBusFromSampleFile(util::getResourceBundle() + "/core/metronome/Primary.wav");
     metSecondaryBus = audioMan->MakeBusFromSampleFile(util::getResourceBundle() + "/core/metronome/Secondary.wav");
@@ -12,13 +14,13 @@ Metronome::Metronome(std::shared_ptr<GainNode> _outputNode, AudioManager *_audio
     metPrimaryBus = audioMan->MakeBusFromSampleFile(util::getInstallDir() + "/core/metronome/Primary.wav");
     metSecondaryBus = audioMan->MakeBusFromSampleFile(util::getInstallDir() + "/core/metronome/Secondary.wav");
     #endif
-    metPrimaryNode = std::make_shared<SampledAudioNode>();
+    metPrimaryNode = std::make_shared<SampledAudioNode>(ac);
     {
         ContextRenderLock r(audioMan->context.get(), "horizon");
         metPrimaryNode->setBus(r, metPrimaryBus);
     }
 
-    metSecondaryNode = std::make_shared<SampledAudioNode>();
+    metSecondaryNode = std::make_shared<SampledAudioNode>(ac);
     {
         ContextRenderLock r(audioMan->context.get(), "horizon");
         metSecondaryNode->setBus(r, metSecondaryBus);

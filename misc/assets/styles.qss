@@ -400,11 +400,25 @@ border-right: 1px Solid @borders;
 	border-radius: 5px;
 }
 
+#regionInfoSection {
+	border-bottom: 1px Solid @borders;
+}
+
+#regionGainSection {
+	border-bottom: 1px Solid @borders;
+}
+
+#regionTransposeSection {
+	border-bottom: 1px Solid @borders;
+}	
+
+
 QLabel {
         padding: 0px;
 	margin: 0px;
 	font-size: 11px;
 	border: 0px;
+	
 }
 
 QPushButton, QToolButton {
@@ -451,8 +465,8 @@ QComboBox:item::hover {
 QLineEdit {
 	background-color: @combobox-background;
 	border: 1px Solid @combobox-border;
-	font-size: 11px;
-	
+	padding-top: 0.5px;
+    padding-bottom: 0.5px;
 	padding-left: 1px;
 	padding-right: 1px;
 	font-size: 11px;
@@ -639,4 +653,50 @@ QListWidget::item {
 QListWidget::item:selected {
 	background-color: @list-item-selected;
 	color: @font-color-selected;
+}
+
+
+QToolBox::tab {
+	color: @font-color-primary;
+    background-color: @pushbutton-background;
+	border: 1px Solid @pushbutton-border;
+	border-radius: 5px;
+    
+	font-size: 11px;
+}
+
+QToolBox::tab:selected {
+    font: italic;
+    background-color: @pushbutton-checked-primary;
+	color: @font-color-selected;
+}
+
+QToolBox QScrollArea>QWidget>QWidget {
+	border: 1px Solid @borders;	
+	background-color: @background;
+	color: @font-color-secondary;
+}
+
+
+
+QToolBox QLabel {
+	color: @font-color-secondary;
+}
+
+QToolBox QPushButton {
+	color: @font-color-secondary;
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+
+QToolBox QLineEdit {
+	color: @font-color-secondary;
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+
+
+QTreeWidget QScrollBar:vertical {
+	border: none;
+	border-left: 1px Solid @scrollbar-border;	
 }

@@ -6,7 +6,8 @@ Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
     uuid = _uuid;
     timeline = _timeline;
     track = _track;
-    outputNode = std::make_shared<GainNode>();
+    lab::AudioContext& ac = *track->getAudioManager()->context.get();
+    outputNode = std::make_shared<GainNode>(ac);
     setGain(1.0f);
     track->getAudioManager()->context->connect(track->getTrackInputNode(), outputNode);
     gridLocation = 1;

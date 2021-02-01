@@ -17,6 +17,7 @@ ArrangeWidget::ArrangeWidget(QWidget *parent) :
     ui->setupUi(this);
     tl = new Timeline(this, ui->ruler, ui->trackControls, ui->timeline->layout(), ui->hScroll, ui->vScroll);
     this->repaint();
+
 }
 
 
@@ -40,7 +41,6 @@ void ArrangeWidget::resizeEvent(QResizeEvent *event)
 
 void ArrangeWidget::on_zoomSlider_valueChanged(int value)
 {
-
     tl->setHZoomFactor(value, ui->zoomSlider);
 }
 
@@ -101,7 +101,6 @@ Track* ArrangeWidget::addAudioTrack(Track *track, std::string uuid) {
     return track;
 }
 
-
 void ArrangeWidget::on_soloDisableButton_clicked()
 {
     //mixer->clearAll();
@@ -114,4 +113,28 @@ void ArrangeWidget::setMixer(Mixer *_mixer) {
 
 void ArrangeWidget::setHZoomFactor(int hZoomFactor) {
     ui->zoomSlider->setValue(hZoomFactor);
+}
+
+void ArrangeWidget::on_centerPlayheadButton_toggled(bool checked)
+{
+    tl->centerPlayhead = checked;
+}
+
+void ArrangeWidget::on_hScroll_actionTriggered(int action)
+{
+    if (action == 7) {
+        ui->centerPlayheadButton->setChecked(false);
+    }
+}
+
+void ArrangeWidget::on_pushButton_3_clicked()
+{
+    //QPropertyAnimation* animation = new QPropertyAnimation(ui->pushButton_3,"background-color");
+    //animation->setDuration(500);
+    //connect(animation,SIGNAL(finished()),this,SLOT(onAnimationFinished()));
+    //animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void ArrangeWidget::on_pushButton_3_toggled(bool checked)
+{
 }

@@ -19,6 +19,8 @@ class TrackGraphicItem : public QGraphicsItem
 public:
     TrackGraphicItem(QGraphicsScene *_scene, Timeline *_timeline, Track *_track);
     Track* getTrack();
+
+    void updateLength();
     //void setHScaleFactor(int _hScaleFactor);
     //void updatePrimaryColor();
 protected:

@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QFileOpenEvent>
 #include <QtDebug>
+
 #include "gui/splashscreen.h"
 #include "gui/mainwindow.h"
 #include "common/debug.h"
@@ -53,6 +54,10 @@ public:
 
         mainWindow = new MainWindow(nullptr, splashScreen, prefs);
         mainWindow->show();
+
+
+
+
         this->instance()->exec();
     }
 

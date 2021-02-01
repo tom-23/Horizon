@@ -16,14 +16,13 @@ public:
     void run() override;
     QTreeWidgetItem* scanDir(QDir dir);
 
-    QString wavIcon;
-    QString mp3Icon;
-    QString folderIcon;
-    QString samplesIcon;
+    QIcon topLevelIcon;
+    QString topLevelText;
+
+    QIcon samplesIcon;
+    QIcon folderIcon;
 
     QDir parentDir;
-
-
 
 signals:
     void resultReady(QTreeWidgetItem *treeWidgetItem);

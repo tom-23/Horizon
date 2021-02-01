@@ -5,17 +5,20 @@ Q_DECLARE_METATYPE(std::shared_ptr<AudioBus>)
 Q_DECLARE_METATYPE(std::shared_ptr<SampledAudioNode>)
 Q_DECLARE_METATYPE(std::vector<const float *>)
 
-void FileLoadingThread::doWork(AudioManager *audioManager, QString loadedFileName) {
+void FileLoadingThread::doWork(std::shared_ptr<AudioBus> audioClipBus, AudioManager *audioManager, QString loadedFileName) {
     debug::out(3, "Spawned file handling thread");
     debug::out(3, "Starting file loading...");
-    std::shared_ptr<AudioBus> audioClipBus = audioManager->MakeBusFromSampleFile(loadedFileName.toStdString());
+    audioClipBus = audioManager->MakeBusFromSampleFile(loadedFileName.toStdString());
 
-    std::shared_ptr<SampledAudioNode> audioClipNode = std::make_shared<SampledAudioNode>();
+    debug::out(3, "Processing...");
+    lab::AudioContext& ac = *audioManager->context.get();
+
+    std::shared_ptr<SampledAudioNode> audioClipNode = std::make_shared<SampledAudioNode>(ac);
     {
         ContextRenderLock r(audioManager->context.get(), "Horizon");
         audioClipNode->setBus(r, audioClipBus);
+        audioClipNode->processIfNecessary(r, 256);
     }
-
 
     debug::out(3, "Loaded audio, running callback function...");
 

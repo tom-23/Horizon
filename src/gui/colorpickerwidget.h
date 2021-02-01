@@ -3,9 +3,8 @@
 
 #include <QWidget>
 #include "common/util.h"
-#include <iostream>
-#include <string>
-#include <sstream>
+#include <QList>
+#include <QString>
 
 namespace Ui {
 class ColorPickerWidget;
@@ -21,7 +20,7 @@ public:
 
     QColor getColor();
 
-    std::vector<std::string> colorPallet = {"#FF5733", "#FFD133" ,"#90FF33", "#33FF58", "#33FFE3", "#33AFFF" ,"#3C33FF" ,"#A533FF" ,"#F633FF" ,"#FF3396" ,"#FF336B"};
+    QList<QString> colorPallet = {"#FF5733", "#FFD133" ,"#90FF33", "#33FF58", "#33FFE3", "#33AFFF" ,"#3C33FF" ,"#A533FF" ,"#F633FF" ,"#FF3396" ,"#FF336B"};
 
 private:
     Ui::ColorPickerWidget *ui;

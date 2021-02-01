@@ -23,25 +23,22 @@ public:
     ~LibraryWidget();
 
     void refesh();
-    void refreshHorizonSamples();
+    void refreshFactoryContent();
+
+    void setCollapsed(bool collapsed);
 
 private slots:
     void on_refeshButton_clicked();
 
     void on_searchBox_textChanged(const QString &arg1);
 
-
-
     void on_libraryTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
-
 private:
     Ui::LibraryWidget *ui;
     Preferences *prefs;
 
-    QString wavIcon;
-    QString mp3Icon;
-    QString folderIcon;
-    QString samplesIcon;
+    QIcon folderIcon;
+    QIcon samplesIcon;
 
     int itemsToIndex;
 
@@ -52,6 +49,9 @@ private:
     ArrangeWidget *arrangeWidget;
 
     QString bundleLoc;
+
+    QList<QList<QString>> factoryContent;
+
 };
 
 #endif // LIBRARYWIDGET_H

@@ -21,11 +21,20 @@
         <file>svg/combobox_arrow.svg</file>
         <file>svg/sync.svg</file>
         <file>svg/connect.svg</file>
-        <file>svg/16x/mp3.svg</file>
         <file>svg/16x/folder.svg</file>
         <file>svg/16x/folder_open.svg</file>
-        <file>svg/16x/wav.svg</file>
-        <file>svg/16x/sample.svg</file>
+        <file>svg/16x/master.svg</file>
+        <file>svg/16x/track.svg</file>
+        <file>svg/16x/track_selected.svg</file>
+        <file>svg/16x/region.svg</file>
+        <file>svg/16x/region_selected.svg</file>
+        <file>svg/16x/master_selected.svg</file>
+        <file>svg/16x/audio.svg</file>
+        <file>svg/16x/drums.svg</file>
+        <file>svg/16x/folder_selected.svg</file>
+        <file>svg/16x/drums_selected.svg</file>
+        <file>svg/16x/audio_selected.svg</file>
+        <file>svg/16x/folder_open_selected.svg</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/Rublik/Rubik-Black.ttf</file>

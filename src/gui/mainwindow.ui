@@ -439,30 +439,6 @@
       <property name="focusPolicy">
        <enum>Qt::ClickFocus</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="spacing">
-        <number>5</number>
-       </property>
-       <property name="leftMargin">
-        <number>5</number>
-       </property>
-       <property name="topMargin">
-        <number>5</number>
-       </property>
-       <property name="rightMargin">
-        <number>5</number>
-       </property>
-       <property name="bottomMargin">
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" name="contentVertical">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-        </layout>
-       </item>
-      </layout>
      </widget>
     </item>
     <item>
@@ -678,6 +654,9 @@
     <addaction name="actionArrange"/>
     <addaction name="actionMixer"/>
     <addaction name="actionLibrary"/>
+    <addaction name="actionPropery_Editor"/>
+    <addaction name="separator"/>
+    <addaction name="actionColor_Picker"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEd9t"/>
@@ -835,6 +814,31 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionColor_Picker">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Color Picker</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionPropery_Editor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Propery Editor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
    </property>
   </action>
  </widget>

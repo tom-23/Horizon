@@ -16,7 +16,7 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
     updateColor();
 
     QGraphicsScene *scene = new QGraphicsScene(ui->channelMeter);
-    mtr = new MeterWidget(ui->channelMeter, 0, 110, true);
+    mtr = new MeterWidget(ui->channelMeter, 0, 110, dialogs::getThemeManager()->getColor("borders"));
     scene->addItem(mtr);
     ui->channelMeter->setScene(scene);
 
@@ -35,6 +35,7 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
     mtr->setPwrValue(0, 0);
     mtr->setRMSValue(0, 0);
 
+    mtr->setSize(ui->channelMeter->width(), ui->channelMeter->height());
 
 }
 
@@ -115,6 +116,8 @@ void MixerChannelWidget::on_muteButton_toggled(bool checked)
 
 void MixerChannelWidget::uiUpdate() {
 
+    mtr->setSize(ui->channelMeter->width(), ui->channelMeter->height());
+
     if (track->getAudioRegionListCount() != 0) {
         std::vector<int> Lvalue = track->getLMeterData();
         std::vector<int> Rvalue = track->getRMeterData();
@@ -124,14 +127,14 @@ void MixerChannelWidget::uiUpdate() {
 
         if (lastLRMS == LRMSValue) {
             if (uiLRMS > 0) {
-                uiLRMS = uiLRMS -1;
+                uiLRMS = uiLRMS -2;
             }
         } else {
             if (uiLRMS < LRMSValue) {
                 uiLRMS = LRMSValue;
             } else {
                 if (uiLRMS > 0) {
-                    uiLRMS = uiLRMS -1;
+                    uiLRMS = uiLRMS -2;
                 }
             }
 
@@ -141,14 +144,14 @@ void MixerChannelWidget::uiUpdate() {
 
         if (lastRRMS == RRMSValue) {
             if (uiRRMS > 0) {
-                uiRRMS = uiRRMS -1;
+                uiRRMS = uiRRMS -2;
             }
         } else {
             if (uiRRMS < RRMSValue) {
                 uiRRMS = RRMSValue;
             } else {
                 if (uiRRMS > 0) {
-                    uiRRMS = uiRRMS -1;
+                    uiRRMS = uiRRMS -2;
                 }
             }
 
@@ -228,6 +231,10 @@ void MixerChannelWidget::on_effectsList_clicked(const QModelIndex &index)
 
 void MixerChannelWidget::on_effectsList_customContextMenuRequested(const QPoint &pos)
 {
+
+}
+
+void MixerChannelWidget::resizeEvent(QResizeEvent* event) {
 
 }
 

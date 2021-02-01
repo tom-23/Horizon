@@ -25,7 +25,7 @@ void AudioRegion::loadFile(std::string fileName, bool _progressDialog) {
     fileLoading = new FileLoading(nullptr, std::bind(&AudioRegion::loadedFileCallBack, this));
     debug::out(3, "Spawining thread...");
 
-    fileLoading->operate(track->getAudioManager(), QString::fromStdString(loadedFileName));
+    fileLoading->operate(audioClipBus, track->getAudioManager(), QString::fromStdString(loadedFileName));
 
 }
 
@@ -38,9 +38,6 @@ void AudioRegion::loadedFileCallBack() {
     updateGridLength();
     debug::out(3, "Length calculated");
 
-    regionGraphicsItem->setGhost(false);
-    regionGraphicsItem->setGridLength(length);
-    regionGraphicsItem->setWaveform(audioClipBus);
 
 
 
@@ -50,11 +47,13 @@ void AudioRegion::loadedFileCallBack() {
         if (dialogs::ProgressDialog::getValue() + 1 == dialogs::ProgressDialog::getMax()) {
             dialogs::ProgressDialog::close();
         } else {
-            qDebug() << "Updating progress..." << dialogs::ProgressDialog::getValue() << dialogs::ProgressDialog::getMax();
             dialogs::ProgressDialog::updateValue(dialogs::ProgressDialog::getValue() + 1);
         }
     }
 
+    regionGraphicsItem->setGhost(false);
+    regionGraphicsItem->setGridLength(length);
+    regionGraphicsItem->setWaveform(audioClipBus);
 
     if (length > timeline->barCount) {
         timeline->setBarAmount(ceil(length));
@@ -66,48 +65,41 @@ void AudioRegion::loadedFileCallBack() {
 void AudioRegion::schedule() {
     float timeEnd = length + gridLocation;
 
-    {
-        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
-        audioClipNode->reset(r);
-   }
+    //track->getAudioManager()->context->connect(outputNode, audioClipNode);
 
-    audioClipNode->initialize();
-
-    audioClipNode->gain()->setValue(1.0f);
+    //audioClipNode->gain()->setValue(1.0f);
 
     if (track->getAudioManager()->getCurrentGridTime() > gridLocation && track->getAudioManager()->getCurrentGridTime() < timeEnd) {
-
         debug::out(3, "Scheduled region during playhead");
         float playheadDiff = track->getAudioManager()->getCurrentGridTime() - gridLocation;
-        audioClipNode->startGrain(track->getAudioManager()->context->currentTime(), track->getAudioManager()->gridTimeToSeconds(playheadDiff));
+        float gttsPlayheadDiff = track->getAudioManager()->gridTimeToSeconds(playheadDiff);
+        audioClipNode->schedule(0.0, gttsPlayheadDiff);
+        isScheduled = true;
         return;
     }
 
     if (track->getAudioManager()->getCurrentGridTime() <= gridLocation ) {
         debug::out(3, "Scheduled region ahead of playhead");
-        double timeToGo = track->getAudioManager()->context->currentTime() + (track->getAudioManager()->gridTimeToSeconds(gridLocation - track->getAudioManager()->getCurrentGridTime()));
-        audioClipNode->start(timeToGo);
-
+        double timeToGo = (track->getAudioManager()->gridTimeToSeconds(gridLocation - track->getAudioManager()->getCurrentGridTime()));
+        audioClipNode->schedule(timeToGo);
+        isScheduled = true;
         return;
     }
 }
 
 void AudioRegion::cancelSchedule() {
 
-    audioClipNode->gain()->setValue(0.0f);
-
-    audioClipNode->stop(track->getAudioManager()->context->currentTime());
+    audioClipNode->stop(0.0);
     {
         ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
         audioClipNode->reset(r);
     }
-
-
+    isScheduled = true;
 }
 
 void AudioRegion::disconnectTrack() {
     cancelSchedule();
-    debug::out(3, "Audio Region Disconnect Called --------------");
+    debug::out(3, "Audio Region Disconnect");
     Region::disconnectTrack();
 }
 
@@ -123,13 +115,14 @@ void AudioRegion::setTrack(Track *_track) {
     debug::out(3, "Switching Tracks...");
     //outputNode->uninitialize();
 
-    track->getTrackInputNode()->input(0)->junctionDisconnectAllOutputs();
+    //track->getTrackInputNode()->input(0)->junctionDisconnectAllOutputs();
 
     _track->getAudioManager()->context->connect(_track->getTrackInputNode(), outputNode);
 
 
 
     audioClipNode->initialize();
+
     debug::out(3, "Connected to track");
     setGain(gain);
 

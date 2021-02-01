@@ -9,6 +9,7 @@
 //#include "track.h"
 
 #include "mainwindow.h"
+#include "ui_controls/horizonpushbutton.h"
 
 //#include "app/audiomanager.h"
 
@@ -38,6 +39,8 @@ public:
     Track* addAudioTrack(Track *track = nullptr, std::string uuid = "");
     void setHZoomFactor(int hZoomFactor);
 
+    QGraphicsColorizeEffect* mEffect;
+
 private slots:
     void on_pushButton_4_clicked();
 
@@ -47,11 +50,20 @@ private slots:
 
 
 
+    void on_centerPlayheadButton_toggled(bool checked);
+    void on_hScroll_actionTriggered(int action);
+
+
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_3_toggled(bool checked);
+
 private:
     Ui::ArrangeWidget *ui;
     AudioManager *audioMan;
     Mixer *mixer;
-
+    QPoint lastMousePos;
 
 protected:
     void resizeEvent(QResizeEvent *event);

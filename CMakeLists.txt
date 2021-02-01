@@ -61,5 +61,8 @@ set_source_files_properties(
 )
 
 add_subdirectory(lib/LabSound)
+if (APPLE)
+    add_subdirectory(lib/KDMacTouchBar)
+endif()
 #add_subdirectory(lib/vst3sdk)
 add_subdirectory(src)

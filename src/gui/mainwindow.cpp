@@ -25,12 +25,14 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     dialogs::setParent(this);
     dialogs::setThemeManager(themeMan);
 
-
     updateIconThemes();
+
+    colorPicker = new ColorPickerWidget(this);
 
     splashScreen->setText("Loading audio engine...");
     debug::out(3, "Loading audio manager...");
 
+    infoWidget = new InfoWidget(this);
 
     arrangeWidget = new ArrangeWidget(this);
     audioMan = std::make_unique<AudioManager>(this, *arrangeWidget->tl);
@@ -41,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     arrangeWidget->setMixer(mixerWidget->mixer);
 
     libraryWidget = new LibraryWidget(this, prefs, arrangeWidget);
-    ui->content->layout()->addWidget(libraryWidget);
+
 
 
     splashScreen->setText("Initialising UAC...");
@@ -53,11 +55,22 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     audioMan->setDivision(4);
     audioMan->setLookAhead(0.05);
 
-    debug::out(3, "Loaded audio manager with default settings!");
+    debug::out(3, "Loaded audio manager with default settings.");
 
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->setMargin(5);
+    mainLayout->setSpacing(5);
+    mainLayout->addWidget(infoWidget);
 
-    ui->contentVertical->addWidget(arrangeWidget);
-    ui->contentVertical->addWidget(mixerWidget);
+    QVBoxLayout *mixerArrangeLayout = new QVBoxLayout;
+    mixerArrangeLayout->addWidget(arrangeWidget);
+    mixerArrangeLayout->addWidget(mixerWidget);
+
+    mainLayout->addLayout(mixerArrangeLayout);
+
+    mainLayout->addWidget(libraryWidget);
+
+    ui->content->setLayout(mainLayout);
 
     arrangeWidget->show();
     arrangeWidget->tl->setColorTheme(themeMan);
@@ -77,8 +90,10 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
    // ew = new EffectWidget(iw);
     //iw->addEffect(ew);
 
-    uiTimer = new QTimer(this);
-    connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
+    //uiTimer = new QTimer(this);
+    //connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
+
+    updateThread = new GuiUpdateThread(this, std::bind(&MainWindow::uiUpdate, this));
 
 
     splashScreen->setText("Creating new project...");
@@ -93,22 +108,34 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     //this->show();
     this->showMaximized();
 
-    uiTimer->start(60);
+    //uiTimer->start(20);
+    updateThread->run();
+
+    util::macInitTouchbar(this);
+
+
+    debug::out(3, "MainWindow Init Done!");
 
 
 }
 
 void MainWindow::uiUpdate() {
+    float currentGridTime = audioMan->getCurrentGridTime();
+    if (currentGridTime >= arrangeWidget->tl->barCount + 1) {
+        audioMan->stop();
+        arrangeWidget->tl->setPlayheadLocation(0.0);
+    }
     arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
    // arrangeWidget->tl->updateViewports();
 
-    float glr = float(floor(audioMan->getCurrentGridTime() * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
-    ui->barNumberLabel->setText(QString::number(floor(audioMan->getCurrentGridTime())));
-    ui->beatNumberLabel->setText(QString::number(((glr - floor(audioMan->getCurrentGridTime())) * arrangeWidget->tl->barLength) + 1));
+    float glr = float(floor(currentGridTime * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
+    ui->barNumberLabel->setText(QString::number(floor(currentGridTime)));
+    ui->beatNumberLabel->setText(QString::number(((glr - floor(currentGridTime)) * arrangeWidget->tl->barLength) + 1));
 
     for (int i = 0; i < int(audioMan->getTrackListCount()); i++) {
         audioMan->getTrackByIndex(i)->uiUpdate();
     }
+
 }
 
 MainWindow::~MainWindow()
@@ -166,7 +193,6 @@ void MainWindow::keyPressEvent(QKeyEvent* ke) {
         break;
 
         case Qt::Key::Key_Alt:
-            qDebug() << "REGION SNAPPING DISABLED";
             arrangeWidget->tl->regionSnapping = false;
         break;
 
@@ -386,12 +412,17 @@ void MainWindow::on_actionArrange_toggled(bool arg1)
 
 void MainWindow::on_actionMixer_toggled(bool arg1)
 {
-    mixerWidget->setVisible(arg1);
+    mixerWidget->setCollapsed(arg1);
 }
 
 void MainWindow::on_actionLibrary_toggled(bool arg1)
 {
-    libraryWidget->setVisible(arg1);
+    libraryWidget->setCollapsed(arg1);
+}
+
+void MainWindow::on_actionPropery_Editor_toggled(bool arg1)
+{
+    infoWidget->setVisible(arg1);
 }
 
 void MainWindow::on_actionConnect_to_Session_2_triggered()
@@ -460,4 +491,14 @@ void MainWindow::on_tempo_lcd_valueChanged(double arg1)
     audioMan->setBPM(arg1);
 }
 
+
+
+void MainWindow::on_actionColor_Picker_toggled(bool arg1)
+{
+    if (arg1) {
+        colorPicker->show();
+    } else {
+        colorPicker->hide();
+    }
+}
 

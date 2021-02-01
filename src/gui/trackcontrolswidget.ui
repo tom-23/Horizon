@@ -218,7 +218,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="soloButton">
+         <widget class="HorizonToolButton" name="soloButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -240,7 +240,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="muteButton">
+         <widget class="HorizonToolButton" name="muteButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -262,7 +262,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="armButton">
+         <widget class="HorizonToolButton" name="armButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -317,6 +317,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HorizonToolButton</class>
+   <extends>QToolButton</extends>
+   <header location="global">gui/ui_controls/horizontoolbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

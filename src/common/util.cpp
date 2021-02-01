@@ -21,6 +21,10 @@ namespace util {
         vibrateHard();
     }
 
+    void macInitTouchbar(QWidget *parent) {
+        initTouchbar(parent);
+    }
+
     #else
     std::string getInstallDir() {
         char buffer[MAX_PATH];

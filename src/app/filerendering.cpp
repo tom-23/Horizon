@@ -9,10 +9,11 @@ void FileRenderingThread::doWork(AudioManager *audioMan, AudioStreamConfig confi
     debug::out(3, "Spawned file render thread");
     debug::out(3, "Starting file Rendering...");
 
+    lab::AudioContext& ac = *audioMan->context.get();
 
     audioMan->context = lab::MakeOfflineAudioContext(config, 60000.f);
 
-    auto recorder = std::make_shared<RecorderNode>(config);
+    auto recorder = std::make_shared<RecorderNode>(ac, config);
 
     audioMan->context->addAutomaticPullNode(recorder);
     recorder->startRecording();
@@ -30,7 +31,7 @@ void FileRenderingThread::doWork(AudioManager *audioMan, AudioStreamConfig confi
         audioMan->context->removeAutomaticPullNode(recorder);
         //context->removeAutomaticPullNode(recorder);
         debug::out(3, "Writing to wav file...");
-        recorder->writeRecordingToWav(fileName);
+        recorder->writeRecordingToWav(fileName, false);
         debug::out(3, "All done!");
 
         emit this->resultReady();

@@ -7,15 +7,16 @@
 
 #include "network/uac.h"
 
-
-#include "infowidget.h"
 #include "arrangewidget.h"
 #include "mixerwidget.h"
 #include "preferenceswindow.h"
 #include "librarywidget.h"
+#include "infowidget.h"
 #include "rtchostwindow.h"
 #include "rtcclientwindow.h"
 #include "renderwindow.h"
+#include "colorpickerwidget.h"
+#include "guiupdatethread.h"
 
 #include "app/audiomanager.h"
 #include "common/thememanager.h"
@@ -44,6 +45,7 @@ class ProjectSerialization;
 class ArrangeWidget;
 class MixerWidget;
 class LibraryWidget;
+class InfoWidget;
 
 
 QT_BEGIN_NAMESPACE
@@ -66,9 +68,13 @@ public:
 
     QTimer *uiTimer;
 
+    GuiUpdateThread *updateThread;
+
+    InfoWidget *infoWidget;
     ArrangeWidget *arrangeWidget;
     MixerWidget *mixerWidget;
     LibraryWidget *libraryWidget;
+
 
 
     void updateIconThemes();
@@ -128,6 +134,10 @@ private slots:
 
     void on_actionLibrary_toggled(bool arg1);
 
+    void on_actionColor_Picker_toggled(bool arg1);
+
+    void on_actionPropery_Editor_toggled(bool arg1);
+
 protected:
 
 private:
@@ -148,6 +158,7 @@ private:
     Session *session;
     UAC *uac;
 
+    ColorPickerWidget *colorPicker;
 public slots:
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent*);

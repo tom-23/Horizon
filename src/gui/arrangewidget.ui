@@ -48,7 +48,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
        <number>5</number>
@@ -84,6 +84,26 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line">
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>M / S</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -97,7 +117,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="HorizonPushButton" name="centerPlayheadButton">
           <property name="font">
            <font>
             <family>SF Display</family>
@@ -105,13 +125,22 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
-           <string>Draw</string>
+           <string>Follow</string>
+          </property>
+          <property name="shortcut">
+           <string>Ctrl+Shift+F</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="HorizonPushButton" name="pushButton_3">
           <property name="font">
            <font>
             <family>SF Display</family>
@@ -124,6 +153,9 @@
           </property>
           <property name="text">
            <string>Pointer</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -161,7 +193,7 @@
            <number>50</number>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>600</number>
           </property>
           <property name="value">
            <number>100</number>
@@ -317,7 +349,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>300</width>
-                 <height>279</height>
+                 <height>274</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -459,7 +491,7 @@
            <item>
             <widget class="QScrollBar" name="hScroll">
              <property name="pageStep">
-              <number>300</number>
+              <number>500</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -486,6 +518,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HorizonPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">gui/ui_controls/horizonpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

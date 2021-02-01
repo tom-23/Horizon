@@ -6,6 +6,7 @@
 #include <QBrush>
 #include <QPen>
 #include <QPainterPath>
+#include <QToolTip>
 
 #include <stdint.h>
 
@@ -54,12 +55,13 @@ protected:
     QPen mainPen;
     QPen waveformPen;
 
-    QPixmap waveFormPixmap;
+    QList<QPixmap> waveFormPixmapList;
     int height;
     float gridLength;
     bool pressed = false;
     QPointF oldPos, oldMousePos;
     int oldTrackIndex;
+    float oldGridLocation;
     float gridLocation;
     QGraphicsScene *scene;
     Region *region;
@@ -103,9 +105,12 @@ private:
 
     void showContextMenu(QPoint pos);
 
-    QMenu *tooltip;
+    QToolTip *tooltip;
 
     void showToolTip(QPoint pos);
+
+    int blockSize = 600;
+    int waveFormMaxReso = 600;
 
 };
 

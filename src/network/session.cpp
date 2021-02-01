@@ -83,7 +83,7 @@ void Session::netManagerFinished(QNetworkReply *reply) {
         if (responseObject->value("result").toString() == "ok") {
             debug::out(3, "Got connection token, setting up websockets...");
             sessionUUID = responseObject->value("uuid").toString();
-            webSockClient = new Client(QUrl("ws://horizon-rtc.systems/ws-session/" + responseObject->value("uuid").toString())
+            webSockClient = new Client(QUrl("wss://horizon-rtc.systems/ws-session/" + responseObject->value("uuid").toString())
                                        , false
                                        , responseObject->value("token").toString()
                                        , this
@@ -247,7 +247,6 @@ void Session::onJSON(QJsonObject object) {
         } else if (payload == "moveRegion") {
             qDebug() << "Moving region";
             audioMan->moveRegion(args.value("regionUUID").toString(), args.value("gridLocation").toDouble());
-
         } else if (payload == "getProject") {
             qDebug() << "Got request for project";
             transferCurrentProject();

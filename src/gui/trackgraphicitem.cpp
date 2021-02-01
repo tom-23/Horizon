@@ -7,22 +7,29 @@ TrackGraphicItem::TrackGraphicItem(QGraphicsScene *_scene, Timeline *_timeline, 
     track = _track;
     length = scene->sceneRect().width();
     yValue = (track->getIndex() + 1) * 60;
+    setY(yValue);
 }
 
-void TrackGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    //Q_UNUSED(widget);
-    painter->setPen(QPen(timeline->getPrimaryColor(), 1));
+void TrackGraphicItem::updateLength() {
+    prepareGeometryChange();
     if ((timeline->barCount * timeline->hZoomFactor) < scene->views()[0]->width()) {
         length = scene->views()[0]->width();
     } else {
         length = (timeline->barCount * timeline->hZoomFactor);
     }
-    yValue = (track->getIndex() + 1) * 60;
-    painter->drawLine(QLine(0, yValue,length, yValue));
+}
+
+void TrackGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+    Q_UNUSED(widget);
+    Q_UNUSED(option);
+    painter->setPen(QPen(timeline->getPrimaryColor(), 1));
+    painter->drawLine(QLine(0, 0,boundingRect().width(), 0));
 
 
 }
 
 QRectF TrackGraphicItem::boundingRect() const {
-    return QRectF(0, yValue, length, yValue + 1);
+    return QRectF(0, 0, length, 1);
 }
+
+

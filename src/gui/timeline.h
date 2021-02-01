@@ -108,6 +108,8 @@ public:
 
     void showGhostRegion(QString fileName);
 
+    bool centerPlayhead;
+
 
 private:
     QGraphicsView *trackRegions;
@@ -123,6 +125,7 @@ private:
     ThemeManager *themeManager;
 
     QList<RegionGraphicItem*> regionGraphicList;
+    QList<TrackGraphicItem*> trackGraphicList;
 
     int trackCount;
     int regionCount;
@@ -132,6 +135,9 @@ private:
     QWidget *parent;
 
     QTimer *uiTimer;
+
+    QScrollBar *horizonalScrollBar;
+    void stopCenterPlayhead();
 
 };
 

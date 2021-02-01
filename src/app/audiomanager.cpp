@@ -11,11 +11,14 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
     scheduled = false;
     debug::out(3, "Starting audio engine...");
 
-    outputNode = std::make_shared<GainNode>();
-    outputNode->gain()->setValue(1.0f);
+
     initContext();
 
+    lab::AudioContext& ac = *context.get();
 
+    outputNode = std::make_shared<GainNode>(ac);
+    outputNode->gain()->setValue(1.0f);
+    context->connect(context->device(), outputNode, 0 ,0);
 
     trackList = new std::vector<class Track *>();
     selectedTrackList = new std::vector<class Track *>();
@@ -33,12 +36,14 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
 
     //eventTimer->start();
     debug::out(3, "Audio engine started without any issues!");
+
+
 }
 
 void AudioManager::initContext() {
     const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
     context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
-    context->connect(context->device(), outputNode);
+
 }
 
 std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileName) {
@@ -314,14 +319,9 @@ std::vector<const float *> AudioManager::getPeaks(std::shared_ptr<AudioBus> bus)
 
     std::vector<const float *> channelSamples = {};
 
-    std::cout << "Max size" << channelSamples.max_size();
-
     for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
          channelSamples.push_back(bus->channel(channelIdx)->data());
     }
-
-    std::cout << "Actual size" << channelSamples.size();
-
     return channelSamples;
 }
 

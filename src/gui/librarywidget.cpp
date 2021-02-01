@@ -18,6 +18,22 @@ LibraryWidget::LibraryWidget(QWidget *parent, Preferences *_prefs, ArrangeWidget
     #else
     bundleLoc = QString::fromUtf8(util::getInstallDir().c_str());
     #endif
+
+    ui->libraryTree->setAnimated(true);
+
+    factoryContent = {{"/core/FactoryContent/Samples", "Samples", "audio"}, {"/core/FactoryContent/Drums", "Drums", "drums"}};
+
+    folderIcon = QIcon();
+    folderIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/folder.svg"), QSize(16,16), QIcon::Normal);
+    folderIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/folder_selected.svg"), QSize(16,16), QIcon::Selected);
+    folderIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/folder_open.svg"), QSize(16,16), QIcon::Normal, QIcon::On);
+    folderIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/folder_open_selected.svg"), QSize(16,16), QIcon::Selected, QIcon::On);
+
+
+    samplesIcon = QIcon();
+    samplesIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/audio.svg"), QSize(16,16), QIcon::Normal);
+    samplesIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/audio_selected.svg"), QSize(16,16), QIcon::Selected);
+
     refesh();
 
 }
@@ -30,18 +46,14 @@ LibraryWidget::~LibraryWidget()
 void LibraryWidget::refesh() {
 
 
-    folderIcon = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/folder.svg");
-    mp3Icon = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/mp3.svg");
-    wavIcon = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/wav.svg");
-    samplesIcon = dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/sample.svg");
 
     ui->libraryTree->clear();
 
     ui->progressBar->setValue(0);
-    ui->progressBar->setRange(0, prefs->libraryDirList.size());
+    ui->progressBar->setRange(0, prefs->libraryDirList.size() + factoryContent.size());
     ui->indexingContainer->setVisible(true);
 
-    refreshHorizonSamples();
+    refreshFactoryContent();
 
     itemsToIndex = 0;
     for (int i = 0; i < prefs->libraryDirList.size(); i++) {
@@ -49,8 +61,6 @@ void LibraryWidget::refesh() {
 
         IndexingThread *indexingThread = new IndexingThread(this, folderDir);
         indexingThread->folderIcon = folderIcon;
-        indexingThread->wavIcon = wavIcon;
-        indexingThread->mp3Icon = mp3Icon;
         indexingThread->samplesIcon = samplesIcon;
 
         connect(indexingThread, &IndexingThread::resultReady, this, &LibraryWidget::indexComplete);
@@ -58,17 +68,23 @@ void LibraryWidget::refesh() {
     }
 }
 
-void LibraryWidget::refreshHorizonSamples() {
-    QDir folderDir(bundleLoc + "/core/Horizon Sample Pack");
+void LibraryWidget::refreshFactoryContent() {
 
-    IndexingThread *indexingThread = new IndexingThread(this, folderDir, true);
-    indexingThread->folderIcon = folderIcon;
-    indexingThread->wavIcon = wavIcon;
-    indexingThread->mp3Icon = mp3Icon;
-    indexingThread->samplesIcon = samplesIcon;
+    for (int i = 0; i < factoryContent.size(); i++) {
+        QDir samplesFolderDir(bundleLoc + factoryContent.at(i).at(0));
 
-    connect(indexingThread, &IndexingThread::resultReady, this, &LibraryWidget::indexComplete);
-    indexingThread->start();
+        IndexingThread *indexingThread = new IndexingThread(this, samplesFolderDir, true);
+        QIcon topLevelIcon;
+        topLevelIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/" + factoryContent.at(i).at(2) + ".svg"), QSize(16,16), QIcon::Normal);
+        topLevelIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/" + factoryContent.at(i).at(2) + "_selected.svg"), QSize(16,16), QIcon::Selected);
+        indexingThread->topLevelIcon = topLevelIcon;
+        indexingThread->folderIcon = folderIcon;
+        indexingThread->samplesIcon = samplesIcon;
+        indexingThread->topLevelText = factoryContent.at(i).at(1);
+
+        connect(indexingThread, &IndexingThread::resultReady, this, &LibraryWidget::indexComplete);
+        indexingThread->start();
+    }
 }
 
 void LibraryWidget::on_refeshButton_clicked()
@@ -78,7 +94,7 @@ void LibraryWidget::on_refeshButton_clicked()
 
 void LibraryWidget::indexComplete(QTreeWidgetItem *parentItem) {
     ui->libraryTree->addTopLevelItem(parentItem);
-    if (itemsToIndex == prefs->libraryDirList.size()) {
+    if (itemsToIndex == ui->progressBar->maximum() - 1) {
         ui->indexingContainer->setVisible(false);
     } else {
         itemsToIndex = itemsToIndex + 1;
@@ -116,4 +132,29 @@ void LibraryWidget::on_libraryTree_itemDoubleClicked(QTreeWidgetItem *item, int 
         arrangeWidget->importAudio(item->text(1));
     }
 
+}
+
+
+void LibraryWidget::setCollapsed(bool collapsed) {
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "maximumWidth");
+    animation->setDuration(500);
+
+    if (!collapsed) {
+        setMinimumWidth(0);
+        animation->setStartValue(400);
+        animation->setEndValue(0);
+    } else {
+        setMinimumWidth(0);
+        setVisible(true);
+        animation->setStartValue(0);
+        animation->setEndValue(400);
+    }
+
+    connect(animation, &QPropertyAnimation::finished, [collapsed, this] () {
+        if (!collapsed) {
+            this->setVisible(false);
+        }
+    });
+    animation->setEasingCurve(QEasingCurve::InOutSine);
+    animation->start();
 }

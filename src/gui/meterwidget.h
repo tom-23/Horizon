@@ -10,11 +10,11 @@
 class MeterWidget : public QGraphicsItem
 {
 public:
-    MeterWidget(QGraphicsView *_view, int min, int max, bool stereo);
+    MeterWidget(QGraphicsView *_view, int min, int max, QColor borderColor);
     void setRMSValue(int _ch1value, int _ch2value = 0);
     void setPwrValue(int _ch1value, int _ch2value = 0);
 
-
+    void setSize(int width, int height);
 
 protected:
     QGraphicsView *view;
@@ -44,7 +44,7 @@ protected:
     int min;
     int max;
 
-    bool stereo;
+    QColor borderColor;
 
     bool vertical;
 
@@ -57,8 +57,8 @@ protected:
 
     void updateGradients();
 
-
-
+    int width = 0;
+    int height = 0;
 };
 
 #endif // METERWIDGET_H

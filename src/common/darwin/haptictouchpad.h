@@ -1,6 +1,6 @@
 #pragma once
 
-extern "C" {
+extern "C++" {
         void vibrateSmall();
         void vibrateHard();
 }

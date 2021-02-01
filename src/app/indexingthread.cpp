@@ -16,12 +16,14 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
     QTreeWidgetItem *folder = new QTreeWidgetItem();
     if (topLevelSpecial && topLevelSpecial) {
         isTopLevelSet = true;
-        folder->setIcon(0, QIcon(samplesIcon));
+        folder->setText(0, topLevelText);
+        folder->setIcon(0, topLevelIcon);
     } else {
-        folder->setIcon(0, QIcon(folderIcon));
+        folder->setIcon(0, folderIcon);
+        folder->setText(0, dir.dirName());
     }
 
-    folder->setText(0, dir.dirName());
+
 
 
 
@@ -45,11 +47,8 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
         QMimeDatabase db;
         QMimeType mime = db.mimeTypeForFile(fileInfo.filePath(), QMimeDatabase::MatchContent);
 
-        if (mime.preferredSuffix() == "wav") {
-            audioFile->setIcon(0, QIcon(wavIcon));
-        } else if (mime.preferredSuffix() == "mp3") {
-            audioFile->setIcon(0, QIcon(mp3Icon));
-        }
+        audioFile->setIcon(0, samplesIcon);
+
         folder->addChild(audioFile);
     }
 

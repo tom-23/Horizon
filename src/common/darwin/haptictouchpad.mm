@@ -9,3 +9,5 @@ void vibrateSmall()
 void vibrateHard() {
     [[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternLevelChange performanceTime:NSHapticFeedbackPerformanceTimeNow];
 }
+
+

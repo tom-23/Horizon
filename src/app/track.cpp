@@ -4,24 +4,27 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan, std::string _uuid) {
 
     debug::out(3, "Creating track");
     audioMan = &_audioMan;
+    lab::AudioContext& ac = *audioMan->context.get();
+
     debug::out(3, "setting timeline");
     timeline = &_timeLine;
     debug::out(3, "setting input node");
-    trackInputNode = std::make_shared<GainNode>();
+
+    trackInputNode = std::make_shared<GainNode>(ac);
     debug::out(3, "setting output node");
 
     uuid = _uuid;
 
-    trackOutputNode = std::make_shared<GainNode>();
-    pannerNode = std::make_shared<StereoPannerNode>();
-    Lanalyser = std::make_shared<AnalyserNode>();
-    Ranalyser = std::make_shared<AnalyserNode>();
+    trackOutputNode = std::make_shared<GainNode>(ac);
+    pannerNode = std::make_shared<StereoPannerNode>(ac);
+    Lanalyser = std::make_shared<AnalyserNode>(ac);
+    Ranalyser = std::make_shared<AnalyserNode>(ac);
 
      Lanalyser->setSmoothingTimeConstant(0.0);
      Ranalyser->setSmoothingTimeConstant(0.0);
 
-    channelSplitter = std::make_shared<ChannelSplitterNode>(2);
-    channelMerger = std::make_shared<ChannelMergerNode>(2);
+    channelSplitter = std::make_shared<ChannelSplitterNode>(ac, 2);
+    channelMerger = std::make_shared<ChannelMergerNode>(ac, 2);
 
 
     trackInputNode->gain()->setValue(1.0f);
@@ -385,3 +388,4 @@ AudioEffect* Track::addAudioEffect(effectType type, std::string uuid) {
     }
     return nullptr;
 }
+
