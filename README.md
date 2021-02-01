@@ -1,3 +1,8 @@
+| macOS | win64 |
+|---|---|
+| [![Build status](https://ci.appveyor.com/api/projects/status/ql6h8cdtmjyqm5ag?svg=true)](https://ci.appveyor.com/project/tom-23/horizon-macos) | [![Build status](https://ci.appveyor.com/api/projects/status/h5q9dai9i5j1mjkq?svg=true)](https://ci.appveyor.com/project/tom-23/horizon-win64) |
+
+
 <img src="https://github.com/tom-23/Horizon/raw/master/main_brand.png" width="500"></img>
 # Horizon Digital Audio Workstation
 
