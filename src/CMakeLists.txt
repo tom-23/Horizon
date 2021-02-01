@@ -1,6 +1,20 @@
-file(GLOB horizon_SOURCES main.cpp horizon.cpp app/*.cpp app/audio_effects/*.cpp common/*.cpp gui/*.cpp gui/audio_effects/*.cpp gui/ui_controls/*.cpp network/*.cpp)
+file(GLOB horizon_SOURCES main.cpp
+    horizon.cpp app/*.cpp
+    app/audio_effects/*.cpp
+    common/*.cpp
+    gui/*.cpp
+    gui/audio_effects/*.cpp
+    gui/ui_controls/*.cpp
+    network/*.cpp)
 
-file(GLOB horizon_HEADERS app/*.h app/audio_effects/*.h common/*.h gui/*.h gui/audio_effects/*.h gui/ui_controls/*.h network/*.h)
+file(GLOB horizon_HEADERS
+    app/*.h
+    app/audio_effects/*.h
+    common/*.h
+    gui/*.h
+    gui/audio_effects/*.h
+    gui/ui_controls/*.h
+    network/*.h)
 
 file(GLOB horizon_DARWIN_SOURCES common/darwin/*.m common/darwin/*.mm common/darwin/*.h common/darwin/*.cpp)
 
