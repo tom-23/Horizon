@@ -111,7 +111,9 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     //uiTimer->start(20);
     updateThread->run();
 
+#ifndef _WIN32
     util::macInitTouchbar(this);
+#endif
 
 
     debug::out(3, "MainWindow Init Done!");

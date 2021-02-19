@@ -37,11 +37,11 @@ namespace util {
     #endif
 
     QList<QString> getInputDeviceList() {
-
+        return {};
     }
 
     QList<QString> getOutputDeviceList() {
-
+        return {};
     }
 
 
