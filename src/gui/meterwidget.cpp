@@ -6,21 +6,12 @@ MeterWidget::MeterWidget(QGraphicsView *_view, int _min, int _max, QColor _borde
     view = _view;
     setSize(view->width(), view->height());
     vertical = !(width > height);
-
-
-
-
-
     pen = QPen(Qt::transparent, 0);
 
     min = _min;
     max = _max;
 
     borderColor = _borderColor;
-
-
-
-
 }
 
 void MeterWidget::setRMSValue(int _ch1value, int _ch2value) {
@@ -40,16 +31,14 @@ QRectF MeterWidget::boundingRect() const
 
 void MeterWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
 
+    // this is bad dumb code. never write code like this. this needs to get fixed.
+    // TODO: reimplement meters so they are not shit.
+
     int paddingx2 = padding * 2;
 
-
-
     QTransform transform;
-    //transform.translate(2, 2);
 
     vertical = !(width > height);
-
-
 
     float movingVal;
 
@@ -153,6 +142,7 @@ void MeterWidget::updateGradients() {
 }
 
 void MeterWidget::setSize(int _width, int _height) {
+    // this is utterly fucking retarded.
     if (width != _width || height != _height) {
         //prepareGeometryChange();
         width = _width;

@@ -69,9 +69,6 @@ public:
     void setColor(QColor _color);
     void updateColor(QColor _color);
 
-    // void setColorTheme(QColor primaryColor);
-    void setHScaleFactor(int _hScaleFactor);
-
     AudioRegion* addAudioRegion(std::string regionUUID);
     void setRegion(Region *_region);
     void removeRegion(Region *_region, Track *newTrack);
@@ -126,6 +123,9 @@ public:
 
     AudioEffect* addAudioEffect(effectType type, std::string uuid = "");
     void showEffectWindow(AudioEffect *effect);
+
+    bool isLSilent();
+    bool isRSilent();
 
 private:
     bool selected;

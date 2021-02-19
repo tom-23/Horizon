@@ -23,10 +23,6 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
         folder->setText(0, dir.dirName());
     }
 
-
-
-
-
     dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     QStringList dirList = dir.entryList();
     foreach(QString dirName, dirList) {
@@ -34,8 +30,12 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
         folder->addChild(scanDir(QDir(newPath)));
     }
 
-    dir.setNameFilters(QStringList() << "*.mp3" << "*.wav");
+    // TODO: make a supported files list so supported files are more centralised.
+    dir.setNameFilters(QStringList() << "*.mp3" << "*.wav" << "*.flac");
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+    // this recursive code *has* the chance of crashing the thread and causing an overflow error.
+    // TODO: make sure the recursive file indexing thread so it doesn't have a chance of crashing out.
 
     foreach(QString filename, dir.entryList()) {
 

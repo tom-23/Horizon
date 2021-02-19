@@ -134,27 +134,3 @@ void LibraryWidget::on_libraryTree_itemDoubleClicked(QTreeWidgetItem *item, int 
 
 }
 
-
-void LibraryWidget::setCollapsed(bool collapsed) {
-    QPropertyAnimation *animation = new QPropertyAnimation(this, "maximumWidth");
-    animation->setDuration(500);
-
-    if (!collapsed) {
-        setMinimumWidth(0);
-        animation->setStartValue(400);
-        animation->setEndValue(0);
-    } else {
-        setMinimumWidth(0);
-        setVisible(true);
-        animation->setStartValue(0);
-        animation->setEndValue(400);
-    }
-
-    connect(animation, &QPropertyAnimation::finished, [collapsed, this] () {
-        if (!collapsed) {
-            this->setVisible(false);
-        }
-    });
-    animation->setEasingCurve(QEasingCurve::InOutSine);
-    animation->start();
-}

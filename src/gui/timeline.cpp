@@ -43,12 +43,11 @@ Timeline::Timeline(QWidget *_parent,
     trackRegions->show();
     trackRegions->setInteractive(true);
     trackRegions->setMouseTracking(true);
-    trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     trackRegions->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
 
     //trackRegions->setDragMode(QGraphicsView::);
-    trackRegions->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    trackRegions->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    trackRuler->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     trackRegions->setCacheMode(QGraphicsView::CacheBackground);
     trackRegions->setOptimizationFlags(QGraphicsView::DontClipPainter);
     trackRegions->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
@@ -70,25 +69,24 @@ Timeline::Timeline(QWidget *_parent,
     rulerGraphic = new RulerGraphicWidget(trackRuler, nullptr, 8);
     rulerGraphic->setBarAmount(barCount);
 
+    trackRegions->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    trackRegions->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-    QObject::connect(vScrollBar, SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
-    QObject::connect(hScrollBar, SIGNAL(valueChanged(int)), trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
+    trackRegions->setHorizontalScrollBar(hScrollBar);
+    trackRegions->setVerticalScrollBar(vScrollBar);
 
-    QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), vScrollBar, SLOT(setValue(int)));
-    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), hScrollBar, SLOT(setValue(int)));
+    QWidget *cornerWidget = new QWidget(trackRegions);
+    cornerWidget->setObjectName("cornerWidget");
+    trackRegions->setCornerWidget(cornerWidget);
 
-    QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), vScrollBar, SLOT(setRange(int, int)));
-    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), hScrollBar, SLOT(setRange(int, int)));
-
+    // Connect the track control's scroll action to the trackRegions vise-versa.
     QObject::connect(trackRegions->verticalScrollBar(), SIGNAL(valueChanged(int)), trackControls->verticalScrollBar(), SLOT(setValue(int)));
     QObject::connect(trackControls->verticalScrollBar(), SIGNAL(valueChanged(int)), trackRegions->verticalScrollBar(), SLOT(setValue(int)));
 
 
+    // Connect the track ruler's scroll action to the trackRegions vise-versa.
     QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(valueChanged(int)), trackRuler->horizontalScrollBar(), SLOT(setValue(int)));
-
-
-    QObject::connect(trackRegions->horizontalScrollBar(), SIGNAL(actionTriggered(int)), hScrollBar, SIGNAL(actionTriggered(int)));
-    //QObject::connect(trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(on_trackRuler_sliderChange(int)));
+    QObject::connect(trackRuler->horizontalScrollBar(), SIGNAL(valueChanged(int)), trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
 
     //QObject::connect(ui->overview, SIGNAL(valueChanged(int)), ui->trackRegions->horizontalScrollBar(), SLOT(setValue(int)));
     //connect(ui->trackRegions->horizontalScrollBar(), SIGNAL(rangeChanged(int, int)), ui->overview, SLOT(setRange(int, int)));
@@ -138,8 +136,8 @@ QColor Timeline::getPrimaryColor() {
 
 
 void Timeline::clearAll() {
-
     regionGraphicList.clear();
+    trackGraphicList.clear();
 }
 
 void Timeline::setHZoomFactor(int _hZoomFactor, QSlider *zoomSlider) {
@@ -289,14 +287,14 @@ void Timeline::setZRegionValues(int _zValue) {
 }
 
 void Timeline::setPlayheadLocation(float _location) {
-    playheadGraphic->setGridLocation(_location);
     if (centerPlayhead) {
 
-        int scrollValue = (_location * hZoomFactor) - (trackRegions->viewport()->width() / 2);
+        int scrollValue = round((_location * float(hZoomFactor)) - (float(trackRegions->size().width()) / 2));
         horizonalScrollBar->setValue(scrollValue);
 
 
     }
+    playheadGraphic->setGridLocation(_location);
 }
 
 void Timeline::stopCenterPlayhead() {

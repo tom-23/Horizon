@@ -26,6 +26,7 @@ class AudioRegion : public Region
 {
 public:
     AudioRegion(Timeline *_timeline, Track *_track, std::string uuid);
+    ~AudioRegion();
 
     void loadFile(std::string fileName, bool progressDialog);
     void schedule() override;

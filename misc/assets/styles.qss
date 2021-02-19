@@ -254,6 +254,34 @@ border-right: 1px Solid @borders;
 	background-color: @foreground;
 }
 
+#trackRegions QScrollBar {
+border: 1px Solid @scrollbar-border;
+background-color: @scrollbar-background;
+padding: 2px;
+}
+#trackRegions QScrollBar:horizontal {
+
+border-bottom: none;
+border-right: none;
+border-left: none;
+height: 12px;
+
+}
+
+#trackRegions QScrollBar:vertical {
+border-right: none;
+border-top: none;
+border-bottom: none;
+width: 12px;
+}
+
+#trackRegions #cornerWidget {
+    border: 1px Solid @scrollbar-border;
+    border-bottom: none;
+    border-right: none;
+    background-color: @scrollbar-background;
+}
+
 #armButton:checked {
 	background-color: @pushbutton-checked-secondary;
 }
@@ -271,25 +299,36 @@ border-right: 1px Solid @borders;
 	background-color: @pushbutton-checked-primary;
 }
 
-#libraryTree {
+QTreeWidget {
 	border: 1px Solid @borders;	
 	background-color: @background;
 }
-#libraryTree::item {
+QTreeWidget::item {
 	color: @font-color-secondary;
 }
 
-#libraryTree::item::selected {
+QTreeWidget::item::selected {
 	background-color: @list-item-selected;
 	color: @font-color-selected;
 }
 
-#libraryTree::branch::selected {
+QTreeWidget::branch::selected {
 	background-color: @list-item-selected;
 	color: @font-color-selected;
 }
+
+#barGraph {
+	border: 1px Solid @borders;	
+	background-color: @background;
+}
+
 
 #indexingContainer {
+	border: 1px Solid @borders;	
+	border-radius: 5px;
+}
+
+#barGraphContainer {
 	border: 1px Solid @borders;	
 	border-radius: 5px;
 }
@@ -435,19 +474,16 @@ QPushButton, QToolButton {
 QComboBox {
 	background-color: @combobox-background;
 	border: 1px Solid @combobox-border;
-	font-size: 11px;
-	margin-bottom: 1px;
+	padding-top: 0.5px;
+    padding-bottom: 0.5px;
 	padding-left: 10px;
-	padding-right: 10px;
+	padding-right: 1px;
 	font-size: 11px;
-	min-width: 250px;	
+	qproperty-frame: false;
+	min-width: 250px;
 }
 
-QComboBox::down-arrow {
-	border: none;
-	background: transparent;
-    image: url(:/svg/svg/combobox_arrow.svg);
-}
+QComboBox::drop-down {border-width: 0px;} QComboBox::down-arrow {image: url(noimg); border-width: 0px;}
 
 QComboBox QAbstractItemView {
     border: 1px Solid @menu-border;
@@ -506,11 +542,11 @@ QToolButton {
 
 
 QMenu {
-	border: 1px Solid @menu-border;
+	border: 2px Solid @menu-border;
 	background-color: @menu-background;
 	menu-scrollable: 1;
-	padding-top: 2px;
-	padding-bottom: 2px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 QMenuBar {

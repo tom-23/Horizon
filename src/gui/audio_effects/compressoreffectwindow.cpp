@@ -6,6 +6,9 @@ CompressorEffectWindow::CompressorEffectWindow(QWidget *parent) :
     ui(new Ui::CompressorEffectWindow)
 {
     ui->setupUi(this);
+    HorizonDial *dial = new HorizonDial("dB", this, 0, 99);
+    ui->inputLayout->insertWidget(1, dial);
+
     //QPixmap pixmap;
     //pixmap.load(":/reverb/effects/reverb/background.svg");
     //ui->dial->setTexture(pixmap);

@@ -1,47 +1,82 @@
 #ifndef HORIZONDIAL_H
 #define HORIZONDIAL_H
 
-#include <QObject>
-#include <QWidget>
 #include <QDial>
-#include <QDebug>
-#include <QGraphicsItem>
+#include <QString>
+#include <QSharedPointer>
 
 class HorizonDial : public QDial
 {
     Q_OBJECT
 
-        Q_PROPERTY(double knobRadius READ getKnobRadius WRITE setKnobRadius);
-        Q_PROPERTY(double knobMargin READ getKnobMargin WRITE setKnobMargin);
-        Q_PROPERTY(QPixmap texture READ getTexture WRITE setTexture);
+    Q_PROPERTY(QString arcColor READ getArcColor WRITE setArcColor)
+
+    Q_PROPERTY(double arcWidth READ getArcWidth WRITE setArcWidth)
 
     public:
 
-        HorizonDial(QWidget * parent = nullptr,
-                   double knobRadius = 5,
-                   double knobMargin = 5);
+        HorizonDial(const QString& suffix,
+                    QWidget * parent = nullptr,
+                    int minimum = 0,
+                    int maximum = 999);
 
-        void setKnobRadius(double radius);
+        void setArcColor(const QString& color);
 
-        double getKnobRadius() const;
+            QString getArcColor() const;
 
-        void setKnobMargin(double margin);
 
-        double getKnobMargin() const;
+            void setStartAngle(double angle);
 
-        QPixmap getTexture() const;
+            double getStartAngle() const;
 
-        void setTexture(QPixmap texture);
+
+            void setMaximumAngle(double angle);
+
+            double getMaximumAngle() const;
+
+
+            void setArcWidth(double px);
+
+            double getArcWidth() const;
+
+
+            void setSuffix(const QString& text);
+
+            QString getSuffix() const;
+
+            void updateSize();
+
+    private slots:
+
+    void updateValue();
 
     private:
 
-        virtual void paintEvent(QPaintEvent*) override;
+    virtual void paintEvent(QPaintEvent*) override;
 
-        double knobRadius_;
+        virtual void resizeEvent(QResizeEvent* event) override;
 
-        double knobMargin_;
+        double maximumAngleSpan_;
 
-        QPixmap texture_;
+        double startAngle_;
+
+        double arcWidth_;
+
+        double angleSpan_;
+
+        QString valueString_;
+
+        QString suffix_;
+
+        QSharedPointer<QRectF> arcRect_;
+
+        QSharedPointer<QRectF> valueRect_;
+
+        QSharedPointer<QRectF> suffixRect_;
+
+        QSharedPointer<QColor> arcColor_;
+
+        QSharedPointer<QPen> arcPen_;
     };
 
 

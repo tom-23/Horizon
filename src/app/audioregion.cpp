@@ -6,6 +6,10 @@ AudioRegion::AudioRegion(Timeline *_timeline, Track *_track, std::string _uuid) 
     debug::out(3, "Audio region added");
 }
 
+AudioRegion::~AudioRegion() {
+
+}
+
 void AudioRegion::loadFile(std::string fileName, bool _progressDialog) {
 
     debug::out(3, "Begining file loading...");
@@ -59,11 +63,17 @@ void AudioRegion::loadedFileCallBack() {
         timeline->setBarAmount(ceil(length));
     }
     timeline->updateViewports();
+
     debug::out(3, "Successfully Loaded File!");
 }
 
 void AudioRegion::schedule() {
     float timeEnd = length + gridLocation;
+
+    {
+        ContextRenderLock r(track->getAudioManager()->context.get(), "Horizon");
+        debug::out(3, QString("Audio Region Latency Time: " + QString::number(audioClipNode->graphTime.microseconds.count())).toStdString());
+    }
 
     //track->getAudioManager()->context->connect(outputNode, audioClipNode);
 

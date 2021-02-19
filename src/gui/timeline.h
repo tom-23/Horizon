@@ -43,6 +43,7 @@ class Track;
 class Region;
 class Debug;
 #include "common/debug.h"
+#include <math.h>
 
 class Timeline
 {

@@ -11,12 +11,13 @@ TrackGraphicItem::TrackGraphicItem(QGraphicsScene *_scene, Timeline *_timeline, 
 }
 
 void TrackGraphicItem::updateLength() {
-    prepareGeometryChange();
+
     if ((timeline->barCount * timeline->hZoomFactor) < scene->views()[0]->width()) {
         length = scene->views()[0]->width();
     } else {
         length = (timeline->barCount * timeline->hZoomFactor);
     }
+    prepareGeometryChange();
 }
 
 void TrackGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {

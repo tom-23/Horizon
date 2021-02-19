@@ -99,8 +99,5 @@ bool Region::getSelected() {
 
 void Region::setSelected(bool _selected) {
     selected = _selected;
-    if (selected) {
-        qDebug() << "REGION IS SELECTED";
-    }
     regionGraphicsItem->setSelected(_selected);
 }

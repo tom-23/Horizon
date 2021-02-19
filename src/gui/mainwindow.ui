@@ -658,12 +658,19 @@
     <addaction name="separator"/>
     <addaction name="actionColor_Picker"/>
    </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="actionProfiler"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEd9t"/>
    <addaction name="menuView"/>
    <addaction name="menuCreat4"/>
    <addaction name="menuPlayback"/>
    <addaction name="menuWindow"/>
+   <addaction name="menuDebug"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">
@@ -839,6 +846,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionProfiler">
+   <property name="text">
+    <string>Profiler</string>
    </property>
   </action>
  </widget>

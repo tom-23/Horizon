@@ -44,6 +44,8 @@ inline std::pair<AudioStreamConfig, AudioStreamConfig> GetDefaultAudioDeviceConf
         }
     }
 
+    debug::out(3, defaultOutputInfo.identifier);
+
     return {inputConfig, outputConfig};
 }
 

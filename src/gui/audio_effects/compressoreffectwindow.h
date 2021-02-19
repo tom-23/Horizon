@@ -2,6 +2,7 @@
 #define COMPRESSOREFFECTWINDOW_H
 
 #include <QWidget>
+#include "gui/ui_controls/horizondial.h"
 
 namespace Ui {
 class CompressorEffectWindow;

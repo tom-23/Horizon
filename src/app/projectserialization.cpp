@@ -5,7 +5,7 @@ ProjectSerialization::ProjectSerialization()
     tempFileList = {};
 }
 
-
+// TODO: refactor serialize and deSerialize to be less complicated and more modular.
 std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) {
 
     QJsonDocument jsonDocument;
@@ -15,6 +15,7 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
     root.insert("Application", "Horizon");
     root.insert("tempo", audioMan.getBPM());
 
+    // ...and the point is?
     std::chrono::milliseconds ms = std::chrono::duration_cast< std::chrono::milliseconds >(
         std::chrono::system_clock::now().time_since_epoch()
     );

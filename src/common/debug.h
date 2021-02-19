@@ -1,7 +1,5 @@
 #ifndef DEBUG_H
 #define DEBUG_H
-
-
 #include <iostream>
 
 namespace debug {
@@ -10,9 +8,5 @@ namespace debug {
     int getDebugLevel();
     void out(int level, std::string message);
 }
-
-
-
-
 
 #endif // DEBUG_H

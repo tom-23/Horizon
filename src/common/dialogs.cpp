@@ -1,5 +1,7 @@
 #include "dialogs.h"
 
+// well this is a big fucking mess
+// why did i design it like this
 namespace dialogs {
 
 void setParent(QWidget *parent) {
@@ -87,38 +89,9 @@ ThemeManager *getThemeManager() {
          break;
         }
 
-
-        QPixmap parentCapture(dialogParent->size());
-        dialogParent->render(&parentCapture);
-
-        QDialog decoyWindow(dialogParent);
-        decoyWindow.setGeometry(dialogParent->geometry());
-        QVBoxLayout layout;
-        layout.setMargin(0);
-        QLabel backgrnd(&decoyWindow);
-        backgrnd.setPixmap(parentCapture);
-        layout.addWidget(&backgrnd);
-        decoyWindow.setLayout(&layout);
-        decoyWindow.show();
-        dialogParent->setVisible(false);
-
-
-
-        QGraphicsBlurEffect* p_blur = new QGraphicsBlurEffect;
-        p_blur->setBlurRadius(15);
-
-        p_blur->setBlurHints(QGraphicsBlurEffect::QualityHint);
-
-        decoyWindow.setGraphicsEffect(p_blur);
-
-
-
         messageDialogWidget = new MessageDialogWidget(dialogParent, QString::fromStdString(title), QString::fromStdString(message), iconSVG, okayOnly, okayCancel, yesNo, yesNoCancel);
 
         int result = messageDialogWidget->exec();
-
-        delete p_blur;
-        decoyWindow.close();
         dialogParent->setVisible(true);
 
         return result;

@@ -20,8 +20,8 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan, std::string _uuid) {
     Lanalyser = std::make_shared<AnalyserNode>(ac);
     Ranalyser = std::make_shared<AnalyserNode>(ac);
 
-     Lanalyser->setSmoothingTimeConstant(0.0);
-     Ranalyser->setSmoothingTimeConstant(0.0);
+     Lanalyser->setSmoothingTimeConstant(8.0);
+     Ranalyser->setSmoothingTimeConstant(8.0);
 
     channelSplitter = std::make_shared<ChannelSplitterNode>(ac, 2);
     channelMerger = std::make_shared<ChannelMergerNode>(ac, 2);
@@ -34,7 +34,6 @@ Track::Track(Timeline &_timeLine, AudioManager &_audioMan, std::string _uuid) {
     audioMan->context.get()->connect(pannerNode, trackOutputNode);
     audioMan->context.get()->connect(channelSplitter, pannerNode);
 
-    //channelSplitter->addOutputs(2);
 
     audioMan->context.get()->connect(Lanalyser, channelSplitter, 0, 0);
     audioMan->context.get()->connect(Ranalyser, channelSplitter, 0, 1);
@@ -74,7 +73,6 @@ Track::~Track() {
 
     audioMan->context->disconnect(audioMan->getOutputNode(), trackOutputNode);
     audioMan->context->disconnect(trackInputNode, trackOutputNode);
-    qDebug() << "distroying";
 }
 
 void Track::setTrackControlsWidget(TrackControlsWidget *_tcw) {
@@ -88,10 +86,6 @@ void Track::setMixerChannelWidget(MixerChannelWidget *_mcw) {
 
 void Track::setTrackGraphicsItem(TrackGraphicItem *_tgi) {
     trackGraphicItem = _tgi;
-}
-
-void Track::setHScaleFactor(int _hScaleFactor) {
-
 }
 
 AudioRegion* Track::addAudioRegion(std::string regionUUID) {
@@ -108,17 +102,13 @@ void Track::setRegion(Region *_region) {
 
 void Track::removeRegion(Region *_region) {
 
-    qDebug() << "Removing Region... IDX" << index;
     regionList->erase(regionList->begin() + getIndexByRegion(_region));
     trackInputNode->uninitialize();
 
     Lanalyser->uninitialize();
     Ranalyser->uninitialize();
 
-    qDebug() << "Track connections before:" << trackInputNode->numberOfInputs();
     audioMan->context->disconnect(trackInputNode, _region->getOutputNode());
-
-    qDebug() << "Track connections after:" << trackInputNode->numberOfInputs();
     trackInputNode->initialize();
 
     Lanalyser->initialize();
@@ -259,33 +249,21 @@ std::vector<int> Track::getLMeterData() {
 
     Lanalyser->getFloatTimeDomainData(buffer);
 
-    //analyser->getFloatFrequencyData(buffer);
-   // qDebug() << "BUFFER" << buffer[0];
+    float sumOfSquares = 0.0;
+    float peakInstantaneousPower = 0.0;
 
-    float sumOfSquares = 0;
     for (int i = 0; i < (int)buffer.size(); i++) {
         sumOfSquares += pow(buffer[i], 2);
-
+        float power = pow(buffer[i], 2);
+        peakInstantaneousPower = max(power, peakInstantaneousPower);
     }
-    //qDebug() << "SOS" << sumOfSquares;
-
     float avgPowerDecibels = 10 * log10(sumOfSquares / buffer.size());
-    int peakInstantaneousPower = 0;
-
-    for (int i = 0; i < (int)buffer.size(); i++) {
-          int power = pow(buffer[i], 2);
-          peakInstantaneousPower = max(power, peakInstantaneousPower);
-    }
-
     float peakInstantaneousPowerDecibels = 10 * log10(peakInstantaneousPower);
 
     if (avgPowerDecibels >= peakdB) {
         peakdB = std::ceil(avgPowerDecibels * 100.0) / 100.0;
 
     }
-
-
-
     return std::vector<int> {static_cast<int>(round(avgPowerDecibels)), static_cast<int>(round(peakInstantaneousPowerDecibels))};
 
 }
@@ -296,30 +274,22 @@ std::vector<int> Track::getRMeterData() {
 
     Ranalyser->getFloatTimeDomainData(buffer);
 
-    //analyser->getFloatFrequencyData(buffer);
-   // qDebug() << "BUFFER" << buffer[0];
+    float sumOfSquares = 0.0;
+    float peakInstantaneousPower = 0.0;
 
-    float sumOfSquares = 0;
     for (int i = 0; i < (int)buffer.size(); i++) {
         sumOfSquares += pow(buffer[i], 2);
-
+        float power = pow(buffer[i], 2);
+        peakInstantaneousPower = max(power, peakInstantaneousPower);
     }
-    //qDebug() << "SOS" << sumOfSquares;
-
     float avgPowerDecibels = 10 * log10(sumOfSquares / buffer.size());
-    int peakInstantaneousPower = 0;
-
-    for (int i = 0; i < (int)buffer.size(); i++) {
-          int power = pow(buffer[i], 2);
-          peakInstantaneousPower = max(power, peakInstantaneousPower);
-    }
-
     float peakInstantaneousPowerDecibels = 10 * log10(peakInstantaneousPower);
 
     if (avgPowerDecibels >= peakdB) {
         peakdB = std::ceil(avgPowerDecibels * 100.0) / 100.0;
 
     }
+
     return std::vector<int> {static_cast<int>(round(avgPowerDecibels)), static_cast<int>(round(peakInstantaneousPowerDecibels))};
 
 }
@@ -376,6 +346,7 @@ void Track::setRegionSelected(Region *region, bool selected) {
 }
 
 AudioEffect* Track::addAudioEffect(effectType type, std::string uuid) {
+    // this has very little reason to be here. It will probably get nuked one day but it's not doing harm at the moment.
     if (uuid == "") {
         uuid = "testUUID";
     }
@@ -389,3 +360,16 @@ AudioEffect* Track::addAudioEffect(effectType type, std::string uuid) {
     return nullptr;
 }
 
+bool Track::isLSilent() {
+    {
+        ContextRenderLock r(audioMan->context.get(), "Horizon");
+        return Lanalyser->inputsAreSilent(r);
+    }
+}
+
+bool Track::isRSilent() {
+    {
+        ContextRenderLock r(audioMan->context.get(), "Horizon");
+        return Ranalyser->inputsAreSilent(r);
+    }
+}

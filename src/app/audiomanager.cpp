@@ -5,6 +5,8 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
 {
     debug::out(3, "Timeline init");
     timeline = &_timeline;
+
+    // Initialising some variables that will be needed in later use
     stopTime = 0.0;
     isPlaying = false;
     currentGridTime = 1.0;
@@ -28,27 +30,36 @@ AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
     metronome = new Metronome(outputNode, this);
 
 
+    // TODO: this needs to go
     debug::out(3, "Starting event loop...");
     eventTimer = new TimerEX(parent, std::bind(&AudioManager::eventLoop, this));
 
+    // We create a new online session but we don't do anything with it at the moment
     session = new Session(parent, *this);
     rendering = false;
 
-    //eventTimer->start();
     debug::out(3, "Audio engine started without any issues!");
 
 
 }
 
+/* initContext
+    Initalises a labsound real-time audio context
+*/
 void AudioManager::initContext() {
     const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
     context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
 
 }
 
+/* MakeBusFromSampleFile
+    Loads the audio file into memory and passes it off the the audio region. Idk why I put the function
+    here but its doing no harm so
+*/
 std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileName) {
 
         std::shared_ptr<AudioBus> bus = MakeBusFromFile(fileName, false);
+
         if (!bus) {
             debug::out(1, "COULD NOT OPEN FILE: " + fileName);
             return nullptr;
@@ -60,10 +71,12 @@ std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileNa
 
 void AudioManager::play() {
     if (isPlaying == false) {
+        // taking the time of the context time as we will use this to schedule our regions and to know where we are during playback.
         startTime = context->currentTime();
         updateMetSchedule();
         scheduleTracks();
         isPlaying = true;
+        // TODO: idk why this is here. Idk why we need to call this. Future Tom: please figure this out when you have a min.
         if (!rendering) {
             eventTimer->start();
         }
@@ -77,6 +90,7 @@ void AudioManager::pause() {
         if (!rendering) {
             eventTimer->stop();
         }
+        // see start time comments. It relates to that in some way.
         stopTime = getCurrentRelativeTime();
     }
 }
@@ -90,6 +104,7 @@ void AudioManager::stop() {
             eventTimer->stop();
         }
     }
+    // We put the playhead to the start when we hit the stop button. We also set the stop time to 0.0 too.
     stopTime = 0.0;
     currentGridTime = 1.0;
 }
@@ -111,6 +126,7 @@ void AudioManager::updateMetSchedule() {
 
 }
 
+// lol I can't think
 void AudioManager::updateSchedule() {
 
     //double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
@@ -200,12 +216,8 @@ float AudioManager::getCurrentRelativeTime() {
 Track* AudioManager::addTrack(std::string trackUUID) {
     debug::out(3, "Creating new track...");
     Track *newTrack = new Track(*timeline, *this, trackUUID);
-    debug::out(3, "Pushing to list...");
     trackList->push_back(newTrack);
-    debug::out(3, "Setting index");
     newTrack->setIndex(trackList->size() - 1);
-
-    debug::out(3, "Dispatching to UI...");
     return newTrack;
 }
 

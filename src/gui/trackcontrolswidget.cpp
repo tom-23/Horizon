@@ -19,10 +19,10 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
     ui->number->setText(QString::number(track->getIndex() + 1));
     ui->muteButton->setChecked(track->getMute());
 
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    mtr = new MeterWidget(ui->trackMeterView, 0, 110, dialogs::getThemeManager()->getColor("borders"));
-    scene->addItem(mtr);
-    ui->trackMeterView->setScene(scene);
+    //QGraphicsScene *scene = new QGraphicsScene(this);
+    //mtr = new MeterWidget(ui->trackMeterView, 0, 110, dialogs::getThemeManager()->getColor("borders"));
+    //scene->addItem(mtr);
+    //ui->trackMeterView->setScene(scene);
 
    // uiTime
 
@@ -30,11 +30,9 @@ TrackControlsWidget::TrackControlsWidget(QWidget *parent, Track *_track) :
    // uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&TrackControlsWidget::uiUpdate));
    // uiTimer->start(60);
 
-    ui->trackMeterView->update();
-    ui->trackMeterView->repaint();
-
-    mtr->setPwrValue(0, 0);
-    mtr->setRMSValue(0, 0);
+    ui->channelMeter->setMinMax(0, 110);
+    ui->channelMeter->setPwrValue(0, 0);
+    ui->channelMeter->setRMSValue(0, 0);
 
     ui->armButton->setLEDType(HorizonToolButton::LED_Types::secondary);
     ui->soloButton->setLEDType(HorizonToolButton::LED_Types::tertiary);
@@ -136,8 +134,6 @@ void TrackControlsWidget::changeColor() {
 
 void TrackControlsWidget::uiUpdate() {
 
-    mtr->setSize(ui->trackMeterView->width(), ui->trackMeterView->height());
-
     if (track->getAudioRegionListCount() != 0) {
     std::vector<int> Lvalue = track->getLMeterData();
     std::vector<int> Rvalue = track->getRMeterData();
@@ -145,7 +141,7 @@ void TrackControlsWidget::uiUpdate() {
     int LRMSValue = Lvalue[0] + 100;
     int RRMSValue = Rvalue[0] + 100;
 
-    if (lastLRMS == LRMSValue) {
+    if (track->isLSilent()) {
         if (uiLRMS > 0) {
             uiLRMS = uiLRMS -2;
         }
@@ -162,7 +158,7 @@ void TrackControlsWidget::uiUpdate() {
 
     lastLRMS = LRMSValue;
 
-    if (lastRRMS == RRMSValue) {
+    if (track->isRSilent()) {
         if (uiRRMS > 0) {
             uiRRMS = uiRRMS -2;
         }
@@ -179,10 +175,9 @@ void TrackControlsWidget::uiUpdate() {
 
     lastRRMS = RRMSValue;
 
-    mtr->setRMSValue(uiLRMS, uiRRMS);
-    //mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
+    ui->channelMeter->setRMSValue(uiLRMS, uiRRMS);
+    ui->channelMeter->update();
 
-    mtr->update();
     ui->peakdBLabel->setText(QString::number(track->peakdB) + " dB");
 
     }

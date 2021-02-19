@@ -17,6 +17,7 @@
 #include "renderwindow.h"
 #include "colorpickerwidget.h"
 #include "guiupdatethread.h"
+#include "debugprofilerwindow.h"
 
 #include "app/audiomanager.h"
 #include "common/thememanager.h"
@@ -46,7 +47,6 @@ class ArrangeWidget;
 class MixerWidget;
 class LibraryWidget;
 class InfoWidget;
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -137,6 +137,8 @@ private slots:
     void on_actionColor_Picker_toggled(bool arg1);
 
     void on_actionPropery_Editor_toggled(bool arg1);
+
+    void on_actionProfiler_triggered();
 
 protected:
 

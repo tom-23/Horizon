@@ -78,6 +78,8 @@ public:
     void setDivision(int _division);
     void setBPM(double _beatsPerMinuet);
     double getBPM();
+
+    // TODO: this function at the moment is completely and utterly fucking useless.
     void setLookAhead(double _value);
 
     float getCurrentGridTime();
@@ -105,6 +107,7 @@ public:
     std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
 
 
+    // TODO: this should be private
     float startTime;
     float stopTime;
 
@@ -112,6 +115,7 @@ public:
 
     std::shared_ptr<AudioContext> context;
 
+    // uh?
     void engageSolo();
     void disengageSolo();
 
@@ -161,6 +165,11 @@ private:
 
 
     int division;
+    /*
+     * currentPos is:
+     * barNumber.division
+     * In the future, I could implement a time-based grid but that would take time.
+     */
     int currentPos;
     double lookAhead;
 

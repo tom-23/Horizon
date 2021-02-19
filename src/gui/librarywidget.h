@@ -25,8 +25,6 @@ public:
     void refesh();
     void refreshFactoryContent();
 
-    void setCollapsed(bool collapsed);
-
 private slots:
     void on_refeshButton_clicked();
 

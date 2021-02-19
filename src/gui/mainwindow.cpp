@@ -412,12 +412,12 @@ void MainWindow::on_actionArrange_toggled(bool arg1)
 
 void MainWindow::on_actionMixer_toggled(bool arg1)
 {
-    mixerWidget->setCollapsed(arg1);
+    mixerWidget->setVisible(arg1);
 }
 
 void MainWindow::on_actionLibrary_toggled(bool arg1)
 {
-    libraryWidget->setCollapsed(arg1);
+    libraryWidget->setVisible(arg1);
 }
 
 void MainWindow::on_actionPropery_Editor_toggled(bool arg1)
@@ -502,3 +502,9 @@ void MainWindow::on_actionColor_Picker_toggled(bool arg1)
     }
 }
 
+
+void MainWindow::on_actionProfiler_triggered()
+{
+    DebugProfilerWindow *profiler = new DebugProfilerWindow(this);
+    profiler->show();
+}

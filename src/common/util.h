@@ -27,6 +27,8 @@ namespace util {
         std::string getInstallDir();
     #endif
 
+       QList<QString> getInputDeviceList();
+       QList<QString> getOutputDeviceList();
 
 }
 #endif

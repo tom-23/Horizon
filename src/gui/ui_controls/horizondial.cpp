@@ -2,126 +2,167 @@
 
 #include <QPainter>
 #include <QColor>
+#include <QLabel>
+#include <QRectF>
+#include <QPen>
+#include <QResizeEvent>
 
 #include <cmath>
 
-HorizonDial::HorizonDial(QWidget* parent,
-                       double knobRadius,
-                       double knobMargin)
+HorizonDial::HorizonDial(const QString& suffix,
+                         QWidget* parent,
+                         int minimum,
+                         int maximum)
 : QDial(parent),
-  knobRadius_(knobRadius),
-  knobMargin_(knobMargin)
+  suffix_(suffix),
+  arcRect_(new QRectF),
+  valueRect_(new QRectF),
+  suffixRect_(new QRectF),
+  arcColor_(new QColor),
+  arcPen_(new QPen)
 {
-    // Default range
+    QDial::setRange(minimum, maximum);
 
-}
+    QDial::setCursor(Qt::PointingHandCursor);
 
-void HorizonDial::setKnobRadius(double radius)
-{
-    knobRadius_ = radius;
-}
+        connect(this, &QDial::valueChanged,
+                this, &HorizonDial::updateValue);
 
-double HorizonDial::getKnobRadius() const
-{
-    return knobRadius_;
-}
+        setMinimumSize(100,100);
 
-void HorizonDial::setKnobMargin(double margin)
-{
-    knobMargin_ = margin;
-}
+        setMaximumAngle(-360);
 
-double HorizonDial::getKnobMargin() const
-{
-    return knobMargin_;
-}
+        setStartAngle(270);
 
-QPixmap HorizonDial::getTexture() const {
-    return texture_;
-}
+        updateValue();
 
-void HorizonDial::setTexture(QPixmap texture) {
-    texture_ = texture;
-}
-
-
-float map(float n, float start1, float stop1, float start2, float stop2) {
-    return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
 }
 
 void HorizonDial::paintEvent(QPaintEvent*)
 {
-    static const double degree270 = 1.5 * M_PI;
-
-    static const double degree225 = 1.25 * M_PI;
-
     QPainter painter(this);
 
-    // So that we can use the background color
-    painter.setBackgroundMode(Qt::TransparentMode);
 
-    // Smooth out the circle
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+        // So that we can use the background color
+        // Otherwise the background is transparent
+        painter.setBackgroundMode(Qt::OpaqueMode);
 
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+        // Smooth out the circle
+        painter.setRenderHint(QPainter::Antialiasing);
 
-    // Use background color
-    QColor pointColor(painter.pen().color());
-    painter.setBrush(QBrush(pointColor));
+        // Use background color
+        painter.setBrush(painter.background());
 
+        // Get current pen before resetting so we have
+        // access to the color() method which returns the
+        // color from the stylesheet
+        QPen textPen = painter.pen();
 
-    // Store color from stylesheet, pen will be overriden
+        // No border
+        painter.setPen(QPen(Qt::NoPen));
 
+        // Draw background circle
+        painter.drawEllipse(QDial::rect());
 
-    // No border
-    painter.setPen(QPen(Qt::NoPen));
+        painter.setPen(textPen);
 
+        painter.drawText(*suffixRect_, Qt::AlignHCenter | Qt::AlignBottom, suffix_);
+
+        painter.drawText(*valueRect_, Qt::AlignCenter, valueString_);
+
+        painter.setPen(*arcPen_);
+
+        painter.drawArc(*arcRect_, startAngle_, angleSpan_);
+}
+
+void HorizonDial::updateSize() {
+    double width = QDial::width() - (2 * arcWidth_);
+
+    double height = width / 2;
+
+    *suffixRect_ = QRectF(arcWidth_, arcWidth_, width, height);
+
+    *valueRect_ = QRectF(arcWidth_, height, width, height);
+
+    *arcRect_ = QRectF(arcWidth_ / 2,
+                       arcWidth_ / 2,
+                       QDial::width() - arcWidth_,
+                       QDial::height() - arcWidth_);
+}
+
+void HorizonDial::resizeEvent(QResizeEvent* event)
+{
+    //QDial::setMinimumSize(event->size());
+    updateSize();
+}
+
+void HorizonDial::updateValue()
+{
+    double value = QDial::value();
 
     // Get ratio between current value and maximum to calculate angle
-    double ratio = double(QDial::value()) / QDial::maximum();
+    double ratio = value / QDial::maximum();
 
-    // The maximum amount of degrees is 270, offset by 225
-    double angle = ratio * degree270 - degree225;
+    angleSpan_ = maximumAngleSpan_ * ratio;
 
-    float angleDeg = map(QDial::value(), QDial::minimum(), QDial::maximum(), 45, 345);
+    valueString_ = QString::number(value);
+}
 
-    // Draw first circle
+void HorizonDial::setArcWidth(double px)
+{
+    arcWidth_ = px;
 
-    painter.translate((QDial::width() / 2.0), (QDial::height() / 2.0));
+    *arcRect_ = QRectF(arcWidth_ / 2,
+                       arcWidth_ / 2,
+                       QDial::width() - arcWidth_,
+                       QDial::height() - arcWidth_);
 
-    qDebug() << angleDeg;
-    painter.rotate(angleDeg);
+    arcPen_->setWidth(arcWidth_);
+}
 
+void HorizonDial::setSuffix(const QString& text)
+{
+    suffix_ = text;
+}
 
-    QPainterPath path(QPointF(-(QDial::height() / 2.0),-(QDial::height() / 2.0)));
-    //your mask - ellipse
-    path.addEllipse(-(QDial::height() / 2.0),-(QDial::height() / 2.0),QDial::height(), QDial::height());
-    painter.setClipPath(path);
+QString HorizonDial::getSuffix() const
+{
+    return suffix_;
+}
 
-    painter.drawImage(-(QDial::height() / 2.0), -(QDial::height() / 2.0), texture_.toImage());
+double HorizonDial::getArcWidth() const
+{
+    return arcWidth_;
+}
 
-    //painter.drawEllipse(-(QDial::height() / 2.0), -(QDial::height() / 2.0), QDial::height(), QDial::height());
+void HorizonDial::setMaximumAngle(double angle)
+{
+    maximumAngleSpan_ = angle * 16;
+}
 
-    // Reset color to pointColor from stylesheet
+double HorizonDial::getMaximumAngle() const
+{
+    return maximumAngleSpan_ / 16;
+}
 
+void HorizonDial::setStartAngle(double angle)
+{
+    startAngle_ = angle * 16;
+}
 
+double HorizonDial::getStartAngle() const
+{
+    return startAngle_ / 16;
+}
 
-    float center = (QDial::width() / 2.0) - (QDial::height() / 2.0);
+void HorizonDial::setArcColor(const QString& color)
+{
+    arcColor_->setNamedColor(color);
 
-    //qDebug() << QString::number(angle);
-    //painter.rotate(angle);
-    //painter.drawImage(QRectF(center, 0, QDial::height(), QDial::height()), texture_.toImage());
+    arcPen_->setColor(*arcColor_);
+}
 
-
-    painter.setBrush(QBrush(Qt::green));
-    // Radius of background circle
-    double r = QDial::height() / 2.0;
-
-    // Add r to have (0,0) in center of dial
-    double y = sin(angle) * (r - knobRadius_ - knobMargin_) + r;
-
-    double x = (cos(angle) * (r - knobRadius_ - knobMargin_) + r) + (QDial::width() / 2.0) - (QDial::height() / 2.0);
-
-    // Draw the ellipse
-    painter.drawEllipse(QPointF(x,y),knobRadius_, knobRadius_);
+QString HorizonDial::getArcColor() const
+{
+    return arcColor_->name();
 }

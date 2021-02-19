@@ -1,6 +1,8 @@
 #include "debug.h"
 #include <QDebug>
 
+
+// TODO: reimplement logging.
 namespace debug {
     void setDebugLevel(int level) {
         overallDebugLevel = level;

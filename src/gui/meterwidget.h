@@ -7,6 +7,12 @@
 #include <qdebug.h>
 #include "common/debug.h"
 
+/*
+ * yes, this class WILL cause a memory leak when destructed. Too bad!
+ */
+
+// TODO: fix the memory leak here
+
 class MeterWidget : public QGraphicsItem
 {
 public:

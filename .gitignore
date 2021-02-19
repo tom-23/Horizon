@@ -91,3 +91,4 @@ cmake-build-debug
 doxygen
 html
 latex
+cmake-build-debug-coverage

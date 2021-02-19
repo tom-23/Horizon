@@ -18,7 +18,6 @@ public:
     ~MixerWidget();
 
     Mixer *mixer;
-    void setCollapsed(bool collapsed);
 
 private slots:
     void on_zoomSlider_valueChanged(int value);

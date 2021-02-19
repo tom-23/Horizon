@@ -15,10 +15,10 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
 
     updateColor();
 
-    QGraphicsScene *scene = new QGraphicsScene(ui->channelMeter);
-    mtr = new MeterWidget(ui->channelMeter, 0, 110, dialogs::getThemeManager()->getColor("borders"));
-    scene->addItem(mtr);
-    ui->channelMeter->setScene(scene);
+    //QGraphicsScene *scene = new QGraphicsScene(ui->channelMeter);
+    //mtr = new MeterWidget(ui->channelMeter, 0, 110, dialogs::getThemeManager()->getColor("borders"));
+    //scene->addItem(mtr);
+    //ui->channelMeter->setScene(scene);
 
     //uiTimer = new QTimer();
     //uiTimer->connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MixerChannelWidget::uiUpdate));
@@ -26,16 +26,11 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
 
     updateTimeout = 0;
 
-    ui->channelColor->setVisible(true);
-    ui->gainSlider->setVisible(true);
-    ui->channelMeter->setVisible(true);
-
     this->setStyleSheet("");
 
-    mtr->setPwrValue(0, 0);
-    mtr->setRMSValue(0, 0);
-
-    mtr->setSize(ui->channelMeter->width(), ui->channelMeter->height());
+    ui->channelMeter->setMinMax(0, 110);
+    ui->channelMeter->setPwrValue(0, 0);
+    ui->channelMeter->setRMSValue(0, 0);
 
 }
 
@@ -116,18 +111,24 @@ void MixerChannelWidget::on_muteButton_toggled(bool checked)
 
 void MixerChannelWidget::uiUpdate() {
 
-    mtr->setSize(ui->channelMeter->width(), ui->channelMeter->height());
 
-    if (track->getAudioRegionListCount() != 0) {
+    if (track->getAudioRegionListCount() != 0) { // Don't bother updating the meters if there are no regions.
+
         std::vector<int> Lvalue = track->getLMeterData();
         std::vector<int> Rvalue = track->getRMeterData();
 
         int LRMSValue = Lvalue[0] + 100;
         int RRMSValue = Rvalue[0] + 100;
 
-        if (lastLRMS == LRMSValue) {
+        int LPWRValue = Lvalue[1] + 100;
+        int RPWRValue = Rvalue[1] + 100;
+
+        if (track->isLSilent()) {
             if (uiLRMS > 0) {
                 uiLRMS = uiLRMS -2;
+            }
+            if (uiLPWR > 0) {
+                uiLPWR = uiLPWR -2;
             }
         } else {
             if (uiLRMS < LRMSValue) {
@@ -137,14 +138,25 @@ void MixerChannelWidget::uiUpdate() {
                     uiLRMS = uiLRMS -2;
                 }
             }
+            if (uiLPWR < LPWRValue) {
+                uiLPWR = LPWRValue;
+            } else {
+                if (uiLPWR > 0) {
+                    uiLPWR = uiLPWR -2;
+                }
+            }
 
         }
 
         lastLRMS = LRMSValue;
+        //lastLPWR = LPWRValue;
 
-        if (lastRRMS == RRMSValue) {
+        if (track->isRSilent()) {
             if (uiRRMS > 0) {
                 uiRRMS = uiRRMS -2;
+            }
+            if (uiRPWR > 0) {
+                uiRPWR = uiRPWR -2;
             }
         } else {
             if (uiRRMS < RRMSValue) {
@@ -154,16 +166,20 @@ void MixerChannelWidget::uiUpdate() {
                     uiRRMS = uiRRMS -2;
                 }
             }
-
+            if (uiRPWR < RPWRValue) {
+                uiRPWR = RPWRValue;
+            } else {
+                if (uiRPWR > 0) {
+                    uiRPWR = uiRPWR -2;
+                }
+            }
         }
 
         lastRRMS = RRMSValue;
 
-        mtr->setRMSValue(uiLRMS, uiRRMS);
-        //mtr->setPwrValue(Lvalue[1] + 100, Rvalue[1] + 100);
-
-
-        mtr->update();
+        ui->channelMeter->setRMSValue(uiLRMS, uiRRMS);
+        ui->channelMeter->setPwrValue(uiLPWR, uiRPWR);
+        ui->channelMeter->update();
     } else {
 
     }

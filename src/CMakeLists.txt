@@ -90,7 +90,7 @@ endif()
 add_dependencies(${HORIZON_EXECUTABLE_NAME} generate_version_header)
 
 # Qt modules
-list(APPEND horizon_qt_modules "WebSockets" "WebEngine" "WebEngineWidgets")
+list(APPEND horizon_qt_modules "WebSockets" "WebEngine" "WebEngineWidgets" "Charts")
 foreach(horizon_qt_module ${horizon_qt_modules})
   message(STATUS "Finding QT Plugin ${horizon_qt_module}")
   find_package(Qt5${horizon_qt_module} REQUIRED)

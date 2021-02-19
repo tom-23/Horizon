@@ -1,5 +1,6 @@
 #include "fileloading.h"
 
+// Qt Shenanigans
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AudioBus>)
 Q_DECLARE_METATYPE(std::shared_ptr<SampledAudioNode>)
@@ -17,7 +18,6 @@ void FileLoadingThread::doWork(std::shared_ptr<AudioBus> audioClipBus, AudioMana
     {
         ContextRenderLock r(audioManager->context.get(), "Horizon");
         audioClipNode->setBus(r, audioClipBus);
-        audioClipNode->processIfNecessary(r, 256);
     }
 
     debug::out(3, "Loaded audio, running callback function...");
@@ -50,6 +50,8 @@ void FileLoading::handleResults(std::shared_ptr<AudioBus> _bus, std::shared_ptr<
     bus = _bus;
     node = _node;
     peaks = _peaks;
+    workerThread.quit();
+    workerThread.wait();
     callback();
 }
 

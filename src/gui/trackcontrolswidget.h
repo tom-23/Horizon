@@ -6,6 +6,8 @@
 #include "gui/colorpickerwidget.h"
 #include "gui/meterwidget.h"
 #include "gui/ui_controls/horizontoolbutton.h"
+#include "gui/ui_controls/horizonmeter.h"
+
 class Track;
 class Timeline;
 

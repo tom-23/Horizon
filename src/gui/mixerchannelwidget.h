@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "app/audiomanager.h"
 #include "gui/meterwidget.h"
+#include "gui/ui_controls/horizonmeter.h"
 
 namespace Ui {
 class MixerChannelWidget;
@@ -52,6 +53,9 @@ private:
 
     int uiLRMS = 0;
     int uiRRMS = 0;
+
+    int uiLPWR = 0;
+    int uiRPWR= 0;
 
     int updateTimeout;
 
