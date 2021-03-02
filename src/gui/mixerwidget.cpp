@@ -2,6 +2,7 @@
 #include "ui_mixerwidget.h"
 
 #include "mixerchannelwidget.h"
+#include "mixermasterwidget.h"
 
 MixerWidget::MixerWidget(QWidget *parent) :
     QWidget(parent),
@@ -12,7 +13,7 @@ MixerWidget::MixerWidget(QWidget *parent) :
     mixer = new Mixer(ui->mixerContainer);
     mixer->setHZoomFactor(ui->zoomSlider->value());
 
-   // MixerChannelWidget *mcw = new MixerChannelWidget(this);
+    MixerMasterWidget *mixerMasterWidget = new MixerMasterWidget(this);
 
     //QHBoxLayout* channelLayout = qobject_cast<QHBoxLayout*>(ui->mixerContainerWidget->layout());
     //channelLayout->insertWidget(channelLayout->count() - 1, mcw);

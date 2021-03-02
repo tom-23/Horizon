@@ -38,13 +38,13 @@ RegionGraphicItem::RegionGraphicItem(QGraphicsScene *_scene, QColor _color, Time
 
 void RegionGraphicItem::setGridLength(float _value) {
     gridLength = _value;
-    if ((gridLocation + gridLength) > timeline->barCount) {
+    if ((gridLocation + gridLength) > timeline->barCount) { // if the length is bigger then the project size,
+        // increase the project's bar count to accommodate.
         timeline->setBarAmount(ceil(gridLocation + gridLength) + 1);
     }
     scene->update();
     timeline->updateViewports();
     prepareGeometryChange();
-
 }
 
 QRectF RegionGraphicItem::boundingRect() const
@@ -54,31 +54,51 @@ QRectF RegionGraphicItem::boundingRect() const
 
 void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
 
+    // FIXME: the last wave form block doesn't get cut off. Need to fix this.
+    // this was a bugger to code...
+
+    // this works by calculating a pixmap width:
+    //
+    // |--------------------------------------------------|
+    // |                         1                        |
+    // |--------------------------------------------------|
+    //
+    // and then dividing it up into blocks. we need to do this as Qt can't have large pixmap objects.
+    // plus, it allows as to have a high resolution waveform.
+    //
+    // |------------|------------|------------|-----------|
+    // |     1      |      2     |      3     |     4     |
+    // |------------|------------|------------|-----------|
+    //
+    // we then stitch them back up on the ui and scale them horizontally relative to the hScaleFactor
+
     bus = _bus;
-    samplesLength = bus->length();
+    samplesLength = bus->length(); // get length of all samples
 
-    waveFormRendered = false;
+    waveFormRendered = false; // don't paint the waveform if we haven't generated it.
 
-    uint64_t imgWidth = gridLength * waveFormMaxReso;
-    int blockAmount = (imgWidth / blockSize) + 1;
+    uint64_t imgWidth = gridLength * waveFormMaxReso; // the length of the pixmap according to the resolution.
+    int blockAmount = (imgWidth / blockSize) + 1; // we then divide
 
-    waveFormPixmapList = {};
+    waveFormPixmapList = {}; // list of all the pixmaps
 
     for (int b = 0; b < blockAmount; b++) {
 
         debug::out(3, "Generating Block " + QString::number(b + 1).toStdString() + " of " + QString::number(blockAmount + 1).toStdString());
 
-        uint64_t firstSample = b * blockSize;
-        uint64_t lastSample = ((b + 1) * blockSize);
+        // this is a smaller type of block. (blocks inside of block).
+        uint64_t firstSample = b * blockSize; // we take the first sample of it
+        uint64_t lastSample = ((b + 1) * blockSize); // then the last
 
-        QPixmap pixmap(QSize(blockSize, this->boundingRect().height()));
+        QPixmap pixmap(QSize(blockSize, this->boundingRect().height())); // create our block pixmap
         pixmap.fill(Qt::transparent);
 
         QPainter wavepainter(&pixmap);
-        wavepainter.setPen(QPen(waveFormColor, 1));
+        wavepainter.setPen(QPen(waveFormColor, 1)); // semi-transparent white
 
         for (uint64_t i = firstSample; i < lastSample; i++) {
 
+            // i'll cover this in my main docment.
             const uint64_t firstSampleIndexForPixel = getFirstSampleIndexForPixel(i, imgWidth, samplesLength);
             const uint64_t lastSampleIndexForPixel = getFirstSampleIndexForPixel(i + 1, imgWidth, samplesLength)-1;
 
@@ -320,6 +340,7 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     int heightDiff = height + 4;
     int newTrackIndex = scenePos().y() / heightDiff;
 
+    // if the track as changed track, change the track.
     if (newTrackIndex != oldTrackIndex) {
 
         Track *newTrack = region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex);
@@ -332,7 +353,7 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     }
 
-    if (gridLocation != oldGridLocation) {
+    if (gridLocation != oldGridLocation) { // if the region has moved location, move location
 
         region->setGridLocation(gridLocation);
         region->getTrack()->getAudioManager()->session->moveRegion(QString::fromStdString(region->getUUID()), gridLocation);
@@ -343,15 +364,18 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
+    // not implemented
     showContextMenu(event->pos().toPoint());
 }
 
 
 void RegionGraphicItem::keyPressEvent(QKeyEvent *event) {
+    // TODO: remove me
     qDebug() << "Key press captured";
 }
 
 void RegionGraphicItem::setGhost(bool _isGhost) {
+    // ghost = file not loaded.
     ghost = _isGhost;
     if (ghost == true) {
         mainBrush = QBrush(Qt::transparent);
@@ -361,6 +385,7 @@ void RegionGraphicItem::setGhost(bool _isGhost) {
 }
 
 void RegionGraphicItem::setHScaleFactor(int value) {
+    // when the user zooms in, we calculate where the positions of things should be
     prepareGeometryChange();
     hScaleFactor = value;
     if (pressed == false ) {
@@ -376,6 +401,8 @@ void RegionGraphicItem::setSelected(bool _selected) {
 
 
 void RegionGraphicItem::showContextMenu(QPoint pos) {
+
+    //TODO: implement
     QGraphicsView *v = scene->views().first();
     QPointF sceneP = mapToScene(pos);
     QPoint viewP = v->mapFromScene(sceneP);
@@ -386,11 +413,9 @@ void RegionGraphicItem::showContextMenu(QPoint pos) {
 
 
 void RegionGraphicItem::showToolTip(QPoint pos) {
+    //TODO: implement
     QGraphicsView *v = scene->views().first();
     QPointF sceneP = mapToScene(pos);
     QPointF shiftedP = QPointF(sceneP.x() + 10, sceneP.y() - 10);
     QPoint viewP = v->mapFromScene(shiftedP);
-
-
-
 }

@@ -3,13 +3,17 @@
 
 Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
 {
+    // here we assign some default variables
     uuid = _uuid;
     timeline = _timeline;
     track = _track;
+    // create a new gain node. We will use this as the output gain.
     lab::AudioContext& ac = *track->getAudioManager()->context.get();
     outputNode = std::make_shared<GainNode>(ac);
     setGain(1.0f);
+    // connect from outputNode -> trackInput node.
     track->getAudioManager()->context->connect(track->getTrackInputNode(), outputNode);
+    // default to track position 1 and selected.
     gridLocation = 1;
     selected = false;
 }
@@ -99,5 +103,6 @@ bool Region::getSelected() {
 
 void Region::setSelected(bool _selected) {
     selected = _selected;
+    // also setting the region graphic item to selected.
     regionGraphicsItem->setSelected(_selected);
 }

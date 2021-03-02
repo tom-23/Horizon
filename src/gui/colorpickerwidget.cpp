@@ -1,6 +1,8 @@
 #include "colorpickerwidget.h"
 #include "ui_colorpickerwidget.h"
 
+// TODO: this feature needs to be implemented.
+
 ColorPickerWidget::ColorPickerWidget(QWidget *parent) :
     QWidget(parent, Qt::Window),
     ui(new Ui::ColorPickerWidget)

@@ -14,6 +14,7 @@ Client::Client(const QUrl &_url, bool _debug, QString _token, QObject *_parent, 
     onMessage(_onMessage)
 {
 
+    // setup websockets stuff...
     debug::out(3, "Opening websockets connection...");
     connect(&webSocket, &QWebSocket::connected, this, &Client::onConnected);
     connect(&webSocket, &QWebSocket::disconnected, this, &Client::closed);
@@ -23,13 +24,14 @@ Client::Client(const QUrl &_url, bool _debug, QString _token, QObject *_parent, 
     });
 
     QNetworkRequest connectionRequest((QUrl(url)));
+    // we set our auth token here to ensure we are authenticated
     connectionRequest.setRawHeader("token", token.toUtf8());
     webSocket.open(connectionRequest);
 }
 
 void Client::onConnected()
 {
-    debug::out(3, "Connected to websocket! Let's get ready to rumble!");
+    debug::out(3, "Connected to websocket! Let's get ready to rumble!"); // lets get ready to RUMBLE!
     connect(&webSocket, &QWebSocket::textMessageReceived, this, &Client::onJSONMessageReceived);
     authenticate();
     sendCommand("ping");
@@ -37,18 +39,21 @@ void Client::onConnected()
 }
 
 void Client::authenticate() {
-
+    // why is this here?
+    // TODO: remove this, it does nothing
 }
 
 void Client::sendCommand(QString cmnd, QList<QString> args) {
     QJsonDocument jsonDocument;
     QJsonObject root;
-
+    // this handles commands, we type set the payload type to cmnd and set the payload.
     root.insert("type", "cmnd");
     root.insert("payload", cmnd);
+    // for each argument, add it to the json...
     for (int i = 0; i < args.size(); i++) {
         root.insert("arg" + QString::number(i), args[i]);
     }
+    // we need to insert our own userUUID to ensure we are not following out actions we've sent (we've already done)
     root.insert("userUUID", userUUID);
 
     jsonDocument.setObject(root);
@@ -85,6 +90,7 @@ void Client::sendCommandObject(QString cmnd, QJsonObject object) {
 
 void Client::onJSONMessageReceived(QString message)
 {
+    // here we handle messages recieved. We parse the json then ensure its coming from someone else.
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8());
     QJsonObject root = jsonDocument.object();
     qDebug() << "GOT JSON MESSAGE";

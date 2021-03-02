@@ -15,13 +15,14 @@ public:
     Horizon(int &argc, char **argv) : QApplication(argc, argv) {
 
         this->instance();
-        this->setAttribute(Qt::AA_UseHighDpiPixmaps);
+        this->setAttribute(Qt::AA_UseHighDpiPixmaps); // Enable HiDPi Image rendering
 
-        debug::setDebugLevel(3);
+        debug::setDebugLevel(3); // Setting the debug level. On production builds, this probably be set to 1
         debug::out(3, "Horizon Digital Audio Workstation");
 
         debug::out(3, "Loading fonts...");
 
+        // Add the custom fonts
         QFontDatabase::addApplicationFont(":/fonts/fonts/Rublik/Rubik-Regular.ttf");
         QFontDatabase::addApplicationFont(":/fonts/fonts/Rublik/Rubik-Medium.ttf");
         QFontDatabase::addApplicationFont(":/fonts/fonts/Rublik/Rubik-MediumItalic.ttf");
@@ -30,6 +31,7 @@ public:
 
         debug::out(3, "Showing Splash...");
 
+        // Show the splash screen
         SplashScreen *splashScreen = new SplashScreen();
         splashScreen->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         splashScreen->show();
@@ -38,6 +40,7 @@ public:
 
         splashScreen->setText("Loading Preferences...");
 
+        // Grab the preferences location. On windows, use the install directory and on macOS, we use the app bundle.
         QString prefsLoc;
 
         #ifndef _WIN32
@@ -52,17 +55,17 @@ public:
         debug::out(3, "Loading MainWindow...");
         splashScreen->setText("Loading main window...");
 
+        // init the main window
         mainWindow = new MainWindow(nullptr, splashScreen, prefs);
         mainWindow->show();
-
-
-
 
         this->instance()->exec();
     }
 
     MainWindow *mainWindow;
 
+
+    // this event handles the user double clicking a project file to open it. This is only working on macOS.
     bool event(QEvent *event) override
     {
         if (event->type() == QEvent::FileOpen) {

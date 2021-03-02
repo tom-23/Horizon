@@ -4,6 +4,7 @@ Mixer::Mixer(QScrollArea *_mixerWidget)
 {
     mixerChannelList = {};
     mixerWidget = _mixerWidget;
+    mixerMasterWidget = new MixerMasterWidget(mixerWidget, )
 }
 
 void Mixer::addChannel(Track *_track) {
@@ -28,4 +29,8 @@ void Mixer::setHZoomFactor(int value) {
     for (int i = 0; i < mixerChannelList.size(); i++) {
         mixerChannelList.at(i)->setHZoomFactor(value);
     }
+}
+
+MixerMasterWidget* Mixer::getMasterTrack() {
+
 }

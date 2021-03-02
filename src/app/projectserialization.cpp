@@ -10,7 +10,7 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
 
     QJsonDocument jsonDocument;
     QJsonObject root;
-
+    // here is where we take note of *most* of the currrent values...
     debug::out(3, "Starting deserialisation...");
     root.insert("Application", "Horizon");
     root.insert("tempo", audioMan.getBPM());
@@ -47,13 +47,20 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
             audioRegionObject.insert("type", "audioRegion");
             audioRegionObject.insert("uuid", QString::fromStdString(audioRegion->getUUID()));
             audioRegionObject.insert("gridLocation", QString::number(audioRegion->getGridLocation()));
-            if (copyToTemp == true) {
+            if (copyToTemp == true) { // this is set to true if we are transfering a project file. we just save audio
+                //file to a temp directory.
+                // on mac os the directory structure would look something like this:
+                // /Users/<username>/Music/Horzion/<sessionID>/<audioFileHash>/<audioFileName>.wav
+                // we take the hash of the audio file to avoid conflics. This could be implemeted in a faster way
+                // but on modern day computers, its fast enough.
+                // example of a file location (on macOS):
+                // /Users/tombutcher/Music/Horzion/8f00b3cc-c489-45ee-8092-40d72d49639d/B39356855B818C63921EF3D0D78D06947ADFB435/audioFile.wav
 
                 QByteArray byteArray = fileChecksum(QString::fromStdString(audioRegion->getLoadedFileName()), QCryptographicHash::Sha1);
                 QString checkSUM = QString::fromUtf8(byteArray.toHex());
                 QString tempFilePath = "/" + sessionID + "/" + checkSUM + "/" + QFileInfo(QString::fromStdString(audioRegion->getLoadedFileName())).fileName();
 
-                bool exists = false;
+                bool exists = false; // if we've already coppied that specifc file, don't copy it again.
                 for (int i = 0; i < int(tempFileList.size()); i++) {
                     if (tempFileList.at(i).at(1) == checkSUM) {
                         exists = true;
@@ -64,7 +71,7 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
 
                     QString dirPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon/" + sessionID + "/" + checkSUM;
                     QDir dir(dirPath);
-                    dir.mkpath(dirPath);
+                    dir.mkpath(dirPath); // make the path I was just taking about
 
 
                     if (QFile::copy(QString::fromStdString(audioRegion->getLoadedFileName()), tempDir + tempFilePath)) {
@@ -78,28 +85,31 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
                     list.append(checkSUM);
                     tempFileList.push_back(list);
                 }
-                audioRegionObject.insert("filePath", tempFilePath);
+                audioRegionObject.insert("filePath", tempFilePath); // add the new path to the JSON object.
                 audioRegionObject.insert("tempLocation", true);
             } else {
                 audioRegionObject.insert("filePath", QString::fromStdString(audioRegion->getLoadedFileName()));
                 audioRegionObject.insert("tempLocation", false);
             }
 
-            audioRegionArray.append(audioRegionObject);
+            audioRegionArray.append(audioRegionObject); // append the audio region to the track audio region array.
         }
 
-        trackObject.insert("audioRegions", audioRegionArray);
+        trackObject.insert("audioRegions", audioRegionArray); // append the array to the track obj.
         trackArray.append(trackObject);
     }
 
-    root.insert("tracks", trackArray);
-    jsonDocument.setObject(root);
+    root.insert("tracks", trackArray); // append the track to the tracklist array.
+    jsonDocument.setObject(root);  // set the root object
 
-    return jsonDocument.toJson().toStdString();
+    return jsonDocument.toJson().toStdString(); // make the json!
 
 }
 
 void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan) {
+
+    // for the most part, most of this is the exact same as the serialization code from above
+    // but with a few changes...
     QJsonDocument jsonDocument = QJsonDocument::fromJson(QString::fromStdString(json).toUtf8());
     QJsonObject root = jsonDocument.object();
 
@@ -131,7 +141,7 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
                     }
                     AudioRegion *audioRegion = track->addAudioRegion(regionUuid.toStdString());
                     audioRegion->setGridLocation(std::stod(audioRegionJSON.value("gridLocation").toString().toStdString()));
-                    if (audioRegionJSON.value("tempLocation").toBool()) {
+                    if (audioRegionJSON.value("tempLocation").toBool()) { // if this file is being sent from the web...
                         QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
                         audioRegion->preLoadedFile = (tempDir + audioRegionJSON.value("filePath").toString()).toStdString();
                     } else {

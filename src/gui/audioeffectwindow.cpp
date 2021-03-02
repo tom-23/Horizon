@@ -1,6 +1,8 @@
 #include "audioeffectwindow.h"
 #include "ui_audioeffectwindow.h"
 
+// TODO: this feature needs to be implemted but life's too short and this project need to be handed in ASAP.
+
 AudioEffectWindow::AudioEffectWindow(QWidget *parent, AudioEffect *_audioEffect) :
     QDialog(parent),
     ui(new Ui::AudioEffectWindow)

@@ -5,41 +5,54 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
-
     ui->setupUi(this);
     QString themeLoc;
 
+    // unimplemented feature
     ui->footer->hide();
 
+    // set the default project to an untitled project
     loadedProjectPath = "Untitled";
     prefs = _prefs;
 
+    // here we get the directory which holds all the theme files. We do the the same way we do with the preferences.
+    // See Horizon.cpp
     #ifndef _WIN32
         themeLoc = QString::fromUtf8(util::getResourceBundle().c_str()) + "/themes/" + prefs->themeName + ".json";
     #else
         themeLoc = QString::fromUtf8(util::getInstallDir().c_str()) + "/themes/" + prefs->themeName + ".json";
     #endif
 
+    // initialise a new theme manager.
     themeMan = new ThemeManager(this, themeLoc);
     dialogs::setParent(this);
     dialogs::setThemeManager(themeMan);
 
     updateIconThemes();
 
+    // todo: implement this
     colorPicker = new ColorPickerWidget(this);
 
     splashScreen->setText("Loading audio engine...");
     debug::out(3, "Loading audio manager...");
 
+    // initalize some object here.
     infoWidget = new InfoWidget(this);
 
     arrangeWidget = new ArrangeWidget(this);
+    // create a new audio manager class and store it in a unique smart pointer. smart pointers are great compared to
+    // raw points as they handle garbage collection.
     audioMan = std::make_unique<AudioManager>(this, *arrangeWidget->tl);
+
+    // realtime collab session
     session = audioMan->session;
+
+    // give the arrange widget a pointer ref to the audio man.
     arrangeWidget->setAudioManager(*audioMan);
 
     mixerWidget = new MixerWidget(this);
+
+    // give the arrange widget a pointer ref to the mixer object.
     arrangeWidget->setMixer(mixerWidget->mixer);
 
     libraryWidget = new LibraryWidget(this, prefs, arrangeWidget);
@@ -48,8 +61,11 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
 
     splashScreen->setText("Initialising UAC...");
     debug::out(3, "Initialising UAC...");
+
+    // create a new UAC.
     uac = new UAC();
 
+    // here we are setting some defaults. Like bpm, bar division and lookahead time.
     debug::out(3, "Setting BPM");
     audioMan->setBPM(130.0);
     audioMan->setDivision(4);
@@ -57,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
 
     debug::out(3, "Loaded audio manager with default settings.");
 
+    // add stuff to the ui.
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setMargin(5);
     mainLayout->setSpacing(5);
@@ -85,87 +102,90 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
         ui->actionLibrary->setChecked(false);
     }
 
-
-    //EffectWidget* ew;
-   // ew = new EffectWidget(iw);
-    //iw->addEffect(ew);
-
-    //uiTimer = new QTimer(this);
-    //connect(uiTimer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::uiUpdate));
-
+    // here we start the update thread which manage the update of moving ui components (meters, playhead)...
     updateThread = new GuiUpdateThread(this, std::bind(&MainWindow::uiUpdate, this));
 
 
     splashScreen->setText("Creating new project...");
     serialization = new ProjectSerialization();
 
+    //make a new project.
     newProject();
 
+    // kill splash screen
     splashScreen->close();
 
+    // remove the focus box on macOS (ODC ui stuffs)
     ui->tempo_lcd->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
-    //this->show();
+    // show the ui full screen. (no brainer)
     this->showMaximized();
-
-    //uiTimer->start(20);
+    // start the update thread.
     updateThread->run();
 
 #ifndef _WIN32
+    // on macOS, enable touch bar support (WIP)
     util::macInitTouchbar(this);
 #endif
-
-
     debug::out(3, "MainWindow Init Done!");
-
-
 }
 
 void MainWindow::uiUpdate() {
+    // TODO: rewrite ui updating code. (event driven)
+    // this function handles ui updating. Whilst in hindsight, this is probably horrible and could be accomplished
+    // using Qt's slots and signals, it gets the job done for the most part.
+
     float currentGridTime = audioMan->getCurrentGridTime();
+
+    // if we've reached the end of the project, stop playback and rewind.
     if (currentGridTime >= arrangeWidget->tl->barCount + 1) {
         audioMan->stop();
         arrangeWidget->tl->setPlayheadLocation(0.0);
     }
-    arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
-   // arrangeWidget->tl->updateViewports();
 
+    // update the playhead's location to the current time.
+    arrangeWidget->tl->setPlayheadLocation(audioMan->getCurrentGridTime());
+
+    // TODO: refactor this. forogtten what it does. maybe i'll work it out one day. (1/2/2021)
     float glr = float(floor(currentGridTime * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
     ui->barNumberLabel->setText(QString::number(floor(currentGridTime)));
     ui->beatNumberLabel->setText(QString::number(((glr - floor(currentGridTime)) * arrangeWidget->tl->barLength) + 1));
 
+    // TODO: maybe it's not a good idea to have a "for" statement every ui update.
+    // call the ui update on every track. this is horrible.
     for (int i = 0; i < int(audioMan->getTrackListCount()); i++) {
         audioMan->getTrackByIndex(i)->uiUpdate();
     }
-
 }
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
-
 }
 
 void MainWindow::on_playButton_clicked()
 {
+    // if the play button is clicked, toggle the playback
+    // TODO: create a pause button for better visual feedback.
     togglePlayback();
-
 }
 
 void MainWindow::on_actionAbout_triggered()
 {
+    // show the about dialog when the user clicks them menu button.
     new dialogs::AboutDialog();
 }
 
 void MainWindow::on_stopButton_clicked()
 {
+    // when the stop button is clicked, stop playback and set the playhead location to 0.0;
     audioMan->stop();
-    //uiTimer->stop();
     arrangeWidget->tl->setPlayheadLocation(0.0);
 }
 
 void MainWindow::updateIconThemes() {
+    // when this function is called, we set the different ui buttons to "colorized" versions of them selves relitive to
+    // the current theme.
     ui->playButton->setStyleSheet("image: url('" + themeMan->colorizeSVG(":/svg/svg/play.svg") + "');");
     ui->stopButton->setStyleSheet("image: url('" + themeMan->colorizeSVG(":/svg/svg/stop.svg") + "');");
     ui->recordButton->setStyleSheet("image: url('" + themeMan->colorizeSVG(":/svg/svg/record.svg") + "');");
@@ -173,28 +193,30 @@ void MainWindow::updateIconThemes() {
 
 void MainWindow::on_actionPreferences_triggered()
 {
+    // show prefs window
     PreferencesWindow *pw = new PreferencesWindow(this, prefs);
     pw->show();
 }
 
 void MainWindow::togglePlayback() {
+    // you can work this out by yourself.
     if (audioMan->isPlaying == false) {
-        //uiTimer->start(30);
         audioMan->play();
     } else {
-        //uiTimer->stop();
         audioMan->pause();
     }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* ke) {
     switch (ke->key()) {
-
         case Qt::Key::Key_Space:
+            // TODO: make this a menu bar option
+            // when you hit the space bar, toggle playback.
             togglePlayback();
         break;
 
         case Qt::Key::Key_Alt:
+            // disable region snapping when the alt key is down
             arrangeWidget->tl->regionSnapping = false;
         break;
 
@@ -205,9 +227,9 @@ void MainWindow::keyPressEvent(QKeyEvent* ke) {
 void MainWindow::keyReleaseEvent(QKeyEvent* ke) {
     switch (ke->key()) {
         case Qt::Key::Key_Alt:
+            //re enable reigon snapping on key up.
             arrangeWidget->tl->regionSnapping = true;
         break;
-
     }
     QMainWindow::keyReleaseEvent(ke); // base class implementation
 }
@@ -219,18 +241,25 @@ void MainWindow::on_importAudioFileMenu_triggered()
 
 void MainWindow::on_newAudioTrackMenu_triggered()
 {
+    // generate a random color
+    // TODO: use a color pallet instead of generating a random color.
+    // this is bad as you may not be able to see the waveform if its selected.
     QColor color = QColor::fromRgb(QRandomGenerator::global()->generate());
+    // make a new uuid
     QString uuid = QUuid::createUuid().toString();
     newTrack(color, uuid);
+    // tell the realtime session to make a new track.
     session->newTrack(color.name(QColor::HexRgb), uuid);
 }
 
 void MainWindow::newTrack(QColor color, QString uuid) {
+    // create a new track (passing a null pointer tells the function to create a new track)
     arrangeWidget->addAudioTrack(nullptr, uuid.toStdString())->updateColor(color);
 }
 
 void MainWindow::on_actionNew_Project_triggered()
 {
+    // if the user wants to create a new project, make sure they've saved the currently open one.
     if (ensureSaved() == true) {
         newProject();
     }
@@ -238,11 +267,13 @@ void MainWindow::on_actionNew_Project_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
+    // if the user wants to open a project, make sure they've saved the currently open one.
     if (ensureSaved() == true) {
+        // if they have, show a project open dialog
         QString dialogFileName = QFileDialog::getOpenFileName(this,
                 tr("Open Project"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                 tr("Horizon Project File (*.hzp)"));
-        if (dialogFileName != "") {
+        if (dialogFileName != "") { // ensure a file was selected.
             openProject(dialogFileName);
         }
     }
@@ -250,59 +281,65 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_actionSave_triggered()
 {
+    // save project with loaded path
     saveProject(QString::fromStdString(loadedProjectPath.toStdString()));
 }
 
 void MainWindow::on_actionSave_As_triggered()
 {
+    // save a project passing no path. (save as)
     saveProject();
 }
 
 void MainWindow::openProject(QString fileName) {
+    // load the file
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
+        // clear the audio manager lists.
         audioMan->clearAll();
+        // clear the timeline ui
         arrangeWidget->tl->clearAll();
+        // clear the mixer ui
         mixerWidget->mixer->clearAll();
+        // load the project's json from the file's buffer.
         loadProjectJSON(inputFile.readAll());
+        // set the window's title to the loaded file's file name.
         QFileInfo fileInfo(fileName);
         this->setWindowTitle(fileInfo.fileName());
+        // set the loadedProjectPath global var.
         loadedProjectPath = fileName;
 
     } else {
-
         debug::out(3, "Cannot open project file. It is probably open in another program.");
     }
 }
 
 void MainWindow::saveProject(QString fileName) {
     if (fileName != "Untitled") {
-
-        QFile outputFile(fileName);
-
-        if (outputFile.open(QIODevice::ReadWrite) )
+        Bog toilet(fileName);
+        if (toilet.open(QIODevice::ReadWrite) ) // open the file
         {
-
             ProjectSerialization *serialization = new ProjectSerialization;
 
-            outputFile.resize(0);
-            outputFile.write(QString::fromStdString(serialization->serialize(*audioMan, false)).toUtf8());
+            toilet.resize(0); // remove all file contents by resizing it. (probably not best practice but oh well)
+            toilet.write(QString::fromStdString(serialization->serialize(*audioMan, false)).toUtf8()); // write the project's json.
 
-            outputFile.flush();
-            outputFile.close();
+            toilet.flush(); // flush the loo
+            toilet.close(); // close the lid
 
             QFileInfo fileInfo(fileName);
             this->setWindowTitle(fileInfo.fileName());
             loadedProjectPath = fileName;
 
-
         } else {
-            dialogs::MessageDialog::show("Cannot save file", "An error occoured whilst trying to load this file. This could be due to permission issues.",
+            // if we can't write to a file, show an error.
+            dialogs::MessageDialog::show("Cannot save file", "An error occurred whilst trying to load this file. This could be due to permission issues.",
                                          dialogs::MessageDialog::icons::no,
                                          dialogs::MessageDialog::buttons::okOnly);
         }
 
     } else {
+        // if the file is untitled, force a save.
         QString dialogFileName = QFileDialog::getSaveFileName(this,
                 tr("Save Project"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
                 tr("Horizon Project File (*.hzp)"));
@@ -316,17 +353,19 @@ void MainWindow::saveProject(QString fileName) {
 }
 
 void MainWindow::newProject() {
+        // when set the project path to Unitled to indicate this is a new project
         loadedProjectPath = "Untitled";
         this->setWindowTitle(loadedProjectPath);
+        // clear relevant classes
         audioMan->clearAll();
         arrangeWidget->tl->clearAll();
         mixerWidget->mixer->clearAll();
+        // set blank json
         untitledJSON = QString::fromStdString(serialization->serialize(*audioMan, false));
 }
 
 void MainWindow::loadProjectJSON(QString JSON) {
-
-    //arrangeWidget->setHZoomFactor(50);
+    // set the tempo box to the current bpm
     ui->tempo_lcd->setValue(audioMan->getBPM());
     int regionsToBeLoaded = 0;
     debug::out(3, "Loading project JSON...");
@@ -352,6 +391,9 @@ void MainWindow::loadProjectJSON(QString JSON) {
 }
 
 bool MainWindow::ensureSaved() {
+    // here is where we show a message box if the project is different to last time.
+    // return true = project *saved*
+    // return false = cancel
     if (isProjectEdited() == true) {
         switch (dialogs::MessageDialog::show("Save Changes?", "Do you want to save changes before you procceed?",
                                              dialogs::MessageDialog::icons::caution,
@@ -375,6 +417,8 @@ bool MainWindow::ensureSaved() {
 }
 
 bool MainWindow::isProjectEdited() {
+    // here is where the serialize the project and then comapaire it to the saved json. if they are the same
+    // we have no changes if not, we have changed.
     bool comparison = false;
     if (loadedProjectPath != "Untitled") {
         comparison = serialization->compaire(loadFile(loadedProjectPath).toStdString(), serialization->serialize(*audioMan, false));
@@ -385,6 +429,7 @@ bool MainWindow::isProjectEdited() {
 }
 
 QString MainWindow::loadFile(QString path) {
+    // return a file's string. if we can't do that, show an error.
     QFile loadedProjectFile(path);
     if(loadedProjectFile.open(QIODevice::ReadOnly)) {
         return loadedProjectFile.readAll();
@@ -397,6 +442,7 @@ QString MainWindow::loadFile(QString path) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *e) {
+    // if the user closes the program, ensure the file is saved and also, destruct things like the UAC.
     if (ensureSaved() == true) {
         session->closeSession();
         uac->~UAC();
@@ -429,12 +475,14 @@ void MainWindow::on_actionPropery_Editor_toggled(bool arg1)
 
 void MainWindow::on_actionConnect_to_Session_2_triggered()
 {
+    // First, we make sure the current project is saved as we will close it later.
     if (ensureSaved() == true) {
+        // then, we check if a session is already active. If so, show a message box.
         if (session->getActive() == true) {
             if (dialogs::MessageDialog::show("Session already active", "A session is currently active. Do you want to disconnect and continue?",
                                              dialogs::MessageDialog::icons::caution,
                                              dialogs::MessageDialog::buttons::yesNo) == 2) {
-
+                // fixme: this message box will continue to disconnect a user even if they click the no button.
             }
         }
         newProject();
@@ -451,6 +499,8 @@ void MainWindow::on_actionManage_Live_Session_triggered()
 
 void MainWindow::on_liveButton_clicked()
 {
+    // this is work in progress.
+    // TODO: make the live button more useful.
     QMenu menu(this);
 
     if (session->getActive() == true) {
@@ -482,6 +532,7 @@ void MainWindow::on_actionRender_Audio_triggered()
 
 void MainWindow::on_pushButton_3_clicked()
 {
+    // TODO: this looks like debug code. it should probably go (1/3/2021)
     //audioMan->renderAudio(this, 48000, 2);
     serialization->sessionID = "testSession";
     serialization->copyToTemp = true;
@@ -492,8 +543,6 @@ void MainWindow::on_tempo_lcd_valueChanged(double arg1)
 {
     audioMan->setBPM(arg1);
 }
-
-
 
 void MainWindow::on_actionColor_Picker_toggled(bool arg1)
 {

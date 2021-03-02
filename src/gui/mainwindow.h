@@ -23,7 +23,7 @@
 #include "common/thememanager.h"
 #include "common/dialogs.h"
 #include "app/projectserialization.h"
-
+#include "app/bog.h"
 
 #include "splashscreen.h"
 #include "common/preferences.h"

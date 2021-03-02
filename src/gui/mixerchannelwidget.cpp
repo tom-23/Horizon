@@ -7,6 +7,7 @@ MixerChannelWidget::MixerChannelWidget(QWidget *parent, Track *_track) :
     ui(new Ui::MixerChannelWidget)
 {
     ui->setupUi(this);
+    ui->effectsList->setVisible(false); // Feature not ready yet
     track = _track;
     ui->number->setText(QString::number(track->getIndex() + 1));
     ui->muteButton->setChecked(track->getMute());

@@ -61,8 +61,12 @@ private slots:
 
 private:
     Ui::ArrangeWidget *ui;
+
+    // keep a reference of the audio manager for use later
     AudioManager *audioMan;
     Mixer *mixer;
+
+    // not sure if this serves a purpose.
     QPoint lastMousePos;
 
 protected:

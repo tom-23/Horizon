@@ -1,5 +1,8 @@
 #include "indexingthread.h"
 
+// here is the class which handles indexing of a thread.
+
+
 IndexingThread::IndexingThread(QObject *parent, QDir dir, bool _topLevelSpecial) : QThread(parent)
 {
     parentDir = dir;
@@ -8,12 +11,15 @@ IndexingThread::IndexingThread(QObject *parent, QDir dir, bool _topLevelSpecial)
 
 void IndexingThread::run() {
     isTopLevelSet = false;
+    // we scan the top level directory here.
     QTreeWidgetItem *widgetItem = scanDir(parentDir);
     emit resultReady(widgetItem);
 }
 
 QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
+    // create a new tree widget item
     QTreeWidgetItem *folder = new QTreeWidgetItem();
+    // ui icon stuffs
     if (topLevelSpecial && topLevelSpecial) {
         isTopLevelSet = true;
         folder->setText(0, topLevelText);
@@ -23,9 +29,13 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
         folder->setText(0, dir.dirName());
     }
 
+    // ensure we are only looking for folders and not "." or ".." as they'll appear as folders too
     dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    // get a list of the inner directories
     QStringList dirList = dir.entryList();
     foreach(QString dirName, dirList) {
+        // for every directory, in the the current directory, call scanDir() again to get a list of that directory
+        // recursively...
         QString newPath = QString("%1/%2").arg(dir.absolutePath()).arg(dirName);
         folder->addChild(scanDir(QDir(newPath)));
     }
@@ -38,7 +48,7 @@ QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
     // TODO: make sure the recursive file indexing thread so it doesn't have a chance of crashing out.
 
     foreach(QString filename, dir.entryList()) {
-
+        // looking through every file in the directory...
         QFileInfo fileInfo(dir.path() + "/" + filename);
         QTreeWidgetItem *audioFile = new QTreeWidgetItem();
         audioFile->setText(0, fileInfo.fileName());

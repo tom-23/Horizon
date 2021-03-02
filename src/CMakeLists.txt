@@ -25,7 +25,7 @@ set(horizon_RESOURCES ../misc/assets/resources.qrc ../misc/assets/core.qrc
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} .)
 include_directories(${Qt5Widgets_INCLUDES})
-include_directories("../lib/LabSound/include")
+include_directories("../lib/LabSound/includes")
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
 qt5_wrap_ui(horizon_FORMS_HEADERS ${horizon_FORMS})

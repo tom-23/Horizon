@@ -8,6 +8,7 @@ AboutDialogWidget::AboutDialogWidget(QWidget *parent, QString svgPath) :
     QDialog(parent),
     ui(new Ui::AboutDialogWidget)
 {
+    // set the logo
     ui->setupUi(this);
     ui->imageContainer->setStyleSheet("image: url('" + svgPath + "');");
 
@@ -22,7 +23,8 @@ AboutDialogWidget::~AboutDialogWidget()
 
 void AboutDialogWidget::on_pushButton_clicked()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/tom-23/Horizon"));
+    // this button would open a link to the website
+    QDesktopServices::openUrl(QUrl(""));
 }
 
 void AboutDialogWidget::on_pushButton_2_clicked()

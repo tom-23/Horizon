@@ -76,7 +76,7 @@ void AudioManager::play() {
         updateMetSchedule();
         scheduleTracks();
         isPlaying = true;
-        // TODO: idk why this is here. Idk why we need to call this. Future Tom: please figure this out when you have a min.
+        // if we are rendering audio offline, call the event timer to see a progress of file export.
         if (!rendering) {
             eventTimer->start();
         }
@@ -126,7 +126,7 @@ void AudioManager::updateMetSchedule() {
 
 }
 
-// lol I can't think
+// this function is currently useless.
 void AudioManager::updateSchedule() {
 
     //double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
@@ -155,6 +155,7 @@ void AudioManager::updateSchedule() {
 
 }
 
+// this handles the current musical time (bar num, div etc)
 void AudioManager::eventLoop() {
     float relativeTime = (context->currentTime() - startTime) + stopTime;
     currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
@@ -162,7 +163,6 @@ void AudioManager::eventLoop() {
     if (rendering == true) {
         dialogs::ProgressDialog::updateValue(int(context->currentTime()));
     }
-    //updateSchedule();
 }
 
 void AudioManager::setDivision(int _division) {

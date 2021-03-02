@@ -1,6 +1,8 @@
 #include "debugprofilerwindow.h"
 #include "ui_debugprofilerwindow.h"
 
+// TODO: this feature needs to be implemented.
+
 DebugProfilerWindow::DebugProfilerWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DebugProfilerWindow)

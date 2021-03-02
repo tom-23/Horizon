@@ -6,6 +6,7 @@
 
 class MixerChannelWidget;
 #include "mixerchannelwidget.h"
+#include "mixermasterwidget.h"
 
 class AudioManager;
 class Track;
@@ -23,6 +24,7 @@ private:
     int hZoomFactor;
     QList<MixerChannelWidget *> mixerChannelList;
     QScrollArea *mixerWidget;
+    MixerMasterWidget *mixerMasterWidget;
 };
 
 #endif // MIXER_H
