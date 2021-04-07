@@ -42,11 +42,8 @@ if(NOT APPLE)
 else()
   list(APPEND horizon_COMPILE ${horizon_DARWIN_SOURCES})
   # On Macs we must ensure the required frameworks are linked
-  find_library(AUDIOUNITS_LIBRARY "AudioUnit")
-  find_library(AUDIOTOOLBOX_LIBRARY "AudioToolbox")
   find_library(ACCELERATE_LIBRARY "Accelerate")
   find_library(COCOA_LIBRARY "Cocoa")
-  find_library(COREAUDIO_LIBRARY "CoreAudio")
   find_library(CORESERVICES_LIBRARY "CoreServices")
 
   mark_as_advanced(AUDIOUNITS_LIBRARY AUDIOTOOLBOX_LIBRARY ACCELERATE_LIBRARY
@@ -54,11 +51,8 @@ else()
   list(
     APPEND
     horizon_LIBRARIES
-    "${AUDIOUNITS_LIBRARY}"
-    "${AUDIOTOOLBOX_LIBRARY}"
     "${ACCELERATE_LIBRARY}"
     "${COCOA_LIBRARY}"
-    "${COREAUDIO_LIBRARY}"
     "${CORESERVICES_LIBRARY}")
 
   set(HORIZON_VERSION_REGEX "^v([0-9]+)\.([0-9]+)\.(.*)$")
@@ -96,15 +90,6 @@ foreach(horizon_qt_module ${horizon_qt_modules})
   find_package(Qt5${horizon_qt_module} REQUIRED)
   list(APPEND horizon_LIBRARIES Qt5::${horizon_qt_module})
 endforeach()
-
-# LabSound
-list(APPEND horizon_LIBRARIES LabSound)
-
-# libnyquist
-list(APPEND horizon_LIBRARIES libnyquist)
-
-# libwavpack
-list(APPEND horizon_LIBRARIES libwavpack)
 
 set_target_properties(${HORIZON_EXECUTABLE_NAME} PROPERTIES COMPILE_DEFINITIONS "${horizon_DEFINITIONS}")
 

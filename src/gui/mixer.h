@@ -24,7 +24,7 @@ private:
     int hZoomFactor;
     QList<MixerChannelWidget *> mixerChannelList;
     QScrollArea *mixerWidget;
-    MixerMasterWidget *mixerMasterWidget;
+    //MixerMasterWidget *mixerMasterWidget;
 };
 
 #endif // MIXER_H

@@ -27,7 +27,7 @@ public:
 
     void setGhost(bool _isGhost);
 
-    void setWaveform(std::shared_ptr<AudioBus> bus);
+    void setWaveform();
     void setHScaleFactor(int value);
 
     void setSelected(bool _selected);
@@ -67,7 +67,6 @@ protected:
     Region *region;
 
     bool ghost;
-    std::shared_ptr<AudioBus> bus;
 
     size_t samplesLength;
     // QGraphicsItem interface

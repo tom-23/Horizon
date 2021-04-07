@@ -5,13 +5,13 @@ AudioEffect::AudioEffect(QWidget *parent)
     effectDialog = new AudioEffectWindow(parent);
 }
 
-std::shared_ptr<GainNode> AudioEffect::getOutputNode() {
-    return outputNode;
-}
+//std::shared_ptr<GainNode> AudioEffect::getOutputNode() {
+//    return outputNode;
+//}
 
-std::shared_ptr<GainNode> AudioEffect::getInputNode() {
-    return inputNode;
-}
+//std::shared_ptr<GainNode> AudioEffect::getInputNode() {
+//    return inputNode;
+//}
 
 void AudioEffect::showEffectWindow() {
     effectDialog->exec();

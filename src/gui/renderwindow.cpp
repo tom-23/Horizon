@@ -28,6 +28,6 @@ void RenderWindow::on_startButton_clicked()
             tr("PCM Wave Files (*.wav)"));
     if (dialogFileName != "") {
         this->close();
-        audioMan->renderAudio(this->parent(), dialogFileName.toStdString(), ui->sampleRateBox->currentText().toInt(), 2);
+        //audioMan->renderAudio(this->parent(), dialogFileName.toStdString(), ui->sampleRateBox->currentText().toInt(), 2);
     }
 }

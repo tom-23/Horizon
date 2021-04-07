@@ -3,8 +3,10 @@
 
 //#include <QGraphicsItem>
 
+#include <QString>
 
-#include "LabSound/LabSound.h"
+
+// #include "LabSound/LabSound.h"
 //#include <QString>
 //#include "audioregion.h"
 
@@ -26,12 +28,11 @@ class Timeline;
 class RegionGraphicItem;
 //#include "regiongraphicitem.h"
 
-using namespace lab;
 
 class Region
 {
 public:
-    Region(Timeline *_timeline, Track *_track, std::string uuid);
+    Region(Timeline *_timeline, Track *_track, QString uuid);
     ~Region();
 
     virtual Track* getTrack();
@@ -40,25 +41,19 @@ public:
     virtual void setRegionGraphicItem(RegionGraphicItem *rgi);
     virtual void setTrack(Track *_track);
 
-    virtual void disconnectTrack();
-
     virtual void setGridLocation(double time);
     virtual double getGridLocation();
 
     virtual void setGridLength(double value);
     virtual double getGridLength();
 
-    virtual void schedule();
-
     virtual float getGain();
     virtual void setGain(float _gain);
 
-    virtual std::string getRegionName();
-    virtual void setRegionName(std::string _name);
+    virtual QString getRegionName();
+    virtual void setRegionName(QString _name);
 
-    virtual std::shared_ptr<GainNode> getOutputNode();
-
-    virtual std::string getUUID();
+    virtual QString getUUID();
 
     virtual bool getSelected();
     virtual void setSelected(bool _selected);
@@ -71,16 +66,14 @@ protected:
     Timeline *timeline;
     RegionGraphicItem *regionGraphicsItem;
 
-    std::shared_ptr<GainNode> outputNode;
-
     double gridLocation;
     double length;
 
-    std::string regionName;
+    QString regionName;
 
     float gain;
 
-    std::string uuid;
+    QString uuid;
 
     bool selected;
 

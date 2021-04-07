@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     arrangeWidget = new ArrangeWidget(this);
     // create a new audio manager class and store it in a unique smart pointer. smart pointers are great compared to
     // raw points as they handle garbage collection.
-    audioMan = std::make_unique<AudioManager>(this, *arrangeWidget->tl);
+    audioMan = new AudioManager(this, *arrangeWidget->tl);
 
     // realtime collab session
     session = audioMan->session;
@@ -66,10 +66,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     uac = new UAC();
 
     // here we are setting some defaults. Like bpm, bar division and lookahead time.
-    debug::out(3, "Setting BPM");
-    audioMan->setBPM(130.0);
-    audioMan->setDivision(4);
-    audioMan->setLookAhead(0.05);
+
 
     debug::out(3, "Loaded audio manager with default settings.");
 
@@ -154,8 +151,10 @@ void MainWindow::uiUpdate() {
     // TODO: maybe it's not a good idea to have a "for" statement every ui update.
     // call the ui update on every track. this is horrible.
     for (int i = 0; i < int(audioMan->getTrackListCount()); i++) {
-        audioMan->getTrackByIndex(i)->uiUpdate();
+        audioMan->trackList->at(i)->uiUpdate();
     }
+
+    //QApplication::processEvents();
 }
 
 MainWindow::~MainWindow()
@@ -254,7 +253,7 @@ void MainWindow::on_newAudioTrackMenu_triggered()
 
 void MainWindow::newTrack(QColor color, QString uuid) {
     // create a new track (passing a null pointer tells the function to create a new track)
-    arrangeWidget->addAudioTrack(nullptr, uuid.toStdString())->updateColor(color);
+    arrangeWidget->addAudioTrack(nullptr, uuid)->updateColor(color);
 }
 
 void MainWindow::on_actionNew_Project_triggered()
@@ -270,9 +269,15 @@ void MainWindow::on_actionOpen_triggered()
     // if the user wants to open a project, make sure they've saved the currently open one.
     if (ensureSaved() == true) {
         // if they have, show a project open dialog
-        QString dialogFileName = QFileDialog::getOpenFileName(this,
-                tr("Open Project"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-                tr("Horizon Project File (*.hzp)"));
+        QFileDialog dialog(this, tr("Open Project"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+                           tr("Horizon Project File (*.hzp)"));
+        dialog.setParent(this);
+        dialog.setWindowModality(Qt::WindowModal);
+
+        dialog.exec();
+
+        QString dialogFileName = dialog.selectedFiles()[0];
+
         if (dialogFileName != "") { // ensure a file was selected.
             openProject(dialogFileName);
         }
@@ -371,9 +376,9 @@ void MainWindow::loadProjectJSON(QString JSON) {
     debug::out(3, "Loading project JSON...");
     serialization->deSerialize(JSON.toStdString(), *audioMan);
     for (int i = 0; i < audioMan->getTrackListCount(); i++) {
-        arrangeWidget->addAudioTrack(audioMan->getTrackByIndex(i));
-        for (int ar = 0; ar < audioMan->getTrackByIndex(i)->getAudioRegionListCount(); ar++) {
-            AudioRegion* audioRegion = audioMan->getTrackByIndex(i)->getAudioRegionByIndex(ar);
+        arrangeWidget->addAudioTrack(audioMan->trackList->at(i));
+        for (int ar = 0; ar < audioMan->trackList->at(i)->getAudioRegionListCount(); ar++) {
+            AudioRegion* audioRegion = audioMan->trackList->at(i)->getAudioRegionByIndex(ar);
             arrangeWidget->tl->addRegion(audioRegion);
             regionsToBeLoaded = regionsToBeLoaded + 1;
             audioRegion->loadFile(audioRegion->preLoadedFile, false);
@@ -410,10 +415,9 @@ bool MainWindow::ensureSaved() {
             return true;
         break;
 
-        }
-    } else {
-        return true;
+        } 
     }
+    return true;
 }
 
 bool MainWindow::isProjectEdited() {

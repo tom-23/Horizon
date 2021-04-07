@@ -25,8 +25,6 @@
 #include <cassert>
 #include <functional>
 #include <math.h>
-#include "LabSound/LabSound.h"
-
 //#include "audioregion.h"
 //class Region;
 //class AudioRegion;
@@ -50,12 +48,10 @@ class Timeline;
 
 //#include "LabSound/LabSound.h"
 
-using namespace lab;
-
 class Track
 {
 public:
-    Track(Timeline &_timeLine, AudioManager &_audioMan, std::string uuid);
+    Track(Timeline &_timeLine, AudioManager &_audioMan, QString uuid);
     ~Track();
 
     void setSelected(bool _selected);
@@ -69,7 +65,7 @@ public:
     void setColor(QColor _color);
     void updateColor(QColor _color);
 
-    AudioRegion* addAudioRegion(std::string regionUUID);
+    AudioRegion* addAudioRegion(QString regionUUID);
     void setRegion(Region *_region);
     void removeRegion(Region *_region, Track *newTrack);
 
@@ -87,15 +83,9 @@ public:
     void scheduleAudioRegions();
     void cancelAudioRegions();
 
-    std::shared_ptr<GainNode> getTrackInputNode();
-    std::shared_ptr<GainNode> getTrackOutputNode();
-
-
-
-
     AudioManager* getAudioManager();
 
-    std::string getUUID();
+    QString getUUID();
 
     void setMute(bool _mute);
     void setSolo(bool _solo);
@@ -109,9 +99,6 @@ public:
     void setPan(float _value);
     float getPan();
 
-    std::vector<int> getLMeterData();
-    std::vector<int> getRMeterData();
-
     float peakdB;
 
     void uiUpdate();
@@ -121,11 +108,14 @@ public:
 
 
 
-    AudioEffect* addAudioEffect(effectType type, std::string uuid = "");
+    AudioEffect* addAudioEffect(effectType type, QString uuid = "");
     void showEffectWindow(AudioEffect *effect);
 
     bool isLSilent();
     bool isRSilent();
+
+    void scheduleNextAudioRegion();
+    void scheduleNextBar();
 
 private:
     bool selected;
@@ -137,18 +127,7 @@ private:
 
     std::vector<class AudioEffect *> audioEffectChain;
 
-    std::string uuid;
-
-    std::shared_ptr<GainNode> trackInputNode;
-    std::shared_ptr<GainNode> trackOutputNode;
-
-    std::shared_ptr<AnalyserNode> Lanalyser;
-    std::shared_ptr<AnalyserNode> Ranalyser;
-
-    std::shared_ptr<ChannelSplitterNode> channelSplitter;
-    std::shared_ptr<ChannelMergerNode> channelMerger;
-
-    std::shared_ptr<StereoPannerNode> pannerNode;
+    QString uuid;
 
     AudioManager *audioMan;
 

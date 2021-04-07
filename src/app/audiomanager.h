@@ -9,30 +9,20 @@
 #include <thread>
 #include <math.h>
 
-#include "LabSound/LabSound.h"
-
-class Metronome;
-
-#include "metronome.h"
-
-
-
-
 //#include "timer.h"
 
 #include "track.h"
 #include "region.h"
 #include "audioregion.h"
+#include "audioschedulingthread.h"
 
 #include "gui/timeline.h"
 #include "gui/mixer.h"
 
-#include "common/audioutil.h"
 #include "common/timer.h"
 #include "common/debug.h"
 #include "common/dialogs.h"
 #include "common/util.h"
-#include "filerendering.h"
 #include "common/timerex.h"
 
 #include "network/session.h"
@@ -50,14 +40,15 @@ class Metronome;
 
 #include <QThread>
 #include <QUuid>
+#include <QLocalSocket>
 
 //class AudioTrackManager;
 //class Track;
 
 class Session;
 class AudioRegion;
+class AudioSchedulingThread;
 
-using namespace lab;
 //using namespace std::chrono_literals;
 
 class AudioManager
@@ -65,7 +56,10 @@ class AudioManager
 public:
     AudioManager(QWidget *parent, Timeline &_timeline);
 
-    void initContext();
+    void initSocket();
+    void sendCommand(QString command);
+    void sendCommand(QString command, QJsonValue value);
+    void sendCommand(QString command, QJsonValue value1, QJsonValue value2);
 
     void play();
     void pause();
@@ -73,14 +67,9 @@ public:
 
     bool isPlaying;
 
-    void updateSchedule();
-
     void setDivision(int _division);
     void setBPM(double _beatsPerMinuet);
     double getBPM();
-
-    // TODO: this function at the moment is completely and utterly fucking useless.
-    void setLookAhead(double _value);
 
     float getCurrentGridTime();
     void setCurrentGridTime(float _value);
@@ -90,9 +79,8 @@ public:
     float secondsToGridTime(double _seconds);
     float getCurrentRelativeTime();
 
-    Track* addTrack(std::string trackUUID);
+    Track* addTrack(QString trackUUID);
     void removeTrack(Track *track);
-    Track* getTrackByIndex(int index);
 
     Track* getSelectedTrack(int index);
     std::vector<class Track*>* getSelectedTracks();
@@ -100,20 +88,7 @@ public:
     void setTrackRangeSelected(Track *firstTrack, Track *lastTrack);
 
     int getTrackListCount();
-    void scheduleTracks();
 
-    std::shared_ptr<GainNode> getOutputNode();
-
-    std::shared_ptr<AudioBus> MakeBusFromSampleFile(std::string fileName);
-
-
-    // TODO: this should be private
-    float startTime;
-    float stopTime;
-
-    std::vector<const float *> getPeaks(std::shared_ptr<AudioBus> bus);
-
-    std::shared_ptr<AudioContext> context;
 
     // uh?
     void engageSolo();
@@ -133,52 +108,47 @@ public:
     Track* getTrackByUUID(QString uuid);
     AudioRegion* getAudioRegionByUUID(QString uuid);
 
-    void renderAudio(QObject *parent, std::string fileName, int sampleRate, int channels);
 
     bool rendering;
-
-    void eventLoop();
-
-
-private:
-    QObject *parent;
-
-    std::shared_ptr<GainNode> outputNode;
-
 
     std::vector<class Track *> *trackList;
     std::vector<class Track *> *selectedTrackList;
 
-    std::vector<class Region *> *selectedRegionList;
+private:
+    QWidget *parent;
 
-    Metronome *metronome;
+    QLocalSocket *socket;
+    void writeString();
+
+    std::vector<class Region *> *selectedRegionList;
 
     Timeline *timeline;
 
-    double bpm;
+    double bpm = 130.0;
     double beatLength;
     double barLength;
 
-
-    TimerEX *eventTimer;
-    bool quitLoop;
-
-
-    int division;
+    int division = 4;
     /*
      * currentPos is:
      * barNumber.division
      * In the future, I could implement a time-based grid but that would take time.
      */
     int currentPos;
-    double lookAhead;
 
     float currentGridTime;
     bool scheduled;
 
-    void updateMetSchedule();
-    void cancelTrackPlayback();
 
+    QList<QString> *dataQueue = new QList<QString>;
+
+    void socketReadReady();
+
+    void sendConfirmation();
+
+    QDataStream dataStream;
+    int connectionCount = 0;
+    quint32 blockSize = 0;
 
 };
 

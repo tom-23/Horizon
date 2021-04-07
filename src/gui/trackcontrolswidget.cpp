@@ -123,7 +123,7 @@ void TrackControlsWidget::keyReleaseEvent(QKeyEvent *event) {
 void TrackControlsWidget::on_muteButton_toggled(bool checked)
 {
     track->setMute(checked);
-    track->getAudioManager()->session->setTrackMute(QString::fromStdString(track->getUUID()), checked);
+    track->getAudioManager()->session->setTrackMute(track->getUUID(), checked);
 }
 
 
@@ -135,8 +135,8 @@ void TrackControlsWidget::changeColor() {
 void TrackControlsWidget::uiUpdate() {
 
     if (track->getAudioRegionListCount() != 0) {
-    std::vector<int> Lvalue = track->getLMeterData();
-    std::vector<int> Rvalue = track->getRMeterData();
+        std::vector<int> Lvalue = {0, 0};
+        std::vector<int> Rvalue = {0, 0};
 
     int LRMSValue = Lvalue[0] + 100;
     int RRMSValue = Rvalue[0] + 100;

@@ -22,7 +22,7 @@ public:
     explicit LibraryWidget(QWidget *parent = nullptr, Preferences *prefs = nullptr, ArrangeWidget *arrangeWidget = nullptr);
     ~LibraryWidget();
 
-    void refesh();
+
     void refreshFactoryContent();
 
 private slots:
@@ -49,7 +49,8 @@ private:
     QString bundleLoc;
 
     QList<QList<QString>> factoryContent;
-
+public slots:
+    void refeshUI();
 };
 
 #endif // LIBRARYWIDGET_H

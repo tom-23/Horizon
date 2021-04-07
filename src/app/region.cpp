@@ -1,18 +1,14 @@
 #include "region.h"
 
 
-Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
+Region::Region(Timeline *_timeline, Track *_track, QString _uuid)
 {
     // here we assign some default variables
     uuid = _uuid;
     timeline = _timeline;
     track = _track;
     // create a new gain node. We will use this as the output gain.
-    lab::AudioContext& ac = *track->getAudioManager()->context.get();
-    outputNode = std::make_shared<GainNode>(ac);
-    setGain(1.0f);
-    // connect from outputNode -> trackInput node.
-    track->getAudioManager()->context->connect(track->getTrackInputNode(), outputNode);
+    //setGain(1.0f);
     // default to track position 1 and selected.
     gridLocation = 1;
     selected = false;
@@ -20,7 +16,7 @@ Region::Region(Timeline *_timeline, Track *_track, std::string _uuid)
 
 Region::~Region() {
     delete regionGraphicsItem;
-    track->getAudioManager()->context->disconnect(track->getTrackOutputNode(), outputNode);
+
 }
 
 Track* Region::getTrack() {
@@ -39,15 +35,9 @@ void Region::setRegionGraphicItem(RegionGraphicItem *rgi) {
     regionGraphicsItem = rgi;
 }
 
-void Region::disconnectTrack() {
-    track->getAudioManager()->context->disconnect(track->getTrackInputNode(), outputNode);
-    debug::out(3, "Disconnected from track");
-}
-
 void Region::setTrack(Track *_track) {
-    track->getAudioManager()->context->connect(_track->getTrackInputNode(), outputNode);
-    debug::out(3, "Connected to track");
-    setGain(gain);
+    debug::out(3, "Switched Tracks");
+    track->getAudioManager()->sendCommand("setRegionTrack", uuid, _track->getUUID());
     track = _track;
 }
 
@@ -55,8 +45,9 @@ double Region::getGridLocation() {
     return gridLocation;
 }
 
-void Region::setGridLocation(double time) {
-    gridLocation = time;
+void Region::setGridLocation(double _gridLocation) {
+    track->getAudioManager()->sendCommand("setRegionLocation", uuid, _gridLocation);
+    gridLocation = _gridLocation;
     debug::out(3, "Grid location just set!");
 }
 
@@ -64,36 +55,30 @@ double Region::getGridLength() {
     return length;
 }
 
-void Region::setGridLength(double value) {
-    length = value;
-}
-
-void Region::schedule() {
-
+void Region::setGridLength(double _length) {
+    track->getAudioManager()->sendCommand("setRegionLength", uuid, _length);
+    length = _length;
 }
 
 void Region::setGain(float _gain) {
+    track->getAudioManager()->sendCommand("setRegionGain", uuid, _gain);
     gain = _gain;
-    outputNode->gain()->setValue(_gain);
 }
 
 float Region::getGain() {
     return gain;
 }
 
-std::shared_ptr<GainNode> Region::getOutputNode() {
-    return outputNode;
-}
 
-std::string Region::getRegionName() {
+QString Region::getRegionName() {
     return regionName;
 }
 
-void Region::setRegionName(std::string _name) {
+void Region::setRegionName(QString _name) {
     regionName = _name;
 }
 
-std::string Region::getUUID() {
+QString Region::getUUID() {
     return uuid;
 }
 

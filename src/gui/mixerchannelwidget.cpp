@@ -107,7 +107,7 @@ void MixerChannelWidget::keyReleaseEvent(QKeyEvent *event) {
 void MixerChannelWidget::on_muteButton_toggled(bool checked)
 {
     track->setMute(checked);
-    track->getAudioManager()->session->setTrackMute(QString::fromStdString(track->getUUID()), checked);
+    track->getAudioManager()->session->setTrackMute(track->getUUID(), checked);
 }
 
 void MixerChannelWidget::uiUpdate() {
@@ -115,8 +115,8 @@ void MixerChannelWidget::uiUpdate() {
 
     if (track->getAudioRegionListCount() != 0) { // Don't bother updating the meters if there are no regions.
 
-        std::vector<int> Lvalue = track->getLMeterData();
-        std::vector<int> Rvalue = track->getRMeterData();
+        std::vector<int> Lvalue = {0, 0};
+        std::vector<int> Rvalue = {0, 0};
 
         int LRMSValue = Lvalue[0] + 100;
         int RRMSValue = Rvalue[0] + 100;
@@ -201,7 +201,7 @@ void MixerChannelWidget::uiUpdate() {
             lastPan = track->getPan();
         } else {
             if (track->getPan() != lastPan) {
-                track->getAudioManager()->session->setTrackPan(QString::fromStdString(track->getUUID()), track->getPan());
+                track->getAudioManager()->session->setTrackPan(track->getUUID(), track->getPan());
                 lastPan = track->getPan();
             }
         }
@@ -212,7 +212,7 @@ void MixerChannelWidget::uiUpdate() {
 
         } else {
             if (track->getGain() != lastGain) {
-                track->getAudioManager()->session->setTrackGain(QString::fromStdString(track->getUUID()), track->getGain());
+                track->getAudioManager()->session->setTrackGain(track->getUUID(), track->getGain());
                 lastGain = track->getGain();
             }
         }

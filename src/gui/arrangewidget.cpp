@@ -36,7 +36,7 @@ void ArrangeWidget::on_pushButton_4_clicked()
 
 void ArrangeWidget::resizeEvent(QResizeEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 
@@ -80,20 +80,20 @@ void ArrangeWidget::importAudio(QString path) {
 
             // we then create a new audio region object by calling a function on the selected track object.
             // we neeed to create a UUID to identify the region when serializing and using real time collaboration.
-            AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion(QUuid::createUuid().toString().toStdString());
+            AudioRegion *newAudioRegion = audioMan->getSelectedTrack(0)->addAudioRegion(QUuid::createUuid().toString());
             // setting the locaiton of the region to the playhead's current location
             newAudioRegion->setGridLocation(audioMan->getCurrentGridTime());
             // add the region to display on the timeline
             tl->addRegion(newAudioRegion);
             // load the audio file on the new audio region
-            newAudioRegion->loadFile(path.toStdString(), true);
+            newAudioRegion->loadFile(path, true);
         }
     } else {
         // no selected track? don't do anything
     }
 }
 
-Track* ArrangeWidget::addAudioTrack(Track *track, std::string uuid) {
+Track* ArrangeWidget::addAudioTrack(Track *track, QString uuid) {
     // TODO: this could be implemented in a simular way we do when creating a new audio region
     // passed in a track object and uuid
     if (!track) {
@@ -145,5 +145,6 @@ void ArrangeWidget::on_pushButton_3_clicked()
 
 void ArrangeWidget::on_pushButton_3_toggled(bool checked)
 {
+    Q_UNUSED(checked);
     //unused
 }

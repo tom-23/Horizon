@@ -1,177 +1,187 @@
 #include "audiomanager.h"
 
 
-AudioManager::AudioManager(QWidget *parent, Timeline &_timeline)
+AudioManager::AudioManager(QWidget *_parent, Timeline &_timeline)
 {
     debug::out(3, "Timeline init");
     timeline = &_timeline;
+    parent = _parent;
 
     // Initialising some variables that will be needed in later use
-    stopTime = 0.0;
     isPlaying = false;
     currentGridTime = 1.0;
-    scheduled = false;
+
     debug::out(3, "Starting audio engine...");
 
-
-    initContext();
-
-    lab::AudioContext& ac = *context.get();
-
-    outputNode = std::make_shared<GainNode>(ac);
-    outputNode->gain()->setValue(1.0f);
-    context->connect(context->device(), outputNode, 0 ,0);
-
-    trackList = new std::vector<class Track *>();
-    selectedTrackList = new std::vector<class Track *>();
-
-    debug::out(3, "Loading metronome...");
-
-    metronome = new Metronome(outputNode, this);
-
-
-    // TODO: this needs to go
-    debug::out(3, "Starting event loop...");
-    eventTimer = new TimerEX(parent, std::bind(&AudioManager::eventLoop, this));
-
-    // We create a new online session but we don't do anything with it at the moment
     session = new Session(parent, *this);
-    rendering = false;
+
+    initSocket();
+
+    trackList = new std::vector<class Track *>;
+    selectedTrackList = new std::vector<class Track *>;
+
+    debug::out(3, "Setting BPM");
+
 
     debug::out(3, "Audio engine started without any issues!");
-
-
+    sendCommand("init");
+    sendCommand("setBPM", bpm);
+    sendCommand("setDivision", division);
 }
 
-/* initContext
+
+
+/* initSocket
     Initalises a labsound real-time audio context
 */
-void AudioManager::initContext() {
-    const auto defaultAudioDeviceConfigurations = GetDefaultAudioDeviceConfiguration();
-    context = lab::MakeRealtimeAudioContext(defaultAudioDeviceConfigurations.second, defaultAudioDeviceConfigurations.first);
-
+void AudioManager::initSocket() {
+    socket = new QLocalSocket(parent);
+    //socket->setCurrentWriteChannel(0);
+    socket->setServerName("HorizonAUMANEngine");
+    dataStream.setDevice(socket);
+    dataStream.setVersion(QDataStream::Qt_5_10);
+    QObject::connect(socket, &QLocalSocket::readyRead, parent, [=] () { socketReadReady(); });
+    socket->connectToServer();
 }
 
-/* MakeBusFromSampleFile
-    Loads the audio file into memory and passes it off the the audio region. Idk why I put the function
-    here but its doing no harm so
-*/
-std::shared_ptr<AudioBus> AudioManager::MakeBusFromSampleFile(std::string fileName) {
+void AudioManager::socketReadReady() {
+    qDebug() << "Received Data";
 
-        std::shared_ptr<AudioBus> bus = MakeBusFromFile(fileName, false);
+    if (blockSize == 0) {
+            // Relies on the fact that QDataStream serializes a quint32 into
+            // sizeof(quint32) bytes
+            if (socket->bytesAvailable() < (int)sizeof(quint32)) { return; };
+            dataStream >> blockSize;
+    }
 
-        if (!bus) {
-            debug::out(1, "COULD NOT OPEN FILE: " + fileName);
-            return nullptr;
-        } else {
-            debug::out(3, "Loaded audio file" + fileName);
+
+    if (socket->bytesAvailable() < blockSize || dataStream.atEnd()) {
+        return;
+    }
+    QString data;
+    dataStream >> data;
+    blockSize = 0;
+
+    QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
+
+    qDebug() << data;
+
+    if (!doc.object().value("result").isUndefined()) {
+        qDebug() << "Got Result";
+        if (doc.object().value("result").toString() == "OK") {
+            if (dataQueue->size() != 0) {
+                dataQueue->pop_front();
+                writeString();
+            }
         }
-        return bus;
+        return;
+    }
+
+    if (doc.object().value("cmnd").toString() == "finishedAudioRegionLoad") {
+        QString uuid = doc.object().value("value0").toString();
+        getAudioRegionByUUID(uuid)->loadedFileCallBack(doc.object().value("value0").toDouble());
+    }
+    sendConfirmation();
+}
+
+void AudioManager::writeString() {
+    if (dataQueue->size() == 0) {
+        return;
+    }
+    //string = "TESTING";
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_10);
+    const QString &message = dataQueue->at(0);
+    out << quint32(message.size());
+    out << message;
+    qDebug() << "Writing string" << message;
+    socket->write(block);
+    socket->flush();
+}
+
+void AudioManager::sendConfirmation() {
+    qDebug() << "Sending confirmation";
+    QJsonObject obj;
+    obj.insert("result", "OK");
+    QJsonDocument doc;
+    doc.setObject(obj);
+    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    if (dataQueue->size() == 1) {
+        writeString();
+    }
+}
+
+void AudioManager::sendCommand(QString command) {
+    QJsonObject obj;
+    obj.insert("cmnd", command);
+    QJsonDocument doc;
+    doc.setObject(obj);
+    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    if (dataQueue->size() == 1) {
+        writeString();
+    }
+}
+
+void AudioManager::sendCommand(QString command, QJsonValue value) {
+    QJsonObject obj;
+    obj.insert("cmnd", command);
+    obj.insert("value0", value);
+    QJsonDocument doc;
+    doc.setObject(obj);
+    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    if (dataQueue->size() == 1) {
+        writeString();
+    }
+}
+
+void AudioManager::sendCommand(QString command, QJsonValue value, QJsonValue value1) {
+    QJsonObject obj;
+    obj.insert("cmnd", command);
+    obj.insert("value0", value);
+    obj.insert("value1", value1);
+    QJsonDocument doc;
+    doc.setObject(obj);
+    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    if (dataQueue->size() == 1) {
+        writeString();
+    }
 }
 
 void AudioManager::play() {
     if (isPlaying == false) {
-        // taking the time of the context time as we will use this to schedule our regions and to know where we are during playback.
-        startTime = context->currentTime();
-        updateMetSchedule();
-        scheduleTracks();
+        sendCommand("play");
         isPlaying = true;
-        // if we are rendering audio offline, call the event timer to see a progress of file export.
-        if (!rendering) {
-            eventTimer->start();
-        }
     }
 }
 
 void AudioManager::pause() {
     if (isPlaying == true) {
         isPlaying = false;
-        cancelTrackPlayback();
-        if (!rendering) {
-            eventTimer->stop();
-        }
-        // see start time comments. It relates to that in some way.
-        stopTime = getCurrentRelativeTime();
+        sendCommand("pause");
     }
 }
 
 void AudioManager::stop() {
 
     if (isPlaying == true) {
-        isPlaying = false;
-        cancelTrackPlayback();
-        if (!rendering) {
-            eventTimer->stop();
-        }
-    }
-    // We put the playhead to the start when we hit the stop button. We also set the stop time to 0.0 too.
-    stopTime = 0.0;
-    currentGridTime = 1.0;
-}
-
-void AudioManager::setLookAhead(double _value) {
-    lookAhead = _value;
-}
-
-void AudioManager::updateMetSchedule() {
-    metronome->schedulePrimary(floor(currentGridTime) + 1);
-    double divGrid = 1.00 / division;
-    std::vector<double> scheduleQueue;
-    for (int i = 1; i < division; i++) {
-        scheduleQueue.insert(scheduleQueue.end(), (floor(currentGridTime) + 1) + (i * divGrid));
-
-    }
-
-    metronome->scheduleSecondary(scheduleQueue);
-
-}
-
-// this function is currently useless.
-void AudioManager::updateSchedule() {
-
-    //double toNearestBar = (floor(currentGridTime) + 1) - currentGridTime;
-    //if (toNearestBar < lookAhead || currentGridTime == 0) {
-        //metPrimaryNode->start(floor(currentGridTime));
-        //debug::out(3, "Buffered Primary Met");
-        //if (toNearestBar < 0.01) {
-
-        //    if (scheduled == true) {
-
-        //        scheduled = false;
-        //    }
-
-        //} else {
-        //    if (scheduled == false) {
-                //updateMetSchedule();
-                //debug::out(3, "Scheduling...");
-        //        scheduled = true;
-       //     }
-       // }
-
-   // }
-
-
-    //metronome->update();
-
-}
-
-// this handles the current musical time (bar num, div etc)
-void AudioManager::eventLoop() {
-    float relativeTime = (context->currentTime() - startTime) + stopTime;
-    currentGridTime = ((relativeTime / beatLength) / division) + 1.0;
-
-    if (rendering == true) {
-        dialogs::ProgressDialog::updateValue(int(context->currentTime()));
+        sendCommand("stop");
     }
 }
 
 void AudioManager::setDivision(int _division) {
-    division = _division;
+    if (division != _division) {
+        division = _division;
+        sendCommand("setDivision", division);
+    }
     barLength = bpm * division;
 }
 
-void AudioManager::setBPM(double _beatsPerMinuet) {
-    bpm = _beatsPerMinuet;
+void AudioManager::setBPM(double _bpm) {
+    if (bpm != _bpm) {
+        sendCommand("setBPM", _bpm);
+        bpm = _bpm;
+    }
     beatLength = 60.00 / bpm;
     barLength = bpm * division;
 
@@ -183,6 +193,7 @@ void AudioManager::setBPM(double _beatsPerMinuet) {
             audioRegion->getRegionGraphicItem()->setGridLength(audioRegion->getGridLength());
         }
     }
+
 }
 
 double AudioManager::getBPM() {
@@ -193,28 +204,9 @@ float AudioManager::getCurrentGridTime() {
     return currentGridTime;
 }
 
-double AudioManager::gridTimeToContextSeconds(float _gridTime) {
-    double secondsTime = ((_gridTime - 1.0) * beatLength) * division;
-    return startTime + secondsTime;
-}
-
-double AudioManager::gridTimeToSeconds(float _gridTime) {
-    double secondsTime = ((_gridTime) * beatLength) * division;
-    return secondsTime;
-}
-
-float AudioManager::secondsToGridTime(double _seconds) {
-    double gridTime = ((_seconds / beatLength) / division) + 1.0;
-    return gridTime;
-}
-
-float AudioManager::getCurrentRelativeTime() {
-    float relativeTime = (context->currentTime() - startTime) + stopTime;
-    return relativeTime;
-}
-
-Track* AudioManager::addTrack(std::string trackUUID) {
+Track* AudioManager::addTrack(QString trackUUID) {
     debug::out(3, "Creating new track...");
+    sendCommand("addTrack", trackUUID);
     Track *newTrack = new Track(*timeline, *this, trackUUID);
     trackList->push_back(newTrack);
     newTrack->setIndex(trackList->size() - 1);
@@ -232,10 +224,6 @@ void AudioManager::removeTrack(Track *track) {
     delete track;
 }
 
-Track* AudioManager::getTrackByIndex(int index) {
-    return trackList->at(index);
-}
-
 Track* AudioManager::getSelectedTrack(int index) {
     if (selectedTrackList->size() != 0) {
         return selectedTrackList->at(index);
@@ -247,10 +235,6 @@ Track* AudioManager::getSelectedTrack(int index) {
 
 std::vector<class Track*>* AudioManager::getSelectedTracks() {
     return selectedTrackList;
-}
-
-std::shared_ptr<GainNode> AudioManager::getOutputNode() {
-    return outputNode;
 }
 
 void AudioManager::setTrackSelected(Track *track, bool selected) {
@@ -309,39 +293,15 @@ int AudioManager::getTrackListCount() {
     return trackList->size();
 }
 
-void AudioManager::scheduleTracks() {
-    for (int i = 0; i < int(trackList->size()); i++) {
-        trackList->at(i)->scheduleAudioRegions();
-        debug::out(3, "Scheduled a track...");
-    }
-}
-
-void AudioManager::cancelTrackPlayback() {
-    for (int i = 0; i < int(trackList->size()); i++) {
-        trackList->at(i)->cancelAudioRegions();
-        debug::out(3, "Cancelling track...");
-    }
-}
-
 void AudioManager::setCurrentGridTime(float _value) {
     currentGridTime = _value;
-}
-
-std::vector<const float *> AudioManager::getPeaks(std::shared_ptr<AudioBus> bus) {
-
-    std::vector<const float *> channelSamples = {};
-
-    for (int channelIdx = 0; channelIdx < (int)bus->numberOfChannels(); channelIdx++) {
-         channelSamples.push_back(bus->channel(channelIdx)->data());
-    }
-    return channelSamples;
 }
 
 void AudioManager::engageSolo() {
     soloEnabled = true;
     for (int i = 0; i < int(trackList->size()); i++) {
         if (trackList->at(i)->getSolo() == false) {
-            trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
+            //trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
         }
 
     }
@@ -351,7 +311,7 @@ void AudioManager::disengageSolo() {
     soloEnabled = false;
     for (int i = 0; i < int(trackList->size()); i++) {
         if (trackList->at(i)->getSolo() == false) {
-            trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
+            //trackList->at(i)->getTrackOutputNode()->gain()->setValue(0.0f);
         }
 
     }
@@ -368,8 +328,8 @@ void AudioManager::clearAll() {
 
 Track* AudioManager::getTrackByUUID(QString uuid) {
     for (int ti= 0; ti < this->getTrackListCount(); ti++) {
-        Track *track = this->getTrackByIndex(ti);
-        if (track->getUUID() == uuid.toStdString()) {
+        Track *track = trackList->at(ti);
+        if (track->getUUID() == uuid) {
             return track;
         }
     }
@@ -378,10 +338,10 @@ Track* AudioManager::getTrackByUUID(QString uuid) {
 
 AudioRegion* AudioManager::getAudioRegionByUUID(QString uuid) {
     for (int ti= 0; ti < this->getTrackListCount(); ti++) {
-        Track *track = this->getTrackByIndex(ti);
+        Track *track = trackList->at(ti);
         for (int ri = 0; ri < track->getAudioRegionListCount(); ri++) {
             AudioRegion *audioRegion = track->getAudioRegionByIndex(ri);
-            if (audioRegion->getUUID() == uuid.toStdString()) {
+            if (audioRegion->getUUID() == uuid) {
                 return audioRegion;
             }
         }
@@ -392,7 +352,6 @@ AudioRegion* AudioManager::getAudioRegionByUUID(QString uuid) {
 void AudioManager::moveRegion(QString uuid, double gridLocation) {
     AudioRegion *audioRegion = getAudioRegionByUUID(uuid);
     if (this->isPlaying == true) {
-        audioRegion->schedule();
     }
     audioRegion->setGridLocation(gridLocation);
     audioRegion->getRegionGraphicItem()->setGridLocation(gridLocation);
@@ -412,30 +371,4 @@ void AudioManager::setTrackPan(QString uuid, float pan) {
 void AudioManager::setTrackGain(QString uuid, float gain) {
     Track *track = getTrackByUUID(uuid);
     track->setGain(gain);
-}
-
-void AudioManager::renderAudio(QObject *parent, std::string fileName, int sampleRate, int channels) {
-
-    qDebug() << "Rendering...";
-    AudioStreamConfig offlineConfig;
-    offlineConfig.device_index = 0;
-    offlineConfig.desired_samplerate = sampleRate;
-    offlineConfig.desired_channels = channels;
-
-    qDebug() << "Config set";
-    rendering = true;
-    stop();
-    eventTimer->start();
-    qDebug() << "Started event timer";
-
-    FileRendering *fileRendering = new FileRendering(parent, [this] {
-        rendering = false;
-        stop();
-        initContext();
-        dialogs::ProgressDialog::close();
-        dialogs::MessageDialog::show("Done!", "The project has been rendered successfully.", dialogs::MessageDialog::info, dialogs::MessageDialog::okOnly);
-    });
-    dialogs::ProgressDialog::show(0, 60, "Rendering Audio...");
-    fileRendering->operate(this, offlineConfig, fileName);
-    //context.swap(offlineContext);
 }

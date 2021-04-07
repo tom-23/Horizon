@@ -18,6 +18,7 @@ void IndexingThread::run() {
 
 QTreeWidgetItem* IndexingThread::scanDir(QDir dir) {
     // create a new tree widget item
+    emit progressUpdate(dir.path());
     QTreeWidgetItem *folder = new QTreeWidgetItem();
     // ui icon stuffs
     if (topLevelSpecial && topLevelSpecial) {

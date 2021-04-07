@@ -26,6 +26,7 @@ public:
 
 signals:
     void resultReady(QTreeWidgetItem *treeWidgetItem);
+    void progressUpdate(QString currentDir);
 private:
     bool topLevelSpecial;
     bool isTopLevelSet;

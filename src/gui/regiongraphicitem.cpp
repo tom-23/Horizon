@@ -52,7 +52,7 @@ QRectF RegionGraphicItem::boundingRect() const
     return QRectF(0, 1, float(gridLength * hScaleFactor), float(height));
 }
 
-void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
+void RegionGraphicItem::setWaveform() {
 
     // FIXME: the last wave form block doesn't get cut off. Need to fix this.
     // this was a bugger to code...
@@ -72,8 +72,8 @@ void RegionGraphicItem::setWaveform(std::shared_ptr<AudioBus> _bus) {
     //
     // we then stitch them back up on the ui and scale them horizontally relative to the hScaleFactor
 
-    bus = _bus;
-    samplesLength = bus->length(); // get length of all samples
+
+    samplesLength = 0; // get length of all samples
 
     waveFormRendered = false; // don't paint the waveform if we haven't generated it.
 
@@ -132,7 +132,7 @@ float RegionGraphicItem::getMaximumSampleValueInRange(uint64_t firstSample, uint
     }
 
     for (uint64_t i = firstSample; i < lastSample; i++) {
-        float sample = bus->channel(channel)->mutableData()[i];
+        float sample = 0;
         if (sample > maxSample) {
 
             maxSample = sample;
@@ -153,8 +153,8 @@ float RegionGraphicItem::getMinimumSampleValueInRange(uint64_t firstSample, uint
 
 
     for (uint64_t i = firstSample; i < lastSample; i++) {
-        if (bus->channel(channel)->data()[i] < minSample) {
-            minSample = bus->channel(channel)->data()[i];
+        if (0 < minSample) {
+            minSample = 0;
         }
     }
     return minSample;
@@ -202,7 +202,7 @@ void RegionGraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     font.setPixelSize(10);
     font.setBold(true);
     QFontMetricsF fontMetrics(font);
-    QString text = QString::fromStdString(region->getRegionName());
+    QString text = region->getRegionName() + " - " + region->getUUID();
     int heightFont = fontMetrics.boundingRect(text).height();
     if (selected) {
         painter->setPen(QPen(mainBrush.color(), 1));
@@ -343,23 +343,23 @@ void RegionGraphicItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     // if the track as changed track, change the track.
     if (newTrackIndex != oldTrackIndex) {
 
-        Track *newTrack = region->getTrack()->getAudioManager()->getTrackByIndex(newTrackIndex);
+        Track *newTrack = region->getTrack()->getAudioManager()->trackList->at(newTrackIndex);
         region->getTrack()->removeRegion(region);
 
         newTrack->setRegion(region);
         region->setTrack(newTrack);
 
-        region->getTrack()->getAudioManager()->session->setRegionTrack(QString::fromStdString(region->getUUID()), QString::fromStdString(newTrack->getUUID()));
+        region->getTrack()->getAudioManager()->session->setRegionTrack(region->getUUID(), newTrack->getUUID());
 
     }
 
     if (gridLocation != oldGridLocation) { // if the region has moved location, move location
 
         region->setGridLocation(gridLocation);
-        region->getTrack()->getAudioManager()->session->moveRegion(QString::fromStdString(region->getUUID()), gridLocation);
-        if (region->getTrack()->getAudioManager()->isPlaying == true) {
-            region->schedule();
-        }
+        region->getTrack()->getAudioManager()->session->moveRegion(region->getUUID(), gridLocation);
+        //if (region->getTrack()->getAudioManager()->isPlaying == true) {
+        //    region->schedule();
+        //}
     }
 }
 void RegionGraphicItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

@@ -36,7 +36,7 @@ public:
     void setAudioManager(AudioManager &_audioMan);
     void setMixer(Mixer *_mixer);
     void importAudio(QString path = "");
-    Track* addAudioTrack(Track *track = nullptr, std::string uuid = "");
+    Track* addAudioTrack(Track *track = nullptr, QString uuid = "");
     void setHZoomFactor(int hZoomFactor);
 
     QGraphicsColorizeEffect* mEffect;

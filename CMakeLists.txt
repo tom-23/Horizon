@@ -60,7 +60,6 @@ set_source_files_properties(
     PROPERTIES GENERATED TRUE
 )
 
-add_subdirectory(lib/LabSound)
 #if (APPLE)
 #    add_subdirectory(lib/KDMacTouchBar)
 #endif()

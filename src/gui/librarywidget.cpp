@@ -34,7 +34,7 @@ LibraryWidget::LibraryWidget(QWidget *parent, Preferences *_prefs, ArrangeWidget
     samplesIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/audio.svg"), QSize(16,16), QIcon::Normal);
     samplesIcon.addFile(dialogs::getThemeManager()->colorizeSVG(":/svg/svg/16x/audio_selected.svg"), QSize(16,16), QIcon::Selected);
 
-    refesh();
+    emit refeshUI();
 
 }
 
@@ -43,7 +43,7 @@ LibraryWidget::~LibraryWidget()
     delete ui;
 }
 
-void LibraryWidget::refesh() {
+void LibraryWidget::refeshUI() {
 
 
 
@@ -64,6 +64,7 @@ void LibraryWidget::refesh() {
         indexingThread->samplesIcon = samplesIcon;
 
         connect(indexingThread, &IndexingThread::resultReady, this, &LibraryWidget::indexComplete);
+        connect(indexingThread, &IndexingThread::progressUpdate, ui->currentDirlLabel, &QLabel::setText);
         indexingThread->start();
     }
 }
@@ -89,7 +90,7 @@ void LibraryWidget::refreshFactoryContent() {
 
 void LibraryWidget::on_refeshButton_clicked()
 {
-    refesh();
+    refeshUI();
 }
 
 void LibraryWidget::indexComplete(QTreeWidgetItem *parentItem) {

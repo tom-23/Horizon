@@ -60,7 +60,7 @@ public:
     MainWindow(QWidget *parent = nullptr, SplashScreen *splashScreen = nullptr, Preferences *prefs = nullptr);
     ~MainWindow();
 
-    std::unique_ptr<AudioManager> audioMan;
+    AudioManager *audioMan;
     ThemeManager *themeMan;
     Timeline *timeline;
     Preferences *prefs;
@@ -162,7 +162,7 @@ private:
 
     ColorPickerWidget *colorPicker;
 public slots:
-    void keyPressEvent(QKeyEvent*);
-    void keyReleaseEvent(QKeyEvent*);
+    void keyPressEvent(QKeyEvent*) override;
+    void keyReleaseEvent(QKeyEvent*) override;
 };
 #endif // MAINWINDOW_H
