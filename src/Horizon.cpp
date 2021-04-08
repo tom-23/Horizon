@@ -7,6 +7,7 @@
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/preferences.h"
+#include "common/version.h"
 
 class Horizon : public QApplication
 {
@@ -36,7 +37,7 @@ public:
         splashScreen->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         splashScreen->show();
 
-        splashScreen->setVersion("1.0.0 alpha");
+        splashScreen->setVersion(HORIZON_VERSION);
 
         splashScreen->setText("Loading Preferences...");
 

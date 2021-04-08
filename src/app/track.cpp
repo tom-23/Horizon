@@ -107,6 +107,7 @@ int Track::getIndexByRegion(Region *region) {
 void Track::setGain(float _value) {
     gain = pow(10, (_value / 20));
     gainNonLog = _value;
+    audioMan->sendCommand("setTrackGain", uuid, _value);
 }
 
 float Track::getGain() {
@@ -116,7 +117,7 @@ float Track::getGain() {
 
 void Track::setPan(float _value) {
     pan = _value;
-
+    audioMan->sendCommand("setTrackPan", uuid, _value);
 }
 
 float Track::getPan() {
@@ -125,6 +126,7 @@ float Track::getPan() {
 
 void Track::setMute(bool _mute) {
     mute = _mute;
+    audioMan->sendCommand("setTrackMute", uuid, _mute);
 }
 
 void Track::setSolo(bool _solo) {

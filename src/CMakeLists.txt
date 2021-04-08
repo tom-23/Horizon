@@ -178,6 +178,12 @@ else()
         COMPONENT Runtime
         )
 
+    #add_custom_command(TARGET ${HORIZON_EXECUTABLE_NAME} POST_BUILD
+    #                   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #                   ${CMAKE_BINARY_DIR}/lib/HorizonEngine/HorizonEngine
+    #                   ${CMAKE_BINARY_DIR}/${HORIZON_EXECUTABLE_NAME}.app/Contents/MacOS/HorizonEngine
+    #                   COMMENT "Copying HorizonEngine to '${HORIZON_EXECUTABLE_NAME}.app/Contents/MacOS/HorizonEngine'"
+    #    )
     set(CPACK_GENERATOR "DragNDrop")
     include(CPack)
 endif()

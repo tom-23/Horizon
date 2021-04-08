@@ -24,6 +24,8 @@ public:
 
     QString sessionID = "";
 
+    QJsonObject rootProject;
+
 private:
 
     QByteArray fileChecksum(const QString &fileName, QCryptographicHash::Algorithm hashAlgorithm);

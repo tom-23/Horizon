@@ -102,16 +102,22 @@ std::string ProjectSerialization::serialize(AudioManager &audioMan, bool epoch) 
     root.insert("tracks", trackArray); // append the track to the tracklist array.
     jsonDocument.setObject(root);  // set the root object
 
+    rootProject = root;
     return jsonDocument.toJson().toStdString(); // make the json!
 
 }
 
 void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan) {
 
+
     // for the most part, most of this is the exact same as the serialization code from above
     // but with a few changes...
     QJsonDocument jsonDocument = QJsonDocument::fromJson(QString::fromStdString(json).toUtf8());
     QJsonObject root = jsonDocument.object();
+
+    rootProject = root;
+
+    audioMan.pauseEngineCommunication = true;
 
     audioMan.setBPM(root.value("tempo").toDouble());
 
@@ -141,12 +147,11 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
                     }
                     AudioRegion *audioRegion = track->addAudioRegion(regionUuid);
                     audioRegion->setGridLocation(std::stod(audioRegionJSON.value("gridLocation").toString().toStdString()));
+                    QString tempDir = "";
                     if (audioRegionJSON.value("tempLocation").toBool()) { // if this file is being sent from the web...
-                        QString tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
-                        audioRegion->preLoadedFile = tempDir + audioRegionJSON.value("filePath").toString();
-                    } else {
-                        audioRegion->preLoadedFile = audioRegionJSON.value("filePath").toString();
+                        tempDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation) + "/Horizon";
                     }
+                    audioRegion->loadFile(tempDir + audioRegionJSON.value("filePath").toString(), false);
 
                 }
             }
@@ -159,6 +164,8 @@ void ProjectSerialization::deSerialize(std::string json, AudioManager &audioMan)
             track->setColor(color);
         }
     }
+
+
 }
 
 bool ProjectSerialization::compaire(std::string a, std::string b) {

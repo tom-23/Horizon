@@ -21,8 +21,6 @@ void AudioRegion::loadFile(QString fileName, bool _progressDialog) {
         dialogs::ProgressDialog::show(0, 0, "Loading Audio file...");
     }
 
-
-
     QFileInfo fileInfo(fileName);
     setRegionName(fileInfo.fileName());
 
@@ -43,13 +41,13 @@ void AudioRegion::loadedFileCallBack(double _length) {
 
 
     if (progressDialog == true) {
-       dialogs::ProgressDialog::close();
+       //dialogs::ProgressDialog::close();
     } else {
-        if (dialogs::ProgressDialog::getValue() + 1 == dialogs::ProgressDialog::getMax()) {
-            dialogs::ProgressDialog::close();
-        } else {
-            dialogs::ProgressDialog::updateValue(dialogs::ProgressDialog::getValue() + 1);
-        }
+        //if (dialogs::ProgressDialog::getValue() + 1 == dialogs::ProgressDialog::getMax()) {
+           // dialogs::ProgressDialog::close();
+        //} else {
+          //  dialogs::ProgressDialog::updateValue(dialogs::ProgressDialog::getValue() + 1);
+        //}
     }
 
     regionGraphicsItem->setGhost(false);
@@ -65,11 +63,9 @@ void AudioRegion::loadedFileCallBack(double _length) {
     debug::out(3, "Successfully Loaded File!");
 }
 
-
 QString AudioRegion::getLoadedFileName() {
     return loadedFileName;
 }
-
 
 void AudioRegion::updateGridLength() {
 

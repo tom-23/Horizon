@@ -115,14 +115,14 @@ void MixerChannelWidget::uiUpdate() {
 
     if (track->getAudioRegionListCount() != 0) { // Don't bother updating the meters if there are no regions.
 
-        std::vector<int> Lvalue = {0, 0};
-        std::vector<int> Rvalue = {0, 0};
+        QPair<int, int> Lvalues = track->lMeterData;
+        QPair<int, int> Rvalues = track->rMeterData;
 
-        int LRMSValue = Lvalue[0] + 100;
-        int RRMSValue = Rvalue[0] + 100;
+        int LRMSValue = Lvalues.first + 100;
+        int RRMSValue = Rvalues.first + 100;
 
-        int LPWRValue = Lvalue[1] + 100;
-        int RPWRValue = Rvalue[1] + 100;
+        int LPWRValue = Lvalues.second + 100;
+        int RPWRValue = Rvalues.second + 100;
 
         if (track->isLSilent()) {
             if (uiLRMS > 0) {

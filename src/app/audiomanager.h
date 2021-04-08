@@ -14,7 +14,9 @@
 #include "track.h"
 #include "region.h"
 #include "audioregion.h"
+#include "enginethread.h"
 #include "audioschedulingthread.h"
+#include "getsharedmemory.h"
 
 #include "gui/timeline.h"
 #include "gui/mixer.h"
@@ -24,6 +26,7 @@
 #include "common/dialogs.h"
 #include "common/util.h"
 #include "common/timerex.h"
+
 
 #include "network/session.h"
 
@@ -56,7 +59,11 @@ class AudioManager
 public:
     AudioManager(QWidget *parent, Timeline &_timeline);
 
+    void initHorizonEngine();
     void initSocket();
+
+    void closeConnectionAndEngine();
+
     void sendCommand(QString command);
     void sendCommand(QString command, QJsonValue value);
     void sendCommand(QString command, QJsonValue value1, QJsonValue value2);
@@ -105,7 +112,9 @@ public:
     void setTrackPan(QString uuid, float pan);
     void setTrackGain(QString uuid, float gain);
 
-    Track* getTrackByUUID(QString uuid);
+    Track* getTrack(QString uuid);
+    Track* getTrack(int index);
+
     AudioRegion* getAudioRegionByUUID(QString uuid);
 
 
@@ -114,11 +123,20 @@ public:
     std::vector<class Track *> *trackList;
     std::vector<class Track *> *selectedTrackList;
 
+    void loadAudioRegion(AudioRegion *audioRegion);
+
+    bool pauseEngineCommunication = false;
+
 private:
+
+    EngineThread *horizonEngine;
+
+    GetSharedMemory *sharedMemory = new GetSharedMemory;
+
     QWidget *parent;
 
     QLocalSocket *socket;
-    void writeString();
+    void writeString(QString string);
 
     std::vector<class Region *> *selectedRegionList;
 
@@ -129,6 +147,8 @@ private:
     double barLength;
 
     int division = 4;
+
+    int c = 0;
     /*
      * currentPos is:
      * barNumber.division
@@ -146,9 +166,9 @@ private:
 
     void sendConfirmation();
 
-    QDataStream dataStream;
     int connectionCount = 0;
     quint32 blockSize = 0;
+
 
 };
 

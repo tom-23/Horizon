@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
     // create a new audio manager class and store it in a unique smart pointer. smart pointers are great compared to
     // raw points as they handle garbage collection.
     audioMan = new AudioManager(this, *arrangeWidget->tl);
+    splashScreen->setText("Starting HorizonEngine...");
+    debug::out(3, "Starting HorizonEngine...");
+    audioMan->initHorizonEngine();
+    audioMan->initSocket();
 
     // realtime collab session
     session = audioMan->session;
@@ -122,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
 
 #ifndef _WIN32
     // on macOS, enable touch bar support (WIP)
-    util::macInitTouchbar(this);
+   // util::macInitTouchbar(this);
 #endif
     debug::out(3, "MainWindow Init Done!");
 }
@@ -131,7 +135,6 @@ void MainWindow::uiUpdate() {
     // TODO: rewrite ui updating code. (event driven)
     // this function handles ui updating. Whilst in hindsight, this is probably horrible and could be accomplished
     // using Qt's slots and signals, it gets the job done for the most part.
-
     float currentGridTime = audioMan->getCurrentGridTime();
 
     // if we've reached the end of the project, stop playback and rewind.
@@ -147,12 +150,6 @@ void MainWindow::uiUpdate() {
     float glr = float(floor(currentGridTime * arrangeWidget->tl->barLength)) / arrangeWidget->tl->barLength;
     ui->barNumberLabel->setText(QString::number(floor(currentGridTime)));
     ui->beatNumberLabel->setText(QString::number(((glr - floor(currentGridTime)) * arrangeWidget->tl->barLength) + 1));
-
-    // TODO: maybe it's not a good idea to have a "for" statement every ui update.
-    // call the ui update on every track. this is horrible.
-    for (int i = 0; i < int(audioMan->getTrackListCount()); i++) {
-        audioMan->trackList->at(i)->uiUpdate();
-    }
 
     //QApplication::processEvents();
 }
@@ -373,6 +370,17 @@ void MainWindow::loadProjectJSON(QString JSON) {
     // set the tempo box to the current bpm
     ui->tempo_lcd->setValue(audioMan->getBPM());
     int regionsToBeLoaded = 0;
+    for (int i = 0; i < audioMan->getTrackListCount(); i++) {
+        arrangeWidget->addAudioTrack(audioMan->trackList->at(i));
+        for (int ar = 0; ar < audioMan->trackList->at(i)->getAudioRegionListCount(); ar++) {
+            regionsToBeLoaded = regionsToBeLoaded + 1;
+        }
+    }
+
+
+    if (regionsToBeLoaded != 0) {
+        dialogs::ProgressDialog::show(0, regionsToBeLoaded, "Loading project audio files...");
+    }
     debug::out(3, "Loading project JSON...");
     serialization->deSerialize(JSON.toStdString(), *audioMan);
     for (int i = 0; i < audioMan->getTrackListCount(); i++) {
@@ -381,15 +389,16 @@ void MainWindow::loadProjectJSON(QString JSON) {
             AudioRegion* audioRegion = audioMan->trackList->at(i)->getAudioRegionByIndex(ar);
             arrangeWidget->tl->addRegion(audioRegion);
             regionsToBeLoaded = regionsToBeLoaded + 1;
-            audioRegion->loadFile(audioRegion->preLoadedFile, false);
+            //audioRegion->loadFile(audioRegion->preLoadedFile, false);
 
         }
     }
 
-    if (regionsToBeLoaded != 0) {
-        dialogs::ProgressDialog::show(0, regionsToBeLoaded, "Loading project audio files...");
-    }
+    audioMan->pauseEngineCommunication = false;
 
+    audioMan->sendCommand("loadProject", serialization->rootProject);
+
+    qApp->processEvents();
 
 
     debug::out(3, "Finished parsing!");
@@ -450,6 +459,7 @@ void MainWindow::closeEvent(QCloseEvent *e) {
     if (ensureSaved() == true) {
         session->closeSession();
         uac->~UAC();
+        audioMan->closeConnectionAndEngine();
         e->accept();
 
     } else {

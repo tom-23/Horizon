@@ -11,93 +11,101 @@ AudioManager::AudioManager(QWidget *_parent, Timeline &_timeline)
     isPlaying = false;
     currentGridTime = 1.0;
 
-    debug::out(3, "Starting audio engine...");
-
     session = new Session(parent, *this);
-
-    initSocket();
 
     trackList = new std::vector<class Track *>;
     selectedTrackList = new std::vector<class Track *>;
+
+    sharedMemory->audioManager = this;
+    sharedMemory->run();
 
     debug::out(3, "Setting BPM");
 
 
     debug::out(3, "Audio engine started without any issues!");
-    sendCommand("init");
-    sendCommand("setBPM", bpm);
-    sendCommand("setDivision", division);
+
 }
 
+void delay( int millisecondsToWait )
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
 
+void AudioManager::initHorizonEngine() {
 
+    debug::out(3, "Initalising HorizonEngine...");
+    horizonEngine = new EngineThread();
+    horizonEngine->run();
+    delay(2000);
+}
 /* initSocket
     Initalises a labsound real-time audio context
 */
 void AudioManager::initSocket() {
+    debug::out(3, "Initalising socket connection...");
     socket = new QLocalSocket(parent);
-    //socket->setCurrentWriteChannel(0);
     socket->setServerName("HorizonAUMANEngine");
-    dataStream.setDevice(socket);
-    dataStream.setVersion(QDataStream::Qt_5_10);
     QObject::connect(socket, &QLocalSocket::readyRead, parent, [=] () { socketReadReady(); });
+    QObject::connect(socket, &QLocalSocket::connected, parent, [=] () {
+        sendCommand("init");
+        sendCommand("setBPM", bpm);
+        sendCommand("setDivision", division);
+    });
     socket->connectToServer();
+    socket->waitForConnected();
+}
+
+void AudioManager::closeConnectionAndEngine() {
+    debug::out(3, "Closing socket connection...");
+    socket->flush();
+    socket->close();
+    delay(2000);
+    if (horizonEngine->isRunning()) {
+        debug::out(3, "HE didn't close gracefully. Killing...");
+        horizonEngine->kill();
+    } else {
+        debug::out(3, "HE closed gracefully.");
+    }
 }
 
 void AudioManager::socketReadReady() {
-    qDebug() << "Received Data";
+    debug::out(3, "Recieved data");
 
-    if (blockSize == 0) {
-            // Relies on the fact that QDataStream serializes a quint32 into
-            // sizeof(quint32) bytes
-            if (socket->bytesAvailable() < (int)sizeof(quint32)) { return; };
-            dataStream >> blockSize;
-    }
+    QByteArray block = socket->readAll();
 
+    QDataStream in(&block, QIODevice::ReadOnly);
+    in.setVersion(QDataStream::Qt_5_10);
 
-    if (socket->bytesAvailable() < blockSize || dataStream.atEnd()) {
-        return;
-    }
-    QString data;
-    dataStream >> data;
-    blockSize = 0;
+    while (!in.atEnd()) //loop needed cause some messages can come on a single packet
+        {
+            QString data;
+            in >> data;
+            QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
 
-    QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8());
+            if (doc.object().value("cmnd").toString() == "finishedAudioRegionLoad") {
+                QString uuid = doc.object().value("value0").toString();
 
-    qDebug() << data;
-
-    if (!doc.object().value("result").isUndefined()) {
-        qDebug() << "Got Result";
-        if (doc.object().value("result").toString() == "OK") {
-            if (dataQueue->size() != 0) {
-                dataQueue->pop_front();
-                writeString();
+                getAudioRegionByUUID(uuid)->loadedFileCallBack(doc.object().value("value1").toDouble());
             }
-        }
-        return;
     }
-
-    if (doc.object().value("cmnd").toString() == "finishedAudioRegionLoad") {
-        QString uuid = doc.object().value("value0").toString();
-        getAudioRegionByUUID(uuid)->loadedFileCallBack(doc.object().value("value0").toDouble());
-    }
-    sendConfirmation();
 }
 
-void AudioManager::writeString() {
-    if (dataQueue->size() == 0) {
-        return;
-    }
+void AudioManager::writeString(QString string) {
     //string = "TESTING";
+    c = c + 1;
+    qDebug() << c;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_10);
-    const QString &message = dataQueue->at(0);
-    out << quint32(message.size());
-    out << message;
-    qDebug() << "Writing string" << message;
+    out << string;
     socket->write(block);
-    socket->flush();
+    socket->waitForBytesWritten(9000);
+    qApp->processEvents();
+    //socket->flush();
 }
 
 void AudioManager::sendConfirmation() {
@@ -108,44 +116,44 @@ void AudioManager::sendConfirmation() {
     doc.setObject(obj);
     dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
     if (dataQueue->size() == 1) {
-        writeString();
+
     }
 }
 
 void AudioManager::sendCommand(QString command) {
+    if (pauseEngineCommunication) {
+        return;
+    }
     QJsonObject obj;
     obj.insert("cmnd", command);
     QJsonDocument doc;
     doc.setObject(obj);
-    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
-    if (dataQueue->size() == 1) {
-        writeString();
-    }
+    writeString(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 }
 
 void AudioManager::sendCommand(QString command, QJsonValue value) {
+    if (pauseEngineCommunication) {
+        return;
+    }
     QJsonObject obj;
     obj.insert("cmnd", command);
     obj.insert("value0", value);
     QJsonDocument doc;
     doc.setObject(obj);
-    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
-    if (dataQueue->size() == 1) {
-        writeString();
-    }
+    writeString(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 }
 
 void AudioManager::sendCommand(QString command, QJsonValue value, QJsonValue value1) {
+    if (pauseEngineCommunication) {
+        return;
+    }
     QJsonObject obj;
     obj.insert("cmnd", command);
     obj.insert("value0", value);
     obj.insert("value1", value1);
     QJsonDocument doc;
     doc.setObject(obj);
-    dataQueue->push_back(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
-    if (dataQueue->size() == 1) {
-        writeString();
-    }
+    writeString(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 }
 
 void AudioManager::play() {
@@ -326,7 +334,7 @@ void AudioManager::clearAll() {
     //selectedRegionList->clear();
 }
 
-Track* AudioManager::getTrackByUUID(QString uuid) {
+Track* AudioManager::getTrack(QString uuid) {
     for (int ti= 0; ti < this->getTrackListCount(); ti++) {
         Track *track = trackList->at(ti);
         if (track->getUUID() == uuid) {
@@ -334,6 +342,10 @@ Track* AudioManager::getTrackByUUID(QString uuid) {
         }
     }
     return nullptr;
+}
+
+Track* AudioManager::getTrack(int index) {
+    return trackList->at(index);
 }
 
 AudioRegion* AudioManager::getAudioRegionByUUID(QString uuid) {
@@ -359,16 +371,16 @@ void AudioManager::moveRegion(QString uuid, double gridLocation) {
 }
 
 void AudioManager::setTrackMute(QString uuid, bool mute) {
-    Track *track = getTrackByUUID(uuid);
+    Track *track = getTrack(uuid);
     track->setMute(mute);
 }
 
 void AudioManager::setTrackPan(QString uuid, float pan) {
-    Track *track = getTrackByUUID(uuid);
+    Track *track = getTrack(uuid);
     track->setPan(pan);
 }
 
 void AudioManager::setTrackGain(QString uuid, float gain) {
-    Track *track = getTrackByUUID(uuid);
+    Track *track = getTrack(uuid);
     track->setGain(gain);
 }

@@ -4,3 +4,6 @@
 [submodule "lib/KDMacTouchBar"]
 	path = lib/KDMacTouchBar
 	url = https://github.com/KDAB/KDMacTouchBar.git
+[submodule "lib/HorizonEngine"]
+	path = lib/HorizonEngine
+	url = https://github.com/tom-23/HorizonEngine.git

@@ -117,6 +117,8 @@ public:
     void scheduleNextAudioRegion();
     void scheduleNextBar();
 
+    QPair<int, int> lMeterData;
+    QPair<int, int> rMeterData;
 private:
     bool selected;
     int index;
