@@ -1,6 +1,8 @@
 ![Alt text](misc/assets/appicon.png?raw=true "Horizon")
 # Horizon Digital Audio Workstation
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ql6h8cdtmjyqm5ag?svg=true)](https://ci.appveyor.com/project/tom-23/horizon)
+
 A digital audio workstation written in c++ and using the Labsound library for audio playback.
 
 ## Getting started
