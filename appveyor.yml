@@ -1,0 +1,64 @@
+version: 1.0.{build}
+
+# This file defines all the magic to test the build on every push to GitHub with the help of appveyor.com
+# We use different (virtual) build environments that work sequentially and provide their artifacts.
+# The artifacts of every push/build are available in appveyor for 6 months from build.
+# Artifacts of tagged pushes ("unstable" or release number) are deployed into the GitHub release.
+
+#define the build environments
+image:
+  - Visual Studio 2019
+  - macOS
+
+# Process the build for each build environment
+for:
+# Build Windows packages
+- matrix:
+    only:
+      - image: Visual Studio 2019
+  environment:
+    QTDIR: /c/Qt/5.15/msvc2019_64
+    BUILD_SUB_DIR: Release
+  install:
+    - ps: $env:Path = "C:\Program Files\Git\bin;$env:Path"
+    - set QTDIR=C:\Qt\5.15\msvc2019_64
+    - set PATH=%PATH%;%QTDIR%\bin
+    - bash scripts/win/install.sh
+  before_build:
+    - bash scripts/win/before_build.sh
+  build_script:
+    - bash scripts/win/build.sh
+  after_build:
+    - bash scripts/win/after_build.sh
+  artifacts:
+    - path: 'horizon-*-setup.exe'
+      name: Horizon Windows Installer
+
+# Build MacOS packages
+- matrix:
+    only: 
+      - image: macOS
+  install:
+    - bash scripts/macOS/install.sh
+  before_build:
+    - bash scripts/macOS/before_build.sh
+  build_script:
+    - bash scripts/macOS/build.sh
+  after_build:
+    - bash scripts/macOS/after_build.sh
+  artifacts:
+    - path: build/*.pkg
+      name: macOS Package Installer
+
+
+# Upload all packages to GitHub, but only if the push was tagged
+deploy:
+- provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  auth_token:
+    secure: kOuvS5K+YgF6WCqkdU9EXV3eVDUhmnb7jSqY4WoZIrqFRMup7+NFR51LOaZSvOpm
+  artifact: /.*\.dmg/, /.*\.exe/, /.*\.pkg/
+  prerelease: true
+  force_update: true
+  on:
+    APPVEYOR_REPO_TAG: true 

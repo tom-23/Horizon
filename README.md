@@ -1,6 +1,5 @@
-<img src="https://github.com/tom-23/Horizon/raw/master/main_brand.png" width="500"></img>
+![Alt text](misc/assets/appicon.png?raw=true "Horizon")
 # Horizon Digital Audio Workstation
-
 
 A digital audio workstation written in c++ and using the Labsound library for audio playback.
 

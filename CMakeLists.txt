@@ -65,9 +65,5 @@ set_source_files_properties(
 #endif()
 #add_subdirectory(lib/vst3sdk)
 add_subdirectory(lib/HorizonEngine)
-if (APPLE)
-    set_target_properties(HorizonEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${HORIZON_EXECUTABLE_NAME}.app/Contents/MacOS)
-else()
-    set_target_properties(HorizonEngine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif()
+
     add_subdirectory(src)
