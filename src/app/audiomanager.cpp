@@ -16,8 +16,7 @@ AudioManager::AudioManager(QWidget *_parent, Timeline &_timeline)
     trackList = new std::vector<class Track *>;
     selectedTrackList = new std::vector<class Track *>;
 
-    sharedMemory->audioManager = this;
-    sharedMemory->run();
+
 
     debug::out(3, "Setting BPM");
 
@@ -42,7 +41,7 @@ void AudioManager::initHorizonEngine() {
     horizonEngine->run();
     delay(2000);
 }
-/* initSocket
+/* initSockets
     Initalises a labsound real-time audio context
 */
 void AudioManager::initSocket() {
@@ -57,6 +56,8 @@ void AudioManager::initSocket() {
     });
     socket->connectToServer();
     socket->waitForConnected();
+    sharedMemory.audioManager = this;
+    sharedMemory.start();
 }
 
 void AudioManager::closeConnectionAndEngine() {

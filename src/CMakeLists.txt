@@ -83,6 +83,18 @@ endif()
 
 add_dependencies(${HORIZON_EXECUTABLE_NAME} generate_version_header)
 
+option(HORIZON_COPY_BUNDLE "Copy Bundle Data" ON)
+if(HORIZON_COPY_BUNDLE)
+    message(STATUS "Will copy bundle data to app package")
+    if(APPLE)
+        add_custom_command(TARGET ${HORIZON_EXECUTABLE_NAME} POST_BUILD
+                           COMMAND ${CMAKE_COMMAND} -E copy_directory
+                               ${CMAKE_SOURCE_DIR}/misc/assets/bundle ${HORIZON_CURRENT_BINARY_DIR}/${HORIZON_EXECUTABLE_NAME}.app/Contents/Resources)
+    endif()
+else()
+    message(STATUS "Will NOT copy bundle data to app package")
+endif()
+
 # Qt modules
 list(APPEND horizon_qt_modules "WebSockets" "WebEngine" "WebEngineWidgets" "Charts")
 foreach(horizon_qt_module ${horizon_qt_modules})

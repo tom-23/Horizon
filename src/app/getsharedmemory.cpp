@@ -2,26 +2,29 @@
 
 #include "audiomanager.h"
 
-GetSharedMemory::GetSharedMemory() :
-    readSemaphore("HorizonReadSemaphore"),
-    writeSemaphore("HorizonWriteSemaphore"),
-    sharedMemory("HorizonSharedData")
+void GetSharedMemory::delay( int millisecondsToWait )
 {
-
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
 }
 
 void GetSharedMemory::run() {
     debug::out(3, "Running shared memory thread...");
-    updateTimer = new QTimer(this);
 
-    sharedMemory.attach();
-    sharedMemory.detach();
+    readSemaphore = new QSystemSemaphore("HorizonReadSemaphore");
+    writeSemaphore = new QSystemSemaphore("HorizonWriteSemaphore");
+    sharedMemory = new QSharedMemory("HorizonSharedData");
 
-    connect(updateTimer, &QTimer::timeout, this, [=] () {
-        if (!sharedMemory.isAttached()) {
-            sharedMemory.attach();
+    while (true) {
+
+        writeSemaphore->acquire();
+
+        if (!sharedMemory->isAttached()) {
+            sharedMemory->attach();
         }
-        writeSemaphore.acquire();
 
         QPair<double, QList<QList<int>>> horizonData;
 
@@ -29,10 +32,10 @@ void GetSharedMemory::run() {
 
         QDataStream in;
         in.setDevice(&buffer);
-        buffer.setData((char*)sharedMemory.constData(), sharedMemory.size());
+        buffer.setData((char*)sharedMemory->constData(), sharedMemory->size());
         buffer.open(QBuffer::ReadOnly);
         in >> horizonData;
-        readSemaphore.release();
+        readSemaphore->release();
 
         audioManager->setCurrentGridTime(horizonData.first);
 
@@ -44,7 +47,7 @@ void GetSharedMemory::run() {
 
             track->uiUpdate();
         }
-    });
+        delay(50);
+    }
 
-    updateTimer->start(10);
 }

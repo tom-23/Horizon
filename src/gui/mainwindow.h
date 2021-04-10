@@ -161,6 +161,8 @@ private:
     UAC *uac;
 
     ColorPickerWidget *colorPicker;
+
+    EngineThread *horizonEngine;
 public slots:
     void keyPressEvent(QKeyEvent*) override;
     void keyReleaseEvent(QKeyEvent*) override;

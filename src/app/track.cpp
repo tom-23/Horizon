@@ -221,9 +221,9 @@ AudioEffect* Track::addAudioEffect(effectType type, QString uuid) {
 }
 
 bool Track::isLSilent() {
-
+    return false;
 }
 
 bool Track::isRSilent() {
-
+    return false;
 }

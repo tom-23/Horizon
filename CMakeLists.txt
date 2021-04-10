@@ -60,10 +60,6 @@ set_source_files_properties(
     PROPERTIES GENERATED TRUE
 )
 
-#if (APPLE)
-#    add_subdirectory(lib/KDMacTouchBar)
-#endif()
-#add_subdirectory(lib/vst3sdk)
+set(HORIZON_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory(lib/HorizonEngine)
-
-    add_subdirectory(src)
+add_subdirectory(src)

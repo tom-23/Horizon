@@ -58,7 +58,6 @@ public:
 
         // init the main window
         mainWindow = new MainWindow(nullptr, splashScreen, prefs);
-        mainWindow->show();
 
         this->instance()->exec();
     }

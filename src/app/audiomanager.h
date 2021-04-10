@@ -127,11 +127,13 @@ public:
 
     bool pauseEngineCommunication = false;
 
-private:
-
     EngineThread *horizonEngine;
 
-    GetSharedMemory *sharedMemory = new GetSharedMemory;
+private:
+
+
+
+    GetSharedMemory sharedMemory;
 
     QWidget *parent;
 

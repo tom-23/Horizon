@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "app/enginethread.h"
 
 MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences *_prefs)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->hide();
     QString themeLoc;
 
     // unimplemented feature
@@ -115,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
 
     // kill splash screen
     splashScreen->close();
+    this->show();
 
     // remove the focus box on macOS (ODC ui stuffs)
     ui->tempo_lcd->setAttribute(Qt::WA_MacShowFocusRect, 0);
@@ -129,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent, SplashScreen *splashScreen, Preferences 
    // util::macInitTouchbar(this);
 #endif
     debug::out(3, "MainWindow Init Done!");
+
 }
 
 void MainWindow::uiUpdate() {

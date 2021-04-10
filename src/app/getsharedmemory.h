@@ -27,16 +27,17 @@ struct HorizonData {
 
 class GetSharedMemory : public QThread
 {
+    Q_OBJECT
 public:
-    GetSharedMemory();
     void run() override;
     AudioManager *audioManager;
 private:
     QTimer *updateTimer;
 
-    QSystemSemaphore readSemaphore;
-    QSystemSemaphore writeSemaphore;
-    QSharedMemory sharedMemory;
+    void delay( int millisecondsToWait );
+    QSystemSemaphore *readSemaphore;
+    QSystemSemaphore *writeSemaphore;
+    QSharedMemory *sharedMemory;
 };
 
 

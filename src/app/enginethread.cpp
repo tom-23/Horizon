@@ -1,17 +1,18 @@
 #include "enginethread.h"
 
-EngineThread::EngineThread()
+EngineThread::EngineThread(QObject *parent) : QThread(parent)
 {
     engine = new QProcess(this);
     engine->setProcessChannelMode(QProcess::ForwardedChannels);
-    engine->setInputChannelMode(QProcess::ForwardedInputChannel);
+    engine->setInputChannelMode(QProcess::InputChannelMode::ForwardedInputChannel);
     engine->setProgram("HorizonEngine");
+
 }
 
 void EngineThread::run() {
-
-    //engine->connect(engine, &EngineThread::finished, this, &EngineThread::exited);
-    engine->start();
+    debug::out(3, "Starting engine, waiting for listening message...");
+    engine->start(QIODevice::ReadOnly);
+    engine->waitForStarted();
 }
 
 bool EngineThread::isRunning() {
