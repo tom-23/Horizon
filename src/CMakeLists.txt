@@ -96,7 +96,7 @@ else()
 endif()
 
 # Qt modules
-list(APPEND horizon_qt_modules "WebSockets" "WebEngine" "WebEngineWidgets" "Charts")
+list(APPEND horizon_qt_modules "Network" "WebSockets" "WebEngine" "WebEngineWidgets" "Charts")
 foreach(horizon_qt_module ${horizon_qt_modules})
   message(STATUS "Finding QT Plugin ${horizon_qt_module}")
   find_package(Qt5${horizon_qt_module} REQUIRED)
